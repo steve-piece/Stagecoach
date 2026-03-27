@@ -17,7 +17,7 @@ Or search for "madewell-dev-workflow" in the Cursor plugin marketplace.
 Clone this repo and symlink or copy the contents into your project's `.cursor/` directory:
 
 ```bash
-git clone https://github.com/stevenlight/madewell-dev-workflow.git
+git clone https://github.com/steve-piece/madewell-dev-workflow.git
 ```
 
 ## Workflow
