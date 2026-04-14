@@ -1,4 +1,4 @@
-# Madewell Dev Workflow
+# Phased Dev Workflow
 
 A Cursor skills plugin for PRD-driven development: generate requirements documents, decompose them into phased implementation plans, and enforce CI/CD quality gates throughout delivery.
 
@@ -7,17 +7,17 @@ A Cursor skills plugin for PRD-driven development: generate requirements documen
 ### Cursor (Plugin Marketplace)
 
 ```text
-/add-plugin madewell-dev-workflow
+/add-plugin phased-dev-workflow
 ```
 
-Or search for "madewell-dev-workflow" in the Cursor plugin marketplace.
+Or search for "phased-dev-workflow" in the Cursor plugin marketplace.
 
 ### Manual
 
 Clone this repo and symlink or copy the contents into your project's `.cursor/` directory:
 
 ```bash
-git clone https://github.com/steve-piece/madewell-dev-workflow.git
+git clone https://github.com/steve-piece/phased-dev-workflow.git
 ```
 
 ## Workflow
@@ -93,7 +93,7 @@ Always-apply rule enforcing strict CI/CD controls during phased plan delivery: c
 
 ## Default Tech Stack
 
-Unless overridden, PRDs reference the Madewell Default Project Setup:
+Unless overridden, PRDs reference the phased Default Project Setup:
 
 | Category | Default |
 |---|---|
