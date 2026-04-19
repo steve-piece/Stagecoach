@@ -1,11 +1,11 @@
 {
-  "name": "madewell-dev-workflow",
+  "name": "phased-dev-workflow",
   "version": "1.0.0",
-  "description": "PRD generation, phased implementation planning, and CI/CD infrastructure hardening for Madewell project workflows. Turns a free-form project brief into a canonical PRD, decomposes it into staged development plans, and enforces quality gates throughout delivery.",
+  "description": "PRD generation, phased implementation planning, and CI/CD infrastructure hardening for phased project workflows. Turns a free-form project brief into a canonical PRD, decomposes it into staged development plans, and enforces quality gates throughout delivery.",
   "author": {
     "name": "Steven Light"
   },
-  "repository": "https://github.com/steve-piece/madewell-dev-workflow",
+  "repository": "https://github.com/steve-piece/phased-dev-workflow",
   "license": "MIT",
   "keywords": [
     "prd",
@@ -22,6 +22,7 @@
     "implementation-planning"
   ],
   "skills": "skills",
+  "agents": "agents",
   "commands": "commands",
   "rules": "rules"
 }

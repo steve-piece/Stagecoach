@@ -52,6 +52,17 @@ Rules:
 
 Create one file per stage: `docs/plans/stage_N_short_name.md`.
 
+**Dispatch the [`phased-plan-writer`](../../agents/phased-plan-writer.md) subagent — one invocation per stage, in parallel** (use the `Task` tool with `subagent_type: phased-plan-writer`). The orchestrator (this skill) is responsible for intake, stage identification, and the master checklist. The subagent is responsible for writing each individual stage file.
+
+For each dispatch, supply the subagent with:
+
+- **Stage metadata**: stage number, short name (snake_case), output path, one-sentence goal, ship-blocking flag
+- **Scope**: features/subtasks assigned to this stage (verbatim from the master checklist) and exit criteria
+- **Context**: relevant excerpts from source PRDs/specs (or absolute paths to read), tech stack, and explicit dependencies on prior stages (packages, tables, components, env vars that must already exist)
+- **Project rules**: absolute paths to every applicable `.cursor/rules/*.mdc` file the subagent must read
+
+The subagent returns a structured summary (`path`, `stage`, `tasks_count`, `dependencies_used`, `unresolved`). Resolve any `unresolved` items before moving to Phase 5.
+
 Each stage plan follows the template in [references/templates.md](references/templates.md) and includes:
 
 1. **Header metadata**: two-line HTML comment (relative path + semantic search description)

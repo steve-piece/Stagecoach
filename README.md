@@ -33,7 +33,8 @@ docs/prd-<slug>.md       ← user reviews and confirms
      |
      v
 [prd-to-phased-plans]    ← skill: decomposes PRD into staged plans
-     |
+     |                     dispatches [phased-plan-writer] subagents in parallel,
+     |                     one per stage
      v
 docs/plans/              ← master checklist + per-stage plan files
      |
@@ -64,6 +65,15 @@ Decompose a PRD into a master checklist and per-stage implementation files. Grou
 
 **Bundled references:**
 - `references/templates.md` &mdash; master checklist and stage plan templates
+
+**Dispatched subagents:**
+- [`phased-plan-writer`](agents/phased-plan-writer.md) &mdash; one invocation per stage, in parallel; writes the full `docs/plans/stage_N_*.md` file from the orchestrator-supplied scope, dependencies, and project rules
+
+## Agents
+
+### phased-plan-writer
+
+Stage-plan author dispatched by the `prd-to-phased-plans` skill. Receives stage metadata, scope, source excerpts, prior-stage dependencies, and applicable `.cursor/rules/*.mdc` paths from the orchestrator and produces a complete, implementation-ready `docs/plans/stage_N_<short_name>.md` file matching the canonical template. Returns a structured summary (`path`, `stage`, `tasks_count`, `dependencies_used`, `unresolved`) so the orchestrator can resolve gaps before implementation begins. One subagent per stage; the orchestrator runs them in parallel.
 
 ## Commands
 
