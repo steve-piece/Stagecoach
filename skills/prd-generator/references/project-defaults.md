@@ -4,16 +4,27 @@ The canonical Phased stack. Apply these unless a PRD explicitly overrides in sec
 
 ---
 
+## Architecture Conditional (Required — Read Before Section 4)
+
+The architecture default is conditional, not fixed. Evaluate based on project scope:
+
+| Project type | Default architecture |
+| --- | --- |
+| Marketing-only single site (no auth, no dashboard, no admin, no client portal) | Single Next.js app — NOT a monorepo |
+| Marketing + any authenticated experience (auth, admin, client dashboard, user portal — any combination) | Turborepo monorepo |
+
+If scope is unclear after reading the brief, surface this in the plan-mode question gate before generating Section 4.
+
+---
+
 ## Foundation
 
 | Layer | Default |
 | --- | --- |
-| Architecture | Turborepo monorepo |
-| Package Management | pnpm |
+| Package management | pnpm |
 | Deployment | Vercel |
-| Version Control | GitHub (feature branches + PRs to `main`) |
-| Issue Tracking | Linear |
-| Node Runtime | Node.js LTS |
+| Version control | GitHub (feature branches + PRs to `main`) |
+| Node runtime | Node.js LTS |
 
 ---
 
@@ -22,12 +33,11 @@ The canonical Phased stack. Apply these unless a PRD explicitly overrides in sec
 - Next.js (App Router)
 - React
 - TypeScript (strict mode)
-- Turborepo
 - Tailwind CSS
 - Class Variance Authority
 - Framer Motion
 - Lucide Icons
-- Shadcn UI
+- shadcn/ui
 - Zod
 - Supabase JS client
 
@@ -101,12 +111,39 @@ The legacy JWT-based `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_
 
 ---
 
+## Token Category Contract
+
+Every project must define values for all applicable token categories before any UI work begins. This contract is enforced by the design-system gate (Stage 1). Categories list what must exist — actual values vary per project.
+
+| Category | Required tokens | Notes |
+| --- | --- | --- |
+| Surface colors | `--background`, `--foreground`, `--card`, `--card-foreground`, `--popover`, `--popover-foreground` | Required for all projects |
+| Brand colors | `--primary`, `--primary-foreground`, `--secondary`, `--secondary-foreground`, `--accent`, `--accent-foreground` | Required for all projects |
+| Semantic colors | `--destructive`, `--destructive-foreground`; optional `--success`, `--warning`, `--info` | `--destructive` always required |
+| Neutrals | `--muted`, `--muted-foreground`, `--border`, `--input`, `--ring` | Required for all projects |
+| Charts | `--chart-1` through `--chart-5` minimum | Required when any data visualization is in scope |
+| Sidebar (if app shell) | `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`, `--sidebar-accent`, `--sidebar-border`, `--sidebar-ring` | Required only if project includes a sidebar shell |
+| Type families | `--font-sans`, `--font-serif`, `--font-mono`; optional `--font-display`, `--font-logo` | `--font-sans` always required |
+| Type scale | EITHER size tokens OR semantic tokens — must pick one and document the choice | Required; record which system is used |
+| Weights / leading / tracking | Scale documented | Required |
+| Radius | `--radius` plus `-sm/-md/-lg/-xl/-pill/-full` derivatives | Required |
+| Spacing | Scale documented (Tailwind default acceptable — record decision) | Required |
+| Shadows | `--shadow-sm` through `--shadow-2xl` plus brand-specific | Required |
+| Motion | Duration scale + easing curves | Required for any animated UI |
+| Breakpoints | Documented | Required |
+| Z-index | Layered scale | Required |
+| Dark mode | Every color token defined for dark variant | Required if dark mode is in scope |
+
+Design-system gate refuses to complete until all applicable categories are satisfied.
+
+---
+
 ## Architecture Conventions
 
 - All database tables have RLS policies enabled before launch
-- Server actions for mutations, API routes only when serving external clients
-- Shared packages in monorepo for `ui`, `db`, `config`, `utils`
-- Apps live under `apps/`, packages under `packages/`
+- Server actions for mutations; API routes only when serving external clients
+- Shared packages in monorepo for `ui`, `db`, `config`, `utils` (monorepo projects only)
+- Apps live under `apps/`, packages under `packages/` (monorepo projects only)
 - Migrations managed via Supabase CLI, committed to repo
 - Environment files: `.env.local` (dev), Vercel project envs (preview/staging/prod)
 
@@ -129,5 +166,5 @@ The legacy JWT-based `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_
 - Mobile-first responsive design
 - WCAG 2.1 AA accessibility minimum
 - All interactive elements have loading, empty, and error states
-- Toast notifications via Shadcn UI sonner component
+- Toast notifications via shadcn/ui sonner component
 - Forms validated client-side with Zod and server-side with Zod

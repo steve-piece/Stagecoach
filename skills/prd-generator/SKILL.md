@@ -1,64 +1,105 @@
 ---
 name: prd-generator
-description: Generate a complete PRD (Product Requirements Document) from a free-form project brief. Use when the user provides a project description and wants a structured PRD, says "create a PRD", "write a PRD", "generate a PRD", "build a PRD", or "document requirements". Follows the Phased PRD Template v1 with 7 top-level sections (0–6) and a phased implementation plan. References bundled defaults for tech stack, architecture, and delivery conventions.
+description: Generate a complete PRD (Product Requirements Document) from a free-form project brief. Use when the user provides a project description and wants a structured PRD, says "create a PRD", "write a PRD", "generate a PRD", "build a PRD", or "document requirements". Follows the Phased PRD Template v2 with 8 sections (0–7). References bundled defaults for tech stack, architecture, and delivery conventions.
+model: opus
+effort: high
 ---
 
 # PRD Generator
 
-Generate a complete, canonical PRD from a free-form project brief.
+Generate a complete, canonical PRD from a free-form project brief. This skill uses plan mode to resolve ambiguity before writing, and invokes `prd-reviewer` as its final step.
 
 ## Inputs
 
 Collect before generating:
 
 1. **Project brief** (required) — free-form description of the product: what it does, who it's for, why it exists.
-2. **Explicit overrides** (optional) — deliberate divergences from the default stack, architecture, or conventions.
-3. **Scope signals** (optional) — MVP vs full, known phases, key personas, required integrations.
-
-If the brief is present but specifics are missing, infer from [references/project-defaults.md](references/project-defaults.md). Do not ask for information that can be reasonably inferred from context.
-
-If critical ambiguities remain after inference (auth model, multi-tenancy, domain name, known external APIs), ask **at most 3 focused questions** before generating.
+2. **Uploaded specs** (optional) — any existing requirements docs, design specs, API docs, visual references.
+3. **Brand assets** (optional) — logo, brand guide, color palette, typography references.
+4. **Explicit overrides** (optional) — deliberate divergences from the default stack, architecture, or conventions.
 
 ## Reference Files
 
-Read both before filling any section:
+Read both before entering plan mode:
 
 | File | Used For |
 | --- | --- |
-| [references/prd-template-v1.md](references/prd-template-v1.md) | Section structure, headings, and prompts |
-| [references/project-defaults.md](references/project-defaults.md) | Default tech stack, services, and conventions (sections 0, 4, 5) |
+| [references/prd-template-v2.md](references/prd-template-v2.md) | Section structure, headings, and prompts |
+| [references/project-defaults.md](references/project-defaults.md) | Default tech stack, services, architecture conditional, token contract |
 
-## Brief Mapping Heuristic
+---
 
-When parsing the project brief, extract these signals first and route them to the right sections:
+## Step 1 — Plan-Mode Question Gate (REQUIRED)
+
+After reading the brief and any uploaded specs, MUST enter plan mode before generating any PRD content.
+
+**Analyze the brief for ambiguities, then generate 3–7 clarifying questions.** Do not generate more than 7. Cover only what is genuinely ambiguous after inference from context and defaults. Present questions ONE AT A TIME using `ask_user_input_v0` (use `single_select` or `multi_select` where possible — avoid free-text when a choice set is realistic).
+
+**Question topics to cover (only if ambiguous in the brief):**
+
+- **Target users** — who specifically will use this product? (if vague)
+- **Monetization model** — free / subscription / one-time purchase / usage-based / not monetized? (if not stated)
+- **Scope edges** — what is explicitly NOT in scope? (helps populate Section 7)
+- **Must-have vs nice-to-have** — which features are required for launch vs Phase 2?
+- **Implied integrations** — the brief implied [X] but didn't confirm — is it needed?
+- **Architecture signal** — does this need any authenticated experience (auth, dashboard, admin, client portal)? (if unclear — needed for architecture conditional below)
+- **Any other ambiguity** specific to this brief
+
+All answers from plan mode populate **Section 6 (Open Questions & Explicit Assumptions)** of the PRD.
+
+---
+
+## Step 2 — Architecture Conditional Rule
+
+Before writing Section 4 (Technical Architecture), evaluate the architecture type:
+
+| Signal | Architecture |
+| --- | --- |
+| Marketing-only single site (no auth, no dashboard, no admin, no client portal) | Single Next.js app — **NOT a monorepo** |
+| Marketing + any combination of: auth, admin panel, client dashboard, user portal | Turborepo monorepo |
+
+**Detection:** read the brief and plan-mode answers. If unclear, surface this as a plan-mode question (see Step 1). Do not default to monorepo without signal.
+
+This decision drives Section 4 content and the `project-defaults.md` architecture field.
+
+---
+
+## Step 3 — Brief Mapping Heuristic
+
+When parsing the project brief, extract these signals and route them to the right sections:
 
 | Signal in Brief | Routes To |
 | --- | --- |
-| Nouns (objects, records, things users interact with) | 4.3 Data Model entities |
-| Verbs (what users do) | 2.4 Functional Requirements |
-| "For [audience]" or "[role] who needs..." | 1.3 Personas |
-| "So that [outcome]" or "to [achieve X]" | 1.2 Success Metrics |
-| "Without [thing]" or "instead of [alternative]" | 1.4 Non Goals |
-| "Connects to [service]" or "uses [provider]" | 5.1 External Integrations |
-| "Must [perform/scale/comply]" | 2.5 Non Functional Requirements |
-| Time references ("first," "later," "eventually") | 6.2 Phases |
+| Nouns (objects, records, things users interact with) | Section 2 (Functional Requirements) — capabilities |
+| Verbs (what users do) | Section 2 (Functional Requirements) |
+| "For [audience]" or "[role] who needs..." | Section 1 (Problem & Users) — user paragraph |
+| "So that [outcome]" or "to [achieve X]" | Section 1 (Problem & Users) — problem paragraph |
+| "Without [thing]" or "instead of [alternative]" | Section 7 (Out of Scope) |
+| "Connects to [service]" or "uses [provider]" | Section 2 implied integrations |
+| "Must [perform/scale/comply]" | Section 3 (Non-Functional Requirements) |
+| Time references ("first," "later," "eventually") | Section 6 (Open Questions — phasing assumptions) |
 
-Run this pass first, then fill sections.
+---
 
-## Generation Workflow
+## Step 4 — Generation Workflow
 
 1. Read both reference files.
-2. Apply the Brief Mapping Heuristic above to extract signals.
-3. Map the project brief to each template section.
-4. For every section not addressed by the brief:
-   - Apply defaults from `project-defaults.md` where applicable (tech stack, infra, integrations).
+2. Complete the plan-mode question gate (Step 1).
+3. Determine architecture type (Step 2).
+4. Apply the brief mapping heuristic (Step 3).
+5. Map the project brief to each template section (0–7).
+6. For every section not addressed by the brief:
+   - Apply defaults from `project-defaults.md` where applicable.
    - Mark unknown specifics with the tagged TBD convention (see below) rather than inventing them.
    - When inferring, mark inline: `[Inferred: reasoning]`.
-5. Fill **section 6.5 (Phased Implementation Plan)** with phase tables (see Phase Table Format below).
-6. Fill **section 6.6 (Linear Implementation Mapping)** with workspace/team, project/label naming per phase, and issue creation rules from the 6.5 tables.
-7. **Run the Consistency Check** (see below) before writing the file.
-8. Write the complete PRD as a single markdown file.
-9. End the response with a summary of what's **confirmed**, **assumed**, and **blocked**.
+7. Run the **Consistency Check** (see below) before writing the file.
+8. Write the complete PRD as a single markdown file to `docs/prd-[project-slug].md`.
+9. Dispatch `agents/prd-reviewer.md` as the final step — pass the draft PRD plus all source materials.
+10. If reviewer returns `verdict: revise`, apply suggestions and re-run the reviewer. Cap at 2 iterations.
+11. If still `revise` after 2 iterations, return `needs_human: true` with `hitl_category: prd_ambiguity`.
+12. End the response with a generation summary (see format below).
+
+---
 
 ## Tagged TBD Convention
 
@@ -66,108 +107,71 @@ Not all gaps are equal. Use these tags so downstream readers know what's urgent:
 
 | Tag | Meaning | Example |
 | --- | --- | --- |
-| `[TBD-BLOCKER]` | Must be resolved before Phase 1 work begins | `[TBD-BLOCKER] auth model: SSO vs email/password` |
+| `[TBD-BLOCKER]` | Must be resolved before Stage 1 work begins | `[TBD-BLOCKER] auth model: SSO vs email/password` |
 | `[TBD-ASSUMPTION]` | Working assumption documented, validate during design | `[TBD-ASSUMPTION] users will tolerate email-only login for MVP` |
 | `[TBD-DEFER]` | Can be resolved later in the project lifecycle | `[TBD-DEFER] localization scope, English only at launch` |
 | `[Inferred: reason]` | Filled in based on context, flag for review | `[Inferred: B2B SaaS based on "team workspace" language]` |
 
-## Phase Table Format
-
-Each phase in section 6.5 uses this expanded format:
-
-```markdown
-#### Phase N: Name
-
-| Feature / Work Item | Priority | Dependencies | Acceptance Criteria | Effort | Owner Role | Notes |
-| --- | --- | --- | --- | --- | --- | --- |
-|  | P0/P1/P2 |  |  | S/M/L |  |  |
-```
-
-**Column rules:**
-- **Priority**: P0 (must ship in this phase), P1 (should ship), P2 (nice to have)
-- **Dependencies**: Other rows or external systems blocking this work
-- **Acceptance Criteria**: Binary, testable definition of done. Drives the gate.
-- **Effort**: S (≤ 1 day), M (2-5 days), L (1-2 weeks). Anything bigger gets split.
-- **Owner Role**: FE / BE / Full-stack / Design / DevOps
-
-**Gate criteria for this phase:**
-A binary, testable paragraph. "Auth works" is not a gate. "User can sign up via email, verify via Resend link, log in, and reach the dashboard on a production preview URL with no console errors" is a gate.
-
-## Quality Bar by Section
-
-Sections that don't meet this bar should be flagged with `[TBD-BLOCKER]` or expanded.
-
-| Section | Minimum Bar |
-| --- | --- |
-| 1.1 Background | At least 3 sentences, names the problem and the cost of not solving it |
-| 1.2 Success Metrics | At least 3 KPIs, each with baseline + target + measurement method |
-| 1.3 Personas | Each persona has name, role, primary JTBD, and at least 1 pain point |
-| 1.4 Non Goals | At least 2 explicit exclusions with rationale |
-| 2.1 In Scope | Each feature has a one-line user value statement |
-| 2.4 Functional Requirements | Each requirement has trigger, behavior, and at least 1 edge case |
-| 2.5 Non Functional Requirements | Concrete numeric targets where possible (latency, uptime, etc.) |
-| 3.3 Key Screens | Each screen lists all 4 states (empty, loading, populated, error) |
-| 4.3 Data Model | Every entity has fields, types, and relationships |
-| 5.1 Integrations | Each integration has purpose, provider, failure mode |
-| 5.3 Telemetry | Every KPI in 1.2 has a corresponding event |
-| 6.3 Domains & Secrets | All env vars listed match integrations in 5.1 |
-| 6.5 Phases | Every phase has a binary, testable gate |
+---
 
 ## Consistency Check
 
 Before writing the file, verify:
 
-- [ ] Every in-scope feature in **2.1** appears in at least one phase in **6.5**
-- [ ] Every KPI in **1.2** has a corresponding telemetry event in **5.3**
-- [ ] Every external integration in **5.1** has env vars listed in **6.3**
-- [ ] Every persona in **1.3** has at least one journey in **2.3**
-- [ ] Every entity in **4.3** is referenced by at least one functional requirement in **2.4**
-- [ ] Every phase in **6.5** ladders up to objectives in **1.2**
-- [ ] No orphan dependencies in **6.5** (every dependency is either a prior row or a documented external system)
+[ ] Every capability in **Section 2** maps to at least one non-functional constraint in **Section 3**
+[ ] Every integration implied in **Section 2** is accounted for in **Section 4**
+[ ] Every open question from plan-mode answers appears in **Section 6**
+[ ] **Section 7** contains at least 2 explicit out-of-scope items
+[ ] Architecture choice in **Section 4** matches the conditional rule (Step 2)
+[ ] Every `[TBD-BLOCKER]` item is surfaced in **Section 6**
 
 If any check fails, fix the gap before writing the file or explicitly flag it with a tagged TBD.
+
+---
 
 ## Output
 
 - **File**: `docs/prd-[project-slug].md`, or `docs/prd.md` if no slug is obvious.
-- **Header**: Two lines at top, (1) relative path, (2) one-line semantic description.
-- **Structure**: Follow [references/prd-template-v1.md](references/prd-template-v1.md) exactly. All sections 0–6 and all subsections must be present, even if sparse. Never omit a section.
-- **Section 0** must open with this verbatim note:
-  > Unless explicitly overridden in this document, use the **Phased Default Project Setup** for all tech stack, architecture, testing, CI/CD, and coding standards.
-- **Section 0.1 (Overrides)**: If the project diverges from defaults, include a structured override table:
+- **Header**: Two lines at top — (1) relative path, (2) one-line semantic description.
+- **Structure**: Follow [references/prd-template-v2.md](references/prd-template-v2.md) exactly. All sections 0–7 must be present, even if sparse. Never omit a section.
 
-  ```markdown
-  ### 0.1 Overrides from Default Setup
-
-  | Default | Override | Reason |
-  | --- | --- | --- |
-  |  |  |  |
-  ```
-
-  If no overrides, write "None. Project follows Phased defaults."
+---
 
 ## Handling Missing Information
 
 | Situation | Action |
 | --- | --- |
-| Tech stack not specified | Apply full defaults from `project-defaults.md` |
+| Tech stack not specified | Apply defaults from `project-defaults.md` |
 | Integrations not mentioned | List defaults (Supabase, Stripe, Resend); mark optional ones `[TBD-DEFER]` |
 | Data model not described | Enumerate entities implied by the brief; mark attributes `[TBD-ASSUMPTION]` |
 | Personas vague | Draft 1–2 personas from context; mark with `[Inferred: ...]` |
-| Phases not given | Propose a 3–4 phase breakdown based on scope |
-| Domain/DNS unknown | Mark `[TBD-BLOCKER]` if pre-launch, `[TBD-DEFER]` otherwise |
-| Auth model unspecified | Default to Supabase Auth with email/password + magic link, flag as `[TBD-ASSUMPTION]` |
-| Multi-tenancy unclear | Ask before generating, this affects RLS schema |
-| Overrides from defaults | Document explicitly in section 0.1 |
+| Auth model unspecified | Ask in plan-mode gate (affects architecture conditional) |
+| Multi-tenancy unclear | Ask before generating — this affects schema and RLS design |
+| Performance targets missing | Apply defaults from `project-defaults.md` NFR section |
+| Out-of-scope not stated | Ask in plan-mode gate; ensure Section 7 is not empty |
 
-## Response Summary Format
+---
 
-After writing the PRD file, end the response with:
+## prd-reviewer Integration
+
+After writing the PRD, dispatch `agents/prd-reviewer.md` with:
+
+- The draft PRD file path
+- All source materials: brief, uploaded specs, brand assets, API docs, visual references
+- Plan-mode question answers
+
+The reviewer returns a structured verdict. On `verdict: revise`, apply the `suggested_revisions` list and re-dispatch. Cap at 2 iterations. If still failing, set `needs_human: true` with `hitl_category: prd_ambiguity` and surface the specific blocking issues.
+
+---
+
+## Generation Summary Format
+
+After writing the PRD file and completing the review loop, end the response with:
 
 ```markdown
 ## PRD Generation Summary
 
-**Confirmed** (from brief or defaults):
+**Confirmed** (from brief, defaults, or plan-mode answers):
 - ...
 
 **Assumed** (inferred or working assumptions):
@@ -175,12 +179,37 @@ After writing the PRD file, end the response with:
 
 **Blocked** (TBD-BLOCKER items needing input):
 - ...
+
+**Reviewer result**: pass | revise (N iterations)
 ```
 
-## Downstream Skills
+---
 
-This skill produces a PRD file. It does not chain automatically.
+## Completion Checklist
 
-Once the PRD is confirmed by the user:
-- **`prd-to-phased-plans`** — decomposes section 6.5 into a master checklist and per-stage implementation files under `docs/plans/`.
-- **`sp-feature-delivery`** command — executes each stage from those plan files.
+[ ] Plan-mode gate completed (3–7 questions asked and answered)
+[ ] Architecture conditional evaluated and documented in Section 4
+[ ] All 8 sections (0–7) present in the output PRD
+[ ] No Linear references in output
+[ ] Consistency check passed (or gaps flagged with TBD tags)
+[ ] `prd-reviewer` dispatched and returned `verdict: pass` (or HITL surfaced after 2 iterations)
+[ ] PRD written to `docs/prd-[project-slug].md`
+[ ] Generation summary included in response
+[ ] All `- [ ]` checkbox syntax converted to `[ ]` in output
+
+---
+
+## Handoff Contract
+
+The PRD produced by this skill feeds downstream skills as follows:
+
+| PRD Section | Feeds |
+| --- | --- |
+| Section 2 (Functional Requirements) | Drives feature stages in `/prd-to-phased-plans` |
+| Section 3 (Non-Functional Requirements) | Drives CI/CD scaffold gates + visual review checklist |
+| Section 4 (Technical Architecture) | Drives monorepo decision + db-schema-foundation conditional |
+| Section 5 (UX & Content Fundamentals) | Drives design-system gate input |
+| Section 6 (Open Questions & Assumptions) | Drives phased-plan elicitation + HITL category 1 triggers |
+| Section 7 (Out of Scope) | Guards every stage from scope creep — referenced throughout orchestration |
+
+Pass the full PRD file path to `/prd-to-phased-plans` after human review and sign-off.
