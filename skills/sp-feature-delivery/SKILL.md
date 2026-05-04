@@ -6,7 +6,7 @@ description: Orchestrate phased feature delivery from docs/plans/ using a parall
 <!-- skills/sp-feature-delivery/SKILL.md -->
 <!-- Orchestrator skill that drives docs/plans/ stages via six standalone subagents (defined in ./agents/*.md) capped at Sonnet 4.6. -->
 
-# Superpowers: Feature Delivery (Subagent Orchestrator)
+# Feature Delivery (Subagent Orchestrator)
 
 This skill replaces the legacy `/sp-feature-delivery` command. The agent loading this skill is the **orchestrator** and runs on **Opus 4.7** (the model the user authorized for the "build plan" step). The orchestrator does not write production code itself — it reads plans, dispatches subagents, and merges their outputs back into the master checklist.
 
