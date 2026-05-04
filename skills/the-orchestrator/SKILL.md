@@ -6,7 +6,7 @@ name: the-orchestrator
 description: Drive an entire phased plan from start to finish by dispatching one Opus 4.7 stage-runner subagent per stage in strict sequence. Reads docs/plans/00_master_checklist.md, runs each stage_<n>_*.md through sp-feature-delivery (or sp-ci-cd-scaffold for the canned Stage 1), verifies the PR + tests, ensures clean return to main, then advances to the next stage. Use when the user runs /the-orchestrator, says "run the whole plan", "ship every stage", "automate the build", or "drive the phased plan to completion". Requires Opus 4.7 as the orchestrator and dispatches Opus 4.7 stage-runner subagents.
 ---
 
-# Superpowers: The Orchestrator
+# The Orchestrator
 
 This is the top-level workflow driver for phased projects. It sits between `prd-to-phased-plans` (which produces the static plan files) and the end of full implementation. Loaded on **Opus 4.7**, it loops through every stage in `docs/plans/00_master_checklist.md` and dispatches one **Opus 4.7 `stage-runner` subagent per stage** to actually do the work. Stages run **strictly sequentially** — never parallel — because each stage's PR must merge to `main` before the next begins.
 
