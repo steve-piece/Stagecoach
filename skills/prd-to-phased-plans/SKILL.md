@@ -1,113 +1,193 @@
 ---
 name: prd-to-phased-plans
-description: Decompose large PRDs, specs, or requirements documents into phased development plans with a master checklist and per-stage implementation files. Use when the user has a long PRD, product spec, requirements doc, or blueprint they want broken into actionable development stages. Also use when the user says "simplify this PRD", "break this into phases", "create a development plan", "staged plan", or "phased approach".
+description: Decompose a finalized PRD into phased development plans — design-system stage, CI/CD scaffold, env-setup gate, optional DB schema foundation, 20-30 vertical-slice feature stages, a master checklist, and a populated project rules file. Use when the user has a completed PRD and wants an implementation-ready plan. Also use when the user says "break this into phases", "create a development plan", or "phased approach".
 ---
 
 # PRD to Phased Plans
 
-Transform sprawling requirements documents into structured, implementation-ready development plans.
+Transform a finalized PRD into a complete, ordered set of implementation stages plus a project rules file.
 
-## Workflow
+## Scope
 
-### Phase 1: Intake and Discovery
+**Input:** a finalized PRD file (output of `/prd-generator` or equivalent). Not specs, briefs, questionnaires, or API docs — those feed `/prd-generator`.
 
-1. **Identify all source documents** in the workspace — PRDs, specs, briefs, questionnaires, API docs, visual references, etc.
-2. Read every source document thoroughly. Extract:
-   - Features and capabilities described
-   - Technical constraints and stack requirements
-   - External integrations (APIs, services, databases)
-   - User roles and access patterns
-   - Data models and schemas
-3. **Check for project rules** at `.cursor/rules/`. If present, read all rule files — they dictate architecture, coding standards, testing, and styling preferences that must be referenced in stage plans.
-4. Ask clarifying questions if critical decisions are ambiguous (e.g., auth model, deployment target, MVP vs Phase 2 scope).
+**Output:**
+- `docs/plans/00_master_checklist.md`
+- `docs/plans/stage_1_design_system_gate.md` (canned)
+- `docs/plans/stage_2_ci_cd_scaffold.md` (canned)
+- `docs/plans/stage_3_env_setup_gate.md` (canned)
+- `docs/plans/stage_4_db_schema_foundation.md` (canned, conditional on Q3)
+- `docs/plans/stage_5..N_<feature>.md` (20-30 vertical-slice feature stages)
+- `CLAUDE.md` or `AGENTS.md` (per Q12) — the project rules file
 
-### Phase 2: Stage Identification
+## Phase 1: Context Elicitation
 
-Group features into **ordered development stages** based on dependency chains:
+Ask each question with `ask_user_input_v0` before writing any files. Answers build the project rules file section by section.
 
-1. Map dependencies: which features block others?
-2. Group into stages where each stage's inputs are satisfied by prior stages
-3. **Stage 1 is always CI/CD scaffolding** and references the [`sp-ci-cd-scaffold`](../sp-ci-cd-scaffold/SKILL.md) skill. Do not generate this stage's task list — the stage plan file simply delegates to the skill. Subsequent stages start at Stage 2.
-4. Typical ordering pattern:
-   - **Stage 1 (canned)**: CI/CD + E2E baseline scaffolding via `sp-ci-cd-scaffold` (always present, body fixed by template)
-   - **Stage 2**: Database schema / data layer
-   - **Stage 3**: Core business logic / engine packages
-   - **Stage 4**: Shared UI components
-   - **Stage 5-7**: Application-level features (admin, client, integrations)
-   - **Stage 8+**: Enhancement features, AI pipelines, seed data
-5. Mark each stage as **ship-blocking (MVP)** or **Phase 2**. Stage 1 is always ship-blocking.
-6. Present the proposed stage breakdown to the user for approval before generating files
+**Q1 — MVP scope**
+> "Is this MVP-only (everything ships in Phase 1) or do you want an MVP + Phase 2 split?"
+> single_select: ["MVP only — all stages are Phase 1", "MVP + Phase 2 — flag which stages are post-launch"]
+> → sets `mvp:` on every stage frontmatter
 
-### Phase 3: Generate Master Checklist
+**Q2 — Master checklist tracking**
+> "Where should the master checklist live?"
+> single_select: ["Local markdown only", "Mirror to Linear (requires Linear MCP)"]
+> → if Linear: confirm Linear MCP is connected; skill writes milestone/issue stubs at the end
 
-Create `docs/plans/00_master_checklist.md` using the template in [references/templates.md](references/templates.md).
+**Q3 — Database in scope?**
+> Detect from PRD Section 4 (Technical Architecture). Present finding:
+> "I see [the PRD indicates / no] database usage. Is a database in scope for this project?"
+> single_select: ["Yes — include Stage 4 db-schema-foundation", "No — skip Stage 4"]
 
-Rules:
-- Every feature from the source docs must appear
-- Every feature is decomposed into concrete subtasks (checkbox items)
-- Each stage section shows Status and Ship-blocking designation
-- Exit criteria per stage: what must be true before moving on
-- Summary tables at the bottom for MVP and Phase 2
+**Q4 — Database tooling** (only if Q3 = Yes)
+> "Which database tooling?"
+> single_select: ["Supabase", "Prisma", "Drizzle", "Other (I'll specify)"]
+> → drives schema file format in stage 4 canned template
 
-### Phase 4: Generate Stage Plans
+**Q5 — Supabase MCP installed?** (only if Q4 = Supabase)
+> "Is the Supabase MCP installed in this workspace?"
+> single_select: ["Yes", "No — I'll set it up manually"]
+> → if Yes: appends Supabase security baseline from `references/architecture-conventions.md` to project rules file
 
-Create one file per stage: `docs/plans/stage_N_short_name.md`.
+**Q6 — GitNexus**
+> "Use GitNexus for codebase graph queries? (Recommended — helps agents understand module boundaries without full file reads)"
+> single_select: ["Yes — pull GitNexus rules into project rules file", "No thanks"]
+> → if Yes: fetch rules from `https://github.com/abhigyanpatwari/GitNexus/blob/main/CLAUDE.md` and `https://github.com/abhigyanpatwari/GitNexus/blob/main/AGENTS.md` and append under `## GitNexus` in the project rules file
 
-#### Always-present Stage 1 (canned)
+**Q7 — Design MCPs**
+> "Which design MCPs are available? (These inform the design-system-gate stage and frontend-design skill.)"
+> multi_select: ["shadcn MCP", "Magic MCP (21st.dev)", "Figma MCP", "None"]
+> → list is written into the project rules file and passed as context to design-system-stage-writer
 
-`docs/plans/stage_1_ci_cd_scaffold.md` is **always written by this orchestrator skill**, never by the `phased-plan-writer` subagent. Its body is fixed and simply delegates to the [`sp-ci-cd-scaffold`](../sp-ci-cd-scaffold/SKILL.md) skill — see the **Stage 1 (Canned) Template** section in [references/templates.md](references/templates.md). Do not dispatch the subagent for stage 1.
+**Q8 — Architecture variant**
+> "Is this a single app or a monorepo?"
+> single_select: ["Single app (one deployable at the project root)", "Monorepo (multiple apps + shared packages)"]
+> follow-up if monorepo: "Which workspace tooling?" single_select: ["Turborepo + pnpm", "Turborepo + npm", "Nx", "Plain pnpm workspaces", "Other"]
+> → reads from `references/architecture-conventions.md` and injects the matching Variant A or B section into the project rules file under `## Architecture Conventions (baseline)`
 
-#### Stages 2..N (subagent-written)
+**Q9 — Project rules to import (code style + internal organization)**
+> "Paste any paths or URLs to external rule files you want imported (naming conventions, type-vs-interface preferences, folder organization, server-action patterns, etc.). Leave blank to skip."
+> text_input
+> → merged into the project rules file under `## Architecture Conventions (project-specific)` with precedence: workflow baseline > project rules > external rules
 
-**Dispatch the [`phased-plan-writer`](../../agents/phased-plan-writer.md) subagent — one invocation per stage, in parallel** (use the `Task` tool with `subagent_type: phased-plan-writer`). The orchestrator (this skill) is responsible for intake, stage identification, the master checklist, and Stage 1. The subagent is responsible for writing each individual Stage 2..N file.
+**Q10 — Auth provider**
+> If PRD Section 2 or 4 specifies an auth provider, use that. Otherwise ask:
+> "Which auth provider?"
+> single_select: ["Clerk", "Auth.js / NextAuth", "Supabase Auth", "Lucia", "None / custom", "Other (I'll specify)"]
+> → drives auth feature stage scope; if auth present, phased-plan-writer injects the dev-mode user switcher task (see `references/canned-stages/auth-dev-mode-switcher-task.md`)
 
-For each dispatch, supply the subagent with:
+**Q11 — Deployment target**
+> "Deployment target? (Default: Vercel)"
+> single_select: ["Vercel", "AWS", "Fly.io", "Other (I'll specify)"]
 
-- **Stage metadata**: stage number, short name (snake_case), output path, one-sentence goal, ship-blocking flag
-- **Scope**: features/subtasks assigned to this stage (verbatim from the master checklist) and exit criteria
-- **Context**: relevant excerpts from source PRDs/specs (or absolute paths to read), tech stack, and explicit dependencies on prior stages (packages, tables, components, env vars that must already exist)
-- **Project rules**: absolute paths to every applicable `.cursor/rules/*.mdc` file the subagent must read
+**Q12 — Rules file format**
+> "Which project rules file format?"
+> single_select: ["CLAUDE.md", "AGENTS.md"]
+> → writes the project rules file to the chosen path
 
-The subagent returns a structured summary (`path`, `stage`, `tasks_count`, `dependencies_used`, `unresolved`). Resolve any `unresolved` items before moving to Phase 5.
+After all answers, assemble and write the project rules file before dispatching stage writers.
 
-Each stage plan follows the template in [references/templates.md](references/templates.md) and includes:
-
-1. **Header metadata**: two-line HTML comment (relative path + semantic search description)
-2. **Goal statement**: one sentence describing the stage's deliverable
-3. **Architecture note**: how this stage fits into the overall system
-4. **Tech stack**: frameworks, libraries, tools specific to this stage
-5. **Rules reference**: if `.cursor/rules/` exist, list which rules apply and summarize key constraints
-6. **Tasks**: numbered, each with:
-   - Files to create/modify (explicit paths)
-   - Step-by-step implementation instructions
-   - Full code snippets where the implementation is non-trivial
-   - Commit message suggestion per task
-7. **Exit criteria**: testable conditions that prove the stage is complete
-
-### Phase 5: Create Implementation Todos
-
-After all plan files are generated, create `TodoWrite` entries for each stage's implementation work. Each todo should reference the stage plan file and be marked `pending`. This gives the user a trackable list they can execute sequentially or delegate to subagents.
-
-## Key Principles
-
-- **Dependency-ordered stages**: never reference a package, table, or component that hasn't been built in a prior stage
-- **Exit criteria are testable**: "All tests pass" or "App boots locally" — not "Code looks good"
-- **Code snippets are complete**: include full file contents for non-trivial implementations, not pseudo-code
-- **Rules are integrated**: if the project has `.cursor/rules/`, each stage plan explicitly states which rules apply and how
-- **MVP vs Phase 2 is explicit**: every feature is tagged. The master checklist summary makes the boundary clear
-- **Plans are static artifacts**: once generated, plans are not edited during implementation. Implementation follows the plan; deviations are noted in todos
-
-## Output Structure
+### Layering precedence (document in project rules file header)
 
 ```
-docs/plans/
-├── 00_master_checklist.md          # Running checklist of all features/subtasks
-├── stage_1_<short_name>.md         # Per-stage implementation plans
-├── stage_2_<short_name>.md
-├── ...
-└── stage_N_<short_name>.md
+Priority 1 (highest): phased-dev-workflow baseline (web standards, security, framework facts)
+Priority 2: project-specific rules (imported via Q9)
+Priority 3 (lowest): external rule files
 ```
 
-## Detailed Templates
+## Phase 2: Stage Identification
 
-See [references/templates.md](references/templates.md) for the exact markdown templates for the master checklist and stage plan files.
+Read the PRD. Map every feature from Section 2 (Functional Requirements) to stages:
+
+1. Every PRD feature defaults to **≥2 stages**: (a) shell stage — route, layout, empty/loading/error states; (b) data stage — queries, mutations, polish, edge cases
+2. Stage count target: **20-30 feature stages** for a typical PRD
+3. Mark each stage as MVP (`mvp: true`) or Phase 2 (`mvp: false`) per Q1
+4. Present the proposed stage list to the user for approval before writing any files
+
+## Phase 3: Dispatch Stage Writers (parallel)
+
+Dispatch all stage-writer sub-agents in parallel. Each writes exactly one file.
+
+| Stage | Sub-agent | Canned? | Condition |
+|-------|-----------|---------|-----------|
+| 1 | `design-system-stage-writer` | Yes | Always |
+| 2 | `ci-cd-scaffold-stage-writer` | Yes | Always |
+| 3 | `env-setup-stage-writer` | Yes | Always |
+| 4 | `db-schema-stage-writer` | Yes | Q3 = Yes only |
+| 5..N | `phased-plan-writer` | No | One per feature stage |
+
+Supply each agent with:
+- Stage number, short name, output path, one-sentence goal, `mvp:` flag
+- Scope: features/subtasks from stage identification step
+- Context: PRD excerpts (or absolute path), tech stack, prior-stage dependencies
+- Elicitation answers (Q1–Q12) as context
+- Absolute path to the project rules file
+
+Each canned-stage writer pulls its template from `references/canned-stages/`.
+
+## Phase 4: Master Checklist (last)
+
+After ALL stage files are written, dispatch `master-checklist-synthesizer`. It:
+1. Scans every stage file's frontmatter `completion_criteria`
+2. Writes `docs/plans/00_master_checklist.md`
+3. Uses `[ ]` checkbox format (no leading dash)
+
+See `references/templates.md` for the exact checklist template.
+
+## Phase 5: Linear stubs (if Q2 = Linear)
+
+If the user chose Linear mirroring:
+1. Create one Linear milestone per stage using the Linear MCP
+2. Write milestone IDs back into each stage file's `linear_milestone:` frontmatter field
+
+## Architecture conventions reference
+
+This skill's `references/architecture-conventions.md` is the **opinion-free baseline** injected into every project's rules file. It contains only:
+- Universal web standards (WCAG, semantic HTML, browser standards)
+- Performance facts (measurable, framework-agnostic)
+- Security baselines conditional on stack (Supabase RLS when DB = Supabase)
+- Framework-version syntactic facts (e.g., Next.js 16+ async params)
+- Structural project variants (Variant A single-app / Variant B monorepo)
+
+Opinionated rules (naming, type-vs-interface, file organization, server-action patterns) are NOT in that file. They enter the project via Q9 (user-imported external rule files) and design-system code patterns. Document this clearly in the project rules file header.
+
+## Output structure
+
+```
+docs/
+├── plans/
+│   ├── 00_master_checklist.md
+│   ├── stage_1_design_system_gate.md
+│   ├── stage_2_ci_cd_scaffold.md
+│   ├── stage_3_env_setup_gate.md
+│   ├── stage_4_db_schema_foundation.md   (conditional)
+│   └── stage_N_<feature>.md              (20-30 feature stages)
+└── (existing PRD)
+CLAUDE.md or AGENTS.md (per Q12)
+```
+
+## Key principles
+
+- **Vertical slices for feature stages**: each stage ships UI + route + data + tests for one user-facing thing
+- **Hard cap**: 6 tasks per stage, max ~10-15 files changed, completable in one Claude session
+- **One PR per stage**: stages are independently reviewable and mergeable
+- **No forward references**: stages may only reference packages, tables, or components built in prior stages
+- **Exit criteria are testable**: "pnpm test passes" not "looks good"
+- **Auth stages always get the dev-mode user switcher task** (see `references/canned-stages/auth-dev-mode-switcher-task.md`)
+
+## Stage frontmatter contract
+
+Every stage file uses the contract in `references/stage-frontmatter-contract.md`. See also `references/templates.md`.
+
+## Completion checklist
+
+[ ] All 12 elicitation questions answered and answers written to project rules file
+[ ] Project rules file assembled with correct layering: baseline → Q9 imports → design system patterns
+[ ] Stage list presented to user and approved
+[ ] All canned stage files written (stages 1-3, optionally 4)
+[ ] All feature stage files written (stages 5..N)
+[ ] All stage files include valid YAML frontmatter per `references/stage-frontmatter-contract.md`
+[ ] Master checklist generated after all stages
+[ ] Linear stubs created if Q2 = Linear (linear_milestone fields populated)
+[ ] No `- [ ]` checkboxes in generated files (all use `[ ]` format)
+[ ] No platform-specific references in generated files (use "project rules file" not "cursor rules")

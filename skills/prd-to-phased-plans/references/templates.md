@@ -1,76 +1,149 @@
 # Plan Document Templates
 
+## Stage Frontmatter Template
+
+Every stage file produced by `prd-to-phased-plans` must begin with this YAML frontmatter. See `references/stage-frontmatter-contract.md` for full field definitions.
+
+```yaml
+---
+stage: <int>
+name: "<Title Case>"
+type: design-system | ci-cd | env-setup | db-schema | frontend | backend | full-stack | infrastructure
+slice: vertical | horizontal
+mvp: true | false
+depends_on: [<stage_ints>]
+estimated_tasks: <int, 1-6>
+hitl_required: false | true
+hitl_reason: null | "prd_ambiguity" | "external_credentials" | "destructive_operation" | "creative_direction"
+linear_milestone: null | "<id>"
+completion_criteria:
+  - tests_passing
+  - <other criteria specific to stage type>
+---
+```
+
 ## Master Checklist Template
 
 ```markdown
 <!-- docs/plans/00_master_checklist.md -->
-<!-- Master checklist tracking all features and subtasks across N development stages -->
+<!-- Master checklist tracking all stages and completion criteria -->
 
 # [Project Name] — Master Checklist
 
-[One-sentence description of what is being tracked.]
+[One-sentence description of the project.]
 
 ---
 
-## Stage 1: CI/CD Scaffolding (canned)
-**Status:** Not Started
-**Ship-blocking:** Yes
+## Stage 1 — Design System Gate
+**Type:** design-system | **MVP:** Yes | **Depends on:** none
+**Linear milestone:** [id or —]
 
-### Feature: CI/CD + E2E Baseline
-- [ ] Run `sp-ci-cd-scaffold` skill end-to-end
-
-**Exit criteria:** Every box in `sp-ci-cd-scaffold/references/scaffold-completion-checklist.md` is `[x]`.
+Completion criteria:
+[ ] token_files_committed
+[ ] design_system_compliance_check_passing
+[ ] tests_passing
+[ ] PR reviewer pass
+[ ] All tests added and passing
+[ ] Full CI green (visual regression + design-system-compliance)
 
 ---
 
-## Stage 2: [Stage Name]
-**Status:** Not Started
-**Ship-blocking:** Yes | No
+## Stage 2 — CI/CD Scaffold
+**Type:** ci-cd | **MVP:** Yes | **Depends on:** Stage 1
+**Linear milestone:** [id or —]
 
-### Feature: [Feature Name]
-- [ ] Subtask description
+Completion criteria:
+[ ] ci_workflow_green_on_main
+[ ] e2e_suite_passing
+[ ] branch_protection_configured
+[ ] tests_passing
+[ ] PR reviewer pass
+[ ] All tests added and passing
+[ ] Full CI green
 
-**Exit criteria:** [Testable condition.]
+---
+
+## Stage 3 — Environment Setup Gate
+**Type:** env-setup | **MVP:** Yes | **Depends on:** Stages 1, 2
+**Linear milestone:** [id or —]
+**HITL required:** external_credentials
+
+Completion criteria:
+[ ] all_env_vars_populated
+[ ] local_dev_boots
+[ ] services_reachable
+[ ] tests_passing
+[ ] PR reviewer pass
+[ ] HITL items resolved
+
+---
+
+## Stage N — [Stage Name]
+**Type:** [type] | **MVP:** Yes | No | **Depends on:** Stages [list]
+**Linear milestone:** [id or —]
+
+Completion criteria:
+[ ] [criterion from frontmatter]
+[ ] tests_passing
+[ ] PR reviewer pass
+[ ] All tests added and passing
+[ ] Full CI green (visual regression + design-system-compliance + db-schema-drift if applicable)
+[ ] HITL items resolved (only if hitl_required: true)
 
 ---
 
 <!-- Repeat for all stages -->
 
-## Ship-Blocking Summary (MVP)
+## MVP Summary
 
-| Stage | Requirement |
-|-------|-------------|
-| 1     | [What must be true] |
-| 2     | [What must be true] |
+| Stage | Name | Type | Status |
+|-------|------|------|--------|
+| 1 | Design System Gate | design-system | [ ] |
+| 2 | CI/CD Scaffold | ci-cd | [ ] |
+| 3 | Environment Setup Gate | env-setup | [ ] |
 
-## Phase 2 (Post-MVP)
+## Phase 2 (Post-Launch)
 
-| Feature | Stage |
-|---------|-------|
-| [Feature name] | N |
+| Stage | Name | Type | Status |
+|-------|------|------|--------|
+| N | [Stage Name] | [type] | [ ] |
 ```
 
-## Stage Plan Template
+## Feature Stage Plan Template (stages 5+)
 
 ```markdown
+---
+stage: N
+name: "Stage Name"
+type: frontend | backend | full-stack | infrastructure
+slice: vertical
+mvp: true | false
+depends_on: [<prior_stage_ints>]
+estimated_tasks: <1-6>
+hitl_required: false | true
+hitl_reason: null | "prd_ambiguity" | "external_credentials" | "destructive_operation" | "creative_direction"
+linear_milestone: null | "<id>"
+completion_criteria:
+  - tests_passing
+  - route_renders_without_error
+  - visual_review_passed
+---
+
 <!-- docs/plans/stage_N_short_name.md -->
 <!-- Stage N: [Brief semantic description for search] -->
 
-# Stage N: [Stage Name] Implementation Plan
+# Stage N — [Stage Name]
 
 **Goal:** [One sentence describing the deliverable.]
 
-**Architecture:** [How this stage fits into the overall system. 1-2 sentences.]
+**Architecture:** [How this stage fits into the overall system. 2-4 sentences.]
 
-**Tech Stack:** [Frameworks, libraries, tools used in this stage.]
+**Tech stack:**
+- [Framework / library]
+- [Relevant tool]
 
----
-
-## Rules Reference
-
-From `.cursor/rules/[relevant-rule].mdc`:
-- [Key constraint from the rule]
-- [Key constraint from the rule]
+**Dependencies from prior stages:**
+- Stage X: [package / table / component / env var assumed to exist]
 
 ---
 
@@ -88,13 +161,13 @@ From `.cursor/rules/[relevant-rule].mdc`:
 
 \`\`\`ts
 // path/to/file.ts
-// Full implementation code
+// Full implementation — no pseudo-code, no // TODO
 \`\`\`
 
 **Step 2: [Step description]**
 
 \`\`\`bash
-[command to run]
+pnpm test
 \`\`\`
 
 **Commit:**
@@ -110,48 +183,29 @@ git commit -m "feat: [description]"
 
 ---
 
-**Exit criteria:** [Testable conditions — commands to run, expected output.]
+**Exit criteria:**
+- `pnpm test` passes
+- Route `/path` renders without errors
+- [Other testable, binary condition]
 ```
 
-## Stage 1 (Canned) Template
+## Canned Stage Templates
 
-`docs/plans/stage_1_ci_cd_scaffold.md` is **always written by the `prd-to-phased-plans` orchestrator skill itself** — never by the `phased-plan-writer` subagent. Its body is fixed and simply delegates to the `sp-ci-cd-scaffold` skill. Lift verbatim:
+The four foundation stage templates live in `references/canned-stages/`. Do not duplicate them here — reference them directly:
 
-```markdown
-<!-- docs/plans/stage_1_ci_cd_scaffold.md -->
-<!-- Stage 1: bootstrap CI/CD + E2E baseline via sp-ci-cd-scaffold skill -->
-
-# Stage 1: CI/CD Scaffolding
-
-**Goal:** Bootstrap CI/CD + E2E baseline before any feature work begins.
-
-**Architecture:** Establishes Playwright suites (`@feature`, `@regression-core`), GitHub Actions workflows (`ci.yml`, `e2e.yml`, `e2e-coverage.yml`), Husky `pre-push`, PR template, and the branch-protection setup script. Every later stage depends on this baseline.
-
-**Tech Stack:** Playwright, GitHub Actions, Husky, `gh` CLI.
-
-**Owner:** Run the [`sp-ci-cd-scaffold`](../../.cursor/skills/sp-ci-cd-scaffold/SKILL.md) skill end-to-end.
-
----
-
-## Tasks
-
-This stage's task list is intentionally not duplicated here. The single task is:
-
-- Run the `sp-ci-cd-scaffold` skill in full.
-
-The skill's `SKILL.md` (Phases 0–6) is the source of truth for the work. Its `references/scaffold-completion-checklist.md` is the source of truth for "done".
-
----
-
-**Exit criteria:** Every box in `sp-ci-cd-scaffold/references/scaffold-completion-checklist.md` is `[x]`. The PR for `chore/ci-cd-scaffold` is merged into `main`, CI is green on the merged head SHA, and the working tree is clean on `main` with no leftover branches.
-```
+- `references/canned-stages/stage-1-design-system-gate.md`
+- `references/canned-stages/stage-2-ci-cd-scaffold.md`
+- `references/canned-stages/stage-3-env-setup-gate.md`
+- `references/canned-stages/stage-4-db-schema-foundation.md`
+- `references/canned-stages/auth-dev-mode-switcher-task.md` (injected into auth-tagged stages)
 
 ## Naming Conventions
 
-- Checklist: `00_master_checklist.md`
-- Stage plans: `stage_N_short_name.md` where `short_name` is lowercase with underscores (e.g., `database_schema`, `ui_components`, `admin_portal`)
+- Master checklist: `00_master_checklist.md`
+- Stage plans: `stage_N_short_name.md` where `short_name` is lowercase with underscores
 - Stage numbers are sequential starting at 1
 - All files go in `docs/plans/`
+- Auth-tagged stages: name contains `auth`, `login`, `session`, `rbac`, or `permission`
 
 ## Header Comment Convention
 
@@ -160,18 +214,13 @@ Every generated plan file starts with two HTML comment lines:
 2. Brief description optimized for semantic search
 
 ```markdown
-<!-- docs/plans/stage_2_database_schema.md -->
-<!-- Stage 2: Supabase schema for industries, questionnaires, and submissions with RLS -->
+<!-- docs/plans/stage_5_user_auth_shell.md -->
+<!-- Stage 5: auth shell — sign-in/sign-up routes, layout, loading and error states -->
 ```
 
-## TodoWrite Convention
+## Checkbox format rule
 
-After generating all plan files, create todos in this format:
+Always use `[ ]` — no leading dash. Never write `- [ ]`.
 
-```
-id: stage-N-short-name
-content: "Stage N: [description of implementation work] (see docs/plans/stage_N_short_name.md)"
-status: pending
-```
-
-Keep one todo per stage. The stage plan file contains the detailed subtasks.
+Correct: `[ ] task description`
+Incorrect: `- [ ] task description`
