@@ -190,4 +190,4 @@ ANTHROPIC_DEFAULT_OPUS_MODEL=<model-id>
 CLAUDE_CODE_SUBAGENT_MODEL=<model-id>   # overrides all sub-agent tiers at once
 ```
 
-See `references/model-tier-guide.md` for the full tier philosophy and per-provider alias resolution. (This file is created in Wave 4 — link will resolve after that wave completes.)
+See `references/model-tier-guide.md` for the full tier philosophy and per-provider alias resolution.

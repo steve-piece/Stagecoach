@@ -52,7 +52,7 @@ The table below reflects the **actual current values** in each agent file. Where
 | **the-orchestrator** | stage-runner | `opus` | high | — |
 | **phased-dev-retrospective** | retrospective-reviewer | `opus` | high | — |
 
-> **Note on `phased-dev-retrospective`:** This skill is being created in Wave 4.4. The `retrospective-reviewer` agent file does not yet exist on disk but is documented here because its model and effort assignments are fixed by spec.
+> **Note on `phased-dev-retrospective`:** The `retrospective-reviewer` agent is experimental. Its model and effort assignments are fixed as documented above.
 
 Aliases (`haiku`, `sonnet`, `opus`) resolve to:
 

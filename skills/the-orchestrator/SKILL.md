@@ -3,7 +3,7 @@
 
 ---
 name: the-orchestrator
-description: Conduct a phased plan from docs/plans/00_master_checklist.md by dispatching one stage-runner subagent per stage. Default mode is supervised — runs one stage, reports results, and waits for human approval before advancing. Supports --auto-mvp and --auto-all flags. Use when the user runs /the-orchestrator, says "run the whole plan", "ship every stage", "automate the build", or "drive the phased plan to completion".
+description: Conduct a phased plan from docs/plans/00_master_checklist.md by dispatching one stage-runner subagent per stage. Default mode is supervised — runs one stage, reports results, and waits for human approval before advancing. Supports --auto-mvp and --auto-all flags. Use when the user runs /sc-the-orchestrator, says "run the whole plan", "ship every stage", "automate the build", or "drive the phased plan to completion".
 ---
 
 # The Orchestrator
@@ -14,9 +14,9 @@ The orchestrator is a **conductor**, not an autopilot. It reads the master check
 
 | Invocation | Behavior |
 |---|---|
-| `/the-orchestrator` (default) | Dispatch one stage → report → **pause and wait for human "continue"** |
-| `/the-orchestrator --auto-mvp` | Auto-advance stages where `mvp: true` in frontmatter; pause before Phase 2 stages (`mvp: false`); pause on any HITL |
-| `/the-orchestrator --auto-all` | Auto-advance all stages; pause **only** on HITL |
+| `/sc-the-orchestrator` (default) | Dispatch one stage → report → **pause and wait for human "continue"** |
+| `/sc-the-orchestrator --auto-mvp` | Auto-advance stages where `mvp: true` in frontmatter; pause before Phase 2 stages (`mvp: false`); pause on any HITL |
+| `/sc-the-orchestrator --auto-all` | Auto-advance all stages; pause **only** on HITL |
 
 In every mode, the orchestrator **never advances past a HITL pause** until the human responds. It is the only surface that calls `ask_user_input_v0`.
 
@@ -29,7 +29,7 @@ In every mode, the orchestrator **never advances past a HITL pause** until the h
 
 Read each file in full before dispatching. Pass the file's body as the prompt to the `Task` tool.
 
-For model override paths, see `references/model-tier-guide.md` (created in Wave 4 — link resolves after that wave).
+For model override paths, see `references/model-tier-guide.md`.
 
 ## Inputs and Preconditions
 
@@ -198,13 +198,13 @@ Recommended next: <empty | open Phase 2 work | run another orchestrator pass>
 - **Clean-main invariant.** Enforced before every stage-runner dispatch.
 - **Master checklist is source of truth** for stage ordering and completion. Never re-order stages.
 - **HITL goes through `ask_user_input_v0` only.** Sub-agents bubble up; orchestrator prompts.
-- **No new commands without authorization.** Only activate on `/the-orchestrator` or the listed trigger phrases.
+- **No new commands without authorization.** Only activate on `/sc-the-orchestrator` or the listed trigger phrases.
 
 ## Triggers
 
 Follow this skill whenever the user:
 
-- runs `/the-orchestrator` (optionally with `--auto-mvp` or `--auto-all`)
+- runs `/sc-the-orchestrator` (optionally with `--auto-mvp` or `--auto-all`)
 - says "run the whole plan", "ship every stage", "automate the build", "drive the phased plan to completion", "execute all stages"
 - explicitly passes the master checklist and asks for autonomous delivery
 

@@ -9,7 +9,7 @@ Transform a finalized PRD into a complete, ordered set of implementation stages 
 
 ## Scope
 
-**Input:** a finalized PRD file (output of `/prd-generator` or equivalent). Not specs, briefs, questionnaires, or API docs — those feed `/prd-generator`.
+**Input:** a finalized PRD file (output of `/sc-prd-generator` or equivalent). Not specs, briefs, questionnaires, or API docs — those feed `/sc-prd-generator`.
 
 **Output:**
 - `docs/plans/00_master_checklist.md`
