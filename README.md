@@ -33,23 +33,16 @@ After the initial plan ships, use `/stagecoach:add-feature` to bolt on more feat
 
 ```mermaid
 flowchart TD
-    Setup["/stagecoach:setup<br/>(Stage 0)"]
-    Setup --> Brief["Project Brief"]
-    Brief --> PRD["/stagecoach:write-prd<br/>→ docs/prd-slug.md"]
-    PRD --> Phased["/stagecoach:plan-phases<br/>→ docs/plans/"]
+    Setup["/stagecoach:setup"]
+    Setup --> PRD["/stagecoach:write-prd"]
+    PRD --> Phased["/stagecoach:plan-phases"]
     Phased --> Run["/stagecoach:run-pipeline"]
+    Add["/stagecoach:add-feature<br/>(adding to a project<br/>that already shipped)"] --> Run
     Run --> Stages["Stages 1–4 canned<br/>+ 5..N feature stages"]
-    Stages --> Done(["✅ Plan shipped"])
-
-    Done -.->|"add a feature later"| Add["/stagecoach:add-feature"]
-    Add --> Detect{"docs/plans/<br/>exists?"}
-    Detect -->|"yes — Stagecoach project"| Assess["complexity-assessor<br/>+ phased-plan-writer<br/>(incremental mode)"]
-    Detect -->|"no — non-Stagecoach app or fresh dir"| Setup
-    Assess --> NewStages["new stage_N+1..N+k<br/>appended to checklist"]
-    NewStages --> Run
+    Stages --> Done(["✅ Done"])
 ```
 
-The dashed loop is the **post-launch flow**: once a plan ships, `/stagecoach:add-feature` extends the existing master checklist with new stages and feeds them back through the same `run-pipeline` delivery — so new features get the same CI gates as the original work. If you point `add-feature` at a project that wasn't built with Stagecoach, it routes you to `/stagecoach:setup` first (Step 3 of setup scaffolds the CI/CD baseline so post-PRD additions still pass the gates).
+Two ways in: build a fresh project end-to-end starting from `/stagecoach:setup`, or add features to an already-shipped project starting from `/stagecoach:add-feature`. Either way, the same delivery + CI gates run.
 
 **Foundation stages** (always run, in order):
 
