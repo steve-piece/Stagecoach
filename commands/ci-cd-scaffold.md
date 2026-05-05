@@ -1,11 +1,11 @@
-<!-- commands/sc-ci-cd-scaffold.md -->
+<!-- commands/ci-cd-scaffold.md -->
 <!-- Slash command shim that loads the sp-ci-cd-scaffold skill to bootstrap production-grade CI/CD and E2E baseline as Stage 2. -->
 
 ---
-description: Bootstrap production-grade CI/CD and E2E baseline (Playwright @feature/@regression-core suites, GitHub Actions ci.yml/e2e.yml/e2e-coverage.yml, Husky pre-push, PR template, branch-protection script) on a dedicated chore/ci-cd-scaffold branch. Use when running Stage 2 of a phased plan, when a repo lacks .github/workflows/, when CI infrastructure must be re-established, or when the user says "scaffold ci/cd", "set up CI", "bootstrap quality gates", or runs /sc-ci-cd-scaffold.
+description: Bootstrap production-grade CI/CD and E2E baseline (Playwright @feature/@regression-core suites, GitHub Actions ci.yml/e2e.yml/e2e-coverage.yml, Husky pre-push, PR template, branch-protection script) on a dedicated chore/ci-cd-scaffold branch. Use when running Stage 2 of a phased plan, when a repo lacks .github/workflows/, when CI infrastructure must be re-established, or when the user says "scaffold ci/cd", "set up CI", "bootstrap quality gates", or runs /ci-cd-scaffold.
 ---
 
-# /sc-ci-cd-scaffold
+# /ci-cd-scaffold
 
 Load and follow the [`sp-ci-cd-scaffold`](../skills/sp-ci-cd-scaffold/SKILL.md) skill.
 
@@ -26,4 +26,4 @@ The skill bootstraps the CI/CD and E2E baseline that every later feature slice d
 
 ## When to use this command
 
-Use `/sc-ci-cd-scaffold` to run Stage 2 manually. The orchestrator (`/sc-the-orchestrator`) invokes this automatically. This skill writes infrastructure, not product code — `sp-feature-delivery` begins only after this stage merges.
+Use `/ci-cd-scaffold` to run Stage 2 manually. The orchestrator (`/orchestrator`) invokes this automatically. This skill writes infrastructure, not product code — `sp-feature-delivery` begins only after this stage merges.

@@ -1,6 +1,6 @@
 ---
 name: retrospective-reviewer
-description: Cross-stage friction pattern detection. Reads stage execution logs, recent commits, PRs, and HITL escalations to identify systemic plugin issues and propose specific diffs. Read-only — does not modify the plugin. Activated by /sc-phased-dev-retrospective.
+description: Cross-stage friction pattern detection. Reads stage execution logs, recent commits, PRs, and HITL escalations to identify systemic plugin issues and propose specific diffs. Read-only — does not modify the plugin. Activated by /retrospective.
 model: opus
 effort: high
 tools: [Read, Glob, Grep, Bash]
@@ -141,7 +141,7 @@ Before including any proposed change in the output, verify the `target_file` is 
 
 - `skills/phased-dev-retrospective/SKILL.md`
 - `skills/phased-dev-retrospective/agents/retrospective-reviewer.md`
-- `commands/sc-phased-dev-retrospective.md`
+- `commands/retrospective.md`
 
 If a proposed change targets one of these files, exclude it from `proposed_changes` and include a note in `patterns_observed`:
 

@@ -1,5 +1,5 @@
 <!-- skills/sp-feature-delivery/agents/discovery.md -->
-<!-- Subagent definition: readonly codebase + GitNexus reconnaissance for the active stage of /sc-feature-delivery. -->
+<!-- Subagent definition: readonly codebase + GitNexus reconnaissance for the active stage of /feature-delivery. -->
 
 ---
 name: discovery

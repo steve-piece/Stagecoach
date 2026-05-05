@@ -1,11 +1,11 @@
-<!-- commands/sc-environment-setup-gate.md -->
+<!-- commands/environment-setup-gate.md -->
 <!-- Slash command shim that loads the sp-environment-setup-gate skill to run the Stage 3 environment setup gate. -->
 
 ---
 description: Stage 3 gate. Scans .env.example files, generates manual setup checklist for external services (Supabase, Stripe, Resend, etc.), waits for user confirmation, verifies all keys populated before allowing CI runs or feature work.
 ---
 
-# /sc-environment-setup-gate
+# /environment-setup-gate
 
 Load and follow the [`sp-environment-setup-gate`](../skills/sp-environment-setup-gate/SKILL.md) skill.
 
@@ -23,4 +23,4 @@ The skill runs canned Stage 3 of every project — a human-in-the-loop gate that
 
 ## When to use this command
 
-Use `/sc-environment-setup-gate` to run Stage 3 manually. The orchestrator (`/sc-the-orchestrator`) invokes this automatically. No CI runs or feature work should begin until this gate clears.
+Use `/environment-setup-gate` to run Stage 3 manually. The orchestrator (`/orchestrator`) invokes this automatically. No CI runs or feature work should begin until this gate clears.

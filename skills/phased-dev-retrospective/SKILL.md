@@ -2,7 +2,7 @@
 name: phased-dev-retrospective
 description: EXPERIMENTAL. Reviews recent stage executions, identifies friction patterns, drafts PRs to the plugin repo for improvements. Defaults to plugin path ~/phased-dev-workflow; override via PHASED_DEV_PLUGIN_PATH env var.
 user-invocable: true
-triggers: ["/sc-phased-dev-retrospective", "review the workflow", "improve the plugin"]
+triggers: ["/stagecoach:retrospective", "/retrospective", "review the workflow", "improve the plugin"]
 experimental: true
 ---
 
@@ -35,7 +35,7 @@ Before invoking this skill, verify:
 
 2. **`gh` CLI** — Must be installed and authenticated against the plugin repo (`steve-piece/phased-dev-workflow`). Run `gh auth status` to verify before proceeding.
 
-3. **Invocation** — User invokes via `/sc-phased-dev-retrospective`. Natural-language triggers: "review the workflow", "improve the plugin".
+3. **Invocation** — User invokes via `/retrospective`. Natural-language triggers: "review the workflow", "improve the plugin".
 
 ---
 
@@ -43,7 +43,7 @@ Before invoking this skill, verify:
 
 ```mermaid
 flowchart LR
-  Invoke["/sc-phased-dev-retrospective"] --> Scope["Ask: review last N stages,<br/>last project, or specific skill?"]
+  Invoke["/retrospective"] --> Scope["Ask: review last N stages,<br/>last project, or specific skill?"]
   Scope --> Read["Read stage execution logs<br/>(docs/plans/, git log,<br/>recent PRs)"]
   Read --> Analyze["retrospective-reviewer (opus)<br/>identifies friction patterns"]
   Analyze --> Draft["Draft proposal:<br/>- skill change<br/>- agent prompt change<br/>- new reference file<br/>- bug fix"]
@@ -160,7 +160,7 @@ The following limits are hard constraints — not suggestions:
 
 2. **Never auto-merge.** All PRs open as drafts. The skill does not call `gh pr merge` under any circumstances.
 
-3. **Never modifies the retrospective skill itself.** If `retrospective-reviewer` proposes a change to any file under `skills/phased-dev-retrospective/` or `commands/sc-phased-dev-retrospective.md`, the skill must skip that proposal, log a warning in the PR body ("Skipped: self-modification guard"), and continue with other proposals. This prevents infinite recursion.
+3. **Never modifies the retrospective skill itself.** If `retrospective-reviewer` proposes a change to any file under `skills/phased-dev-retrospective/` or `commands/retrospective.md`, the skill must skip that proposal, log a warning in the PR body ("Skipped: self-modification guard"), and continue with other proposals. This prevents infinite recursion.
 
 ---
 
@@ -196,7 +196,7 @@ This skill does NOT call `ask_user_input_v0` for HITL resolution — it bubbles 
 [ ] Execution data gathered: stage files, git log, recent PRs, HITL escalation records
 [ ] `retrospective-reviewer` (opus) dispatched with all gathered data
 [ ] `patterns_observed` and `proposed_changes` received from `retrospective-reviewer`
-[ ] Self-modification guard applied — no proposals targeting `skills/phased-dev-retrospective/` or `commands/sc-phased-dev-retrospective.md`
+[ ] Self-modification guard applied — no proposals targeting `skills/phased-dev-retrospective/` or `commands/retrospective.md`
 [ ] Proposals surfaced to user with clear summary
 [ ] User confirmed PR or elected to save locally
 [ ] If PR: branch name follows `retrospective/<yyyy-mm-dd>-<topic>` format

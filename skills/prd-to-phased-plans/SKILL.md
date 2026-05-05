@@ -9,7 +9,7 @@ Transform a finalized PRD into a complete, ordered set of implementation stages 
 
 ## Scope
 
-**Input:** a finalized PRD file (output of `/sc-prd-generator` or equivalent). Not specs, briefs, questionnaires, or API docs — those feed `/sc-prd-generator`.
+**Input:** a finalized PRD file (output of `/prd-generator` or equivalent). Not specs, briefs, questionnaires, or API docs — those feed `/prd-generator`.
 
 **Output:**
 - `docs/plans/00_master_checklist.md`
@@ -19,6 +19,17 @@ Transform a finalized PRD into a complete, ordered set of implementation stages 
 - `docs/plans/stage_4_db_schema_foundation.md` (canned, conditional on Q3)
 - `docs/plans/stage_5..N_<feature>.md` (20-30 vertical-slice feature stages)
 - `CLAUDE.md` or `AGENTS.md` (per Q12) — the project rules file
+
+## Project Config (optional)
+
+Before Phase 1, check for `stagecoach.config.json` at the project root. Honor these keys (see [`references/stagecoach-config-schema.md`](../../references/stagecoach-config-schema.md) for the full schema):
+
+- `rules.imports` — when non-empty, **skip Q9** (external rule-file imports) and use these URLs directly
+- `stages.targetFeatureStages` — pass to phased-plan-writer to tune the splitter (default `"20-30"`; smaller band = larger slices)
+- `stages.maxTasksPerStage` — pass to phased-plan-writer (default `6`; warn if user set `> 8`)
+- `mcps.*` — pre-fills Q5 (Supabase MCP) and Q7 (design MCPs) so the elicitation skips already-answered questions
+
+If a config-supplied answer covers a question, log a one-liner ("Q9 answered from stagecoach.config.json — skipping") and move to the next question.
 
 ## Phase 1: Context Elicitation
 

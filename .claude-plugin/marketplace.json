@@ -8,7 +8,7 @@
       "name": "stagecoach",
       "source": "./",
       "description": "Stagecoach is a Claude Code plugin that takes a project from a free-form brief to a shipping production web app through a phased, multi-agent workflow. It scaffolds a cohesive design system, CI/CD with visual + design-system regression gates, an environment-setup gate, an optional database schema foundation, and 20–30 vertical-slice feature stages — pausing for human approval only at the four checkpoint categories where judgment actually matters.",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "keywords": [
         "prd",
         "phased-plans",

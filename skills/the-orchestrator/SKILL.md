@@ -3,7 +3,7 @@
 
 ---
 name: the-orchestrator
-description: Conduct a phased plan from docs/plans/00_master_checklist.md by dispatching one stage-runner subagent per stage. Default mode is supervised — runs one stage, reports results, and waits for human approval before advancing. Supports --auto-mvp and --auto-all flags. Use when the user runs /sc-the-orchestrator, says "run the whole plan", "ship every stage", "automate the build", or "drive the phased plan to completion".
+description: Conduct a phased plan from docs/plans/00_master_checklist.md by dispatching one stage-runner subagent per stage. Default mode is supervised — runs one stage, reports results, and waits for human approval before advancing. Supports --auto-mvp and --auto-all flags. Use when the user runs /orchestrator, says "run the whole plan", "ship every stage", "automate the build", or "drive the phased plan to completion".
 ---
 
 # The Orchestrator
@@ -14,9 +14,9 @@ The orchestrator is a **conductor**, not an autopilot. It reads the master check
 
 | Invocation | Behavior |
 |---|---|
-| `/sc-the-orchestrator` (default) | Dispatch one stage → report → **pause and wait for human "continue"** |
-| `/sc-the-orchestrator --auto-mvp` | Auto-advance stages where `mvp: true` in frontmatter; pause before Phase 2 stages (`mvp: false`); pause on any HITL |
-| `/sc-the-orchestrator --auto-all` | Auto-advance all stages; pause **only** on HITL |
+| `/orchestrator` (default) | Dispatch one stage → report → **pause and wait for human "continue"** |
+| `/orchestrator --auto-mvp` | Auto-advance stages where `mvp: true` in frontmatter; pause before Phase 2 stages (`mvp: false`); pause on any HITL |
+| `/orchestrator --auto-all` | Auto-advance all stages; pause **only** on HITL |
 
 In every mode, the orchestrator **never advances past a HITL pause** until the human responds. It is the only surface that calls `ask_user_input_v0`.
 
@@ -57,6 +57,26 @@ The orchestrator reads each stage file's `type` frontmatter field and dispatches
 | `infrastructure` | `sp-feature-delivery` |
 
 Pass `SKILL_TO_LOAD` to the stage-runner so it loads the right skill without re-reading frontmatter.
+
+## Project Config (optional)
+
+Before Phase 0, check for `stagecoach.config.json` at the project root. If present:
+
+1. Read the file as JSONC (comments + trailing commas allowed).
+2. Apply the precedence rules from [`references/stagecoach-config-schema.md`](../../references/stagecoach-config-schema.md): env vars > config file > project rules file > plugin defaults.
+3. Compute the resolved values for `modelTiers`, `stages`, `mcps`, `visualReview`, `hitl.additionalCategories`, and `rules.imports`.
+4. Log a one-line summary of any non-default resolutions in the orchestrator's first message so the user knows what's in effect (e.g., `Config overrides: implementer→opus, maxTasksPerStage→8, vizzly disabled`).
+5. Thread relevant slices into each sub-agent dispatch:
+   - `modelTiers.<agent>` → override the agent's frontmatter `model` for THIS run
+   - `stages.maxTasksPerStage` → pass to phased-plan-writer / sp-feature-delivery context
+   - `mcps.*` → pass to sp-frontend-design / sp-design-system-gate / sp-feature-delivery context
+   - `visualReview.*` → pass to sp-frontend-design's visual-reviewer
+   - `hitl.additionalCategories` → expand the orchestrator's HITL handler with these new categories
+   - `rules.imports` → pass to prd-to-phased-plans (skip Q9 elicitation)
+
+If the file exists but parses as malformed JSON, stop and surface an HITL prompt to the user (`hitl_category: "prd_ambiguity"`, `hitl_question: "stagecoach.config.json failed to parse — please fix the syntax error at line N before continuing"`). Never silently fall through to defaults — surprising defaults are worse than an explicit halt.
+
+If the file is absent, proceed with plugin defaults (no warning).
 
 ## Workflow
 
@@ -198,13 +218,13 @@ Recommended next: <empty | open Phase 2 work | run another orchestrator pass>
 - **Clean-main invariant.** Enforced before every stage-runner dispatch.
 - **Master checklist is source of truth** for stage ordering and completion. Never re-order stages.
 - **HITL goes through `ask_user_input_v0` only.** Sub-agents bubble up; orchestrator prompts.
-- **No new commands without authorization.** Only activate on `/sc-the-orchestrator` or the listed trigger phrases.
+- **No new commands without authorization.** Only activate on `/orchestrator` or the listed trigger phrases.
 
 ## Triggers
 
 Follow this skill whenever the user:
 
-- runs `/sc-the-orchestrator` (optionally with `--auto-mvp` or `--auto-all`)
+- runs `/orchestrator` (optionally with `--auto-mvp` or `--auto-all`)
 - says "run the whole plan", "ship every stage", "automate the build", "drive the phased plan to completion", "execute all stages"
 - explicitly passes the master checklist and asks for autonomous delivery
 

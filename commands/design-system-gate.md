@@ -1,11 +1,11 @@
-<!-- commands/sc-design-system-gate.md -->
+<!-- commands/design-system-gate.md -->
 <!-- Slash command shim that loads the sp-design-system-gate skill to bootstrap the project design system as Stage 1. -->
 
 ---
 description: Bootstrap the project design system as Stage 1. Validates Claude Design bundle if present, otherwise expands brand brief. Outputs globals.css, Tailwind config, design-system.md, and design-system rules in project rules file. Required before any UI work.
 ---
 
-# /sc-design-system-gate
+# /design-system-gate
 
 Load and follow the [`sp-design-system-gate`](../skills/sp-design-system-gate/SKILL.md) skill.
 
@@ -23,4 +23,4 @@ The skill runs canned Stage 1 of every project — validate or generate a comple
 
 ## When to use this command
 
-Use `/sc-design-system-gate` to run Stage 1 manually. The orchestrator (`/sc-the-orchestrator`) invokes this automatically when driving a full plan. No UI feature work should begin until this gate completes.
+Use `/design-system-gate` to run Stage 1 manually. The orchestrator (`/orchestrator`) invokes this automatically when driving a full plan. No UI feature work should begin until this gate completes.

@@ -2,7 +2,7 @@
 name: sp-frontend-design
 description: End-to-end frontend feature delivery via specialized subagent pipeline. Handles type:frontend stages. Composes from shadcn blocks before crafting custom; ensures all UI states; visual review against design system before PR.
 user-invocable: true
-triggers: ["frontend stage", "deliver frontend slice", "/sc-frontend-design"]
+triggers: ["/stagecoach:frontend-design", "/frontend-design", "frontend stage", "deliver frontend slice"]
 ---
 
 <!-- skills/sp-frontend-design/SKILL.md -->
@@ -48,7 +48,7 @@ All six agents live in `skills/sp-frontend-design/agents/`. Read each file befor
 
 ## MCP Registry
 
-MCP availability is read from the project rules file (cursor or claude rules file) — NOT discovered fresh on each call. Check for these entries before dispatching agents that need them:
+MCP availability is read from `stagecoach.config.json` (the `mcps` block) and the project rules file (cursor or claude rules file). Config wins on conflict. NOT discovered fresh on each call. Check for these entries before dispatching agents that need them:
 
 | MCP | Used by | Status check |
 | --- | --- | --- |
@@ -58,6 +58,15 @@ MCP availability is read from the project rules file (cursor or claude rules fil
 | Chrome DevTools MCP (`chrome-devtools-mcp`) | visual-reviewer | Recommended — enables DOM/console/network introspection |
 
 If a required MCP is missing, surface it to the user before continuing. Do not proceed with block composition if shadcn MCP is unavailable — fall back to direct shadcn CLI commands.
+
+## Project Config (optional)
+
+Honor these `stagecoach.config.json` keys when present (see [`references/stagecoach-config-schema.md`](../../references/stagecoach-config-schema.md)):
+
+- `mcps.*` — supersedes the project rules file's MCP section
+- `visualReview.tools` — ordered priority list for visual-reviewer (overrides the hardcoded `claude-in-chrome > chrome-devtools-mcp > playwright > vizzly` default)
+- `visualReview.vizzly: false` — disable Vizzly entirely (skips it even if it's in the `tools` list)
+- `modelTiers.<agent>` — overrides the agent file's `model:` for THIS run
 
 ---
 

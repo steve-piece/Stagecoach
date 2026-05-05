@@ -2,7 +2,7 @@
 name: sp-design-system-gate
 description: Bootstrap the project design system as Stage 1. Validates Claude Design bundle if present, otherwise expands brand brief. Outputs globals.css, Tailwind config, design-system.md, and design-system rules in project rules file. Required before any UI work.
 user-invocable: true
-triggers: ["scaffold design system", "stage 1 design", "/sc-design-system-gate"]
+triggers: ["/stagecoach:design-system-gate", "/design-system-gate", "scaffold design system", "stage 1 design"]
 ---
 
 # sp-design-system-gate
@@ -24,6 +24,15 @@ Read all of these before beginning:
 | [references/tailwind-config-template.md](references/tailwind-config-template.md) | Template for `tailwind.config.ts` output |
 | [references/design-system-md-template.md](references/design-system-md-template.md) | Template for `docs/design-system.md` output |
 | [references/claude-md-rules-block.md](references/claude-md-rules-block.md) | Rules block to append to the project rules file |
+
+---
+
+## Project Config (optional)
+
+Honor these `stagecoach.config.json` keys when present (see [`references/stagecoach-config-schema.md`](../../references/stagecoach-config-schema.md)):
+
+- `mcps.shadcn`, `mcps.figma`, `mcps.magic` — declarative MCP availability for the bundle-validator and token-expander agents
+- `modelTiers.tokenExpander`, `modelTiers.bundleValidator`, `modelTiers.compliancePreCheck` — override agent model tiers for THIS run
 
 ---
 

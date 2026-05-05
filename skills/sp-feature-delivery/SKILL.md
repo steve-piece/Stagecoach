@@ -1,6 +1,6 @@
 ---
 name: sp-feature-delivery
-description: Orchestrate phased feature delivery from docs/plans/ using a parallel-subagent pipeline (discovery, checklist curation, implementation, spec + quality review) with branching, CI/E2E gates, and live master-checklist updates. Use when the user runs /sc-feature-delivery, says "deliver the next stage", "execute the plan", "ship stage N", "work the checklist", or "implement docs/plans".
+description: Orchestrate phased feature delivery from docs/plans/ using a parallel-subagent pipeline (discovery, checklist curation, implementation, spec + quality review) with branching, CI/E2E gates, and live master-checklist updates. Use when the user runs /feature-delivery, says "deliver the next stage", "execute the plan", "ship stage N", "work the checklist", or "implement docs/plans".
 ---
 
 <!-- skills/sp-feature-delivery/SKILL.md -->
@@ -30,7 +30,17 @@ Each subagent lives in its own file under `./agents/`. Read the file before disp
 - One or more `docs/plans/stage_<n>_*.md` exist.
 - Clean git working tree, OR explicit user OK to proceed dirty.
 
-If `docs/plans/` is missing, instruct the user to run `/sc-prd-to-phased-plans` first and stop.
+If `docs/plans/` is missing, instruct the user to run `/prd-to-phased-plans` first and stop.
+
+## Project Config (optional)
+
+If the parent orchestrator passes config slices (or if running standalone, check for `stagecoach.config.json` at the project root), honor:
+
+- `modelTiers.<agent>` — overrides the agent file's `model:` for THIS run (each subagent dispatched checks its own slot)
+- `stages.maxTasksPerStage` — overrides the default cap of 6 (warn if user sets > 8)
+- `mcps.*` — declarative MCP availability, supersedes the project rules file's MCP section on conflict
+
+See [`references/stagecoach-config-schema.md`](../../references/stagecoach-config-schema.md) for the full schema.
 
 ## Workflow
 
@@ -38,9 +48,10 @@ If `docs/plans/` is missing, instruct the user to run `/sc-prd-to-phased-plans` 
 
 1. Read `docs/plans/00_master_checklist.md` and every `docs/plans/stage_*.md`.
 2. Read the project rules file for MCP configs, design-system rules, and any project-specific constraints.
-3. Identify the **active stage**: first stage with status `Not Started` or `In Progress`, unless the user named one.
-4. Confirm git state: `git status --short`, `git rev-parse --abbrev-ref HEAD`.
-5. Switch to **Plan Mode** before continuing.
+3. Read `stagecoach.config.json` if running standalone (otherwise the orchestrator already passed resolved values).
+4. Identify the **active stage**: first stage with status `Not Started` or `In Progress`, unless the user named one.
+5. Confirm git state: `git status --short`, `git rev-parse --abbrev-ref HEAD`.
+6. Switch to **Plan Mode** before continuing.
 
 ### Phase 1 — Parallel Reconnaissance
 

@@ -1,6 +1,6 @@
 ---
 name: prd-reviewer
-description: Read-only reviewer that audits a draft PRD against its source materials. Runs as the final step of /sc-prd-generator. Returns verdict pass | revise with structural, alignment, and completeness checks.
+description: Read-only reviewer that audits a draft PRD against its source materials. Runs as the final step of /prd-generator. Returns verdict pass | revise with structural, alignment, and completeness checks.
 model: sonnet
 effort: medium
 tools: Read, Grep, Glob
@@ -8,7 +8,7 @@ tools: Read, Grep, Glob
 
 # prd-reviewer
 
-Read-only subagent. Audits a draft PRD against its source materials and returns a structured verdict. Activated automatically as the **final step** of `/sc-prd-generator`. Does not write or modify any files.
+Read-only subagent. Audits a draft PRD against its source materials and returns a structured verdict. Activated automatically as the **final step** of `/prd-generator`. Does not write or modify any files.
 
 ## Role
 
@@ -17,7 +17,7 @@ Compare the draft PRD against every source material provided to confirm:
 1. The PRD structure matches the v2 template (Sections 0–7, required subsections present)
 2. Every claim in the PRD can be traced to a source (brief, uploaded spec, brand asset, API doc, or explicit plan-mode answer)
 3. No required section is missing, empty, or contains only placeholder text
-4. No Linear references appear in the PRD (Linear is gathered in `/sc-prd-to-phased-plans`)
+4. No Linear references appear in the PRD (Linear is gathered in `/prd-to-phased-plans`)
 
 ## Inputs
 

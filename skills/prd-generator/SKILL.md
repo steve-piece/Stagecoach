@@ -205,11 +205,11 @@ The PRD produced by this skill feeds downstream skills as follows:
 
 | PRD Section | Feeds |
 | --- | --- |
-| Section 2 (Functional Requirements) | Drives feature stages in `/sc-prd-to-phased-plans` |
+| Section 2 (Functional Requirements) | Drives feature stages in `/prd-to-phased-plans` |
 | Section 3 (Non-Functional Requirements) | Drives CI/CD scaffold gates + visual review checklist |
 | Section 4 (Technical Architecture) | Drives monorepo decision + db-schema-foundation conditional |
 | Section 5 (UX & Content Fundamentals) | Drives design-system gate input |
 | Section 6 (Open Questions & Assumptions) | Drives phased-plan elicitation + HITL category 1 triggers |
 | Section 7 (Out of Scope) | Guards every stage from scope creep — referenced throughout orchestration |
 
-Pass the full PRD file path to `/sc-prd-to-phased-plans` after human review and sign-off.
+Pass the full PRD file path to `/prd-to-phased-plans` after human review and sign-off.
