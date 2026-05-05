@@ -13,7 +13,7 @@ Full read-through of every plugin file against 17 audit categories. Fixes applie
 
 ## Fixes Applied
 
-### 1. `commands/sc-the-orchestrator.md`
+### 1. `commands/orchestrator.md`
 
 **Issues found:**
 - HTML comment header contained `<!-- Orchestrator Skill — Opus 4.7 -->` (hardcoded model version)
@@ -29,7 +29,7 @@ Full read-through of every plugin file against 17 audit categories. Fixes applie
 
 ---
 
-### 2. `commands/sc-feature-delivery.md`
+### 2. `commands/feature-delivery.md`
 
 **Issues found:**
 - Description block: "Requires Opus 4.7 as the orchestrator; all subagents MUST use Sonnet 4.6 or smaller models" — hardcoded version pins
@@ -46,13 +46,13 @@ Full read-through of every plugin file against 17 audit categories. Fixes applie
 
 **Issues found:**
 - `description:` frontmatter field: `/the-orchestrator` (missing `sc-` prefix)
-- Modes table: three rows contained `/the-orchestrator` instead of `/sc-the-orchestrator`
+- Modes table: three rows contained `/the-orchestrator` instead of `/orchestrator`
 - Hard Constraints section: "Only activate on `/the-orchestrator`"
 - Triggers section: "/the-orchestrator" (optionally with flags)
 - Stale development note: "(created in Wave 4 — link resolves after that wave)"
 
 **Fixes applied:**
-- Fixed all 5 occurrences of `/the-orchestrator` → `/sc-the-orchestrator`
+- Fixed all 5 occurrences of `/the-orchestrator` → `/orchestrator`
 - Removed stale Wave 4 development note
 
 ---
@@ -73,15 +73,15 @@ Full read-through of every plugin file against 17 audit categories. Fixes applie
 - Two references to `/prd-generator` without the `sc-` prefix (Scope section and Input clarification)
 
 **Fixes applied:**
-- Fixed both occurrences: `/prd-generator` → `/sc-prd-generator`
+- Fixed both occurrences: `/prd-generator` → `/prd-generator`
 
 ---
 
 ### 6. `skills/sp-frontend-design/SKILL.md`
 
 **Issues found:**
-- HTML comment header line 9: `<!-- skills/sc-frontend-design/SKILL.md -->` — wrong `sc-` prefix in file-path comment
-- Line 37: "All six agents live in `skills/sc-frontend-design/agents/`" — should be `skills/sp-frontend-design/agents/`
+- HTML comment header line 9: `<!-- skills/frontend-design/SKILL.md -->` — wrong `sc-` prefix in file-path comment
+- Line 37: "All six agents live in `skills/frontend-design/agents/`" — should be `skills/sp-frontend-design/agents/`
 
 **Fixes applied:**
 - Line 9: `sc-frontend-design` → `sp-frontend-design`
@@ -192,13 +192,13 @@ These are intentional examples showing how to pin to specific versions. However,
 
 The following files were read and audited with no issues found:
 
-- `commands/sc-prd-generator.md`
-- `commands/sc-prd-to-phased-plans.md`
-- `commands/sc-design-system-gate.md`
-- `commands/sc-ci-cd-scaffold.md`
-- `commands/sc-environment-setup-gate.md`
-- `commands/sc-frontend-design.md`
-- `commands/sc-phased-dev-retrospective.md`
+- `commands/prd-generator.md`
+- `commands/prd-to-phased-plans.md`
+- `commands/design-system-gate.md`
+- `commands/ci-cd-scaffold.md`
+- `commands/environment-setup-gate.md`
+- `commands/frontend-design.md`
+- `commands/retrospective.md`
 - `skills/prd-generator/SKILL.md`
 - `skills/phased-dev-retrospective/SKILL.md`
 - `skills/sp-design-system-gate/SKILL.md`

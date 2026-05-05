@@ -102,7 +102,7 @@ This PR delivers the full v2 refactor of the phased-dev-workflow plugin, now off
 
 **Embedded checklists replace separate reference files.** The standalone `completion-checklist.md` and `scaffold-completion-checklist.md` files have been removed. Their contents are embedded inside the respective skill files. Any tooling or workflow that referenced those file paths directly will break.
 
-**Slash commands now use the `sc-` prefix.** `/the-orchestrator` → `/sc-the-orchestrator`, `/sp-feature-delivery` → `/sc-feature-delivery`, `/prd-generator` → `/sc-prd-generator`, etc. Saved shortcuts or documentation pointing to the old command names will need updating.
+**Slash commands now use the `sc-` prefix.** `/the-orchestrator` → `/orchestrator`, `/sp-feature-delivery` → `/feature-delivery`, `/prd-generator` → `/prd-generator`, etc. Saved shortcuts or documentation pointing to the old command names will need updating.
 
 **`skill-mcp-scout` subagent removed.** MCPs are now declared upstream in the phased plan stage files and read from the project's rules file (cursor or claude). Any workflow that invoked `skill-mcp-scout` directly no longer has that entry point.
 
@@ -116,7 +116,7 @@ This PR delivers the full v2 refactor of the phased-dev-workflow plugin, now off
 
 **Env-setup gate (Stage 3, mandatory).** Before feature stages run, `sp-environment-setup-gate` guides the human through populating `.env.local` with all service credentials required by the PRD. The `env-verifier` subagent scans the file and returns a pass/fail verdict. The orchestrator does not advance to feature stages until the gate passes.
 
-**Claude Design handoff bundle (optional upstream input).** If the project team uses Claude Design out-of-band to generate brand assets and a design token brief, that bundle can now be passed to `/sc-prd-generator` as an optional input. The bundle flows through to `sp-design-system-gate` as the starting point for token expansion, replacing the brief-first path. This is entirely optional; projects without a Claude Design bundle use the brief-first path.
+**Claude Design handoff bundle (optional upstream input).** If the project team uses Claude Design out-of-band to generate brand assets and a design token brief, that bundle can now be passed to `/prd-generator` as an optional input. The bundle flows through to `sp-design-system-gate` as the starting point for token expansion, replacing the brief-first path. This is entirely optional; projects without a Claude Design bundle use the brief-first path.
 
 **Model tier guide review.** Before running the orchestrator on a new project, review `references/model-tier-guide.md` and set any desired project-level model overrides via `ANTHROPIC_DEFAULT_*_MODEL` or `CLAUDE_CODE_SUBAGENT_MODEL`. The three pre-applied project overrides (implementer = opus + xhigh, quality-reviewer = opus + high, ci-cd-guardrails = sonnet + medium) are reasonable defaults but can be adjusted.
 
@@ -126,7 +126,7 @@ This PR delivers the full v2 refactor of the phased-dev-workflow plugin, now off
 
 1. **Pull the branch and review the new stage architecture.** Read the updated README, especially the Stage Architecture and Migration from v1 sections. Confirm you understand that Stage 1 is now design-system-gate and Stage 2 is ci-cd-scaffold.
 
-2. **Re-run `/sc-prd-to-phased-plans` against your existing PRD.** This regenerates stage files with v2 YAML frontmatter, which the `master-checklist-synthesizer` requires. Your existing PRD file is still valid input — no changes to it are needed.
+2. **Re-run `/prd-to-phased-plans` against your existing PRD.** This regenerates stage files with v2 YAML frontmatter, which the `master-checklist-synthesizer` requires. Your existing PRD file is still valid input — no changes to it are needed.
 
 3. **Mark already-completed stages before running the orchestrator.** If your project completed v1's Stage 1 (CI/CD scaffold), open the newly generated `docs/plans/00_master_checklist.md` and mark `stage_2_ci_cd_scaffold.md` as completed. If your project does not need a design system, stub Stage 1 by completing `stage_1_design_system_gate.md` manually with a minimal token set.
 
@@ -169,16 +169,16 @@ Before opening the PR, every item below must be true.
 
 ## 7. Testing performed
 
-**CP-1-smoke:** Simulated `/sc-prd-generator` dry-run against `tests/fixtures/sample-brief.md` returned PASS on all three structural gates (plan-mode question gate fired, prd-reviewer subagent ran, handoff contract section present in output PRD).
+**CP-1-smoke:** Simulated `/prd-generator` dry-run against `tests/fixtures/sample-brief.md` returned PASS on all three structural gates (plan-mode question gate fired, prd-reviewer subagent ran, handoff contract section present in output PRD).
 
 **Wave 5.2 cross-skill QA audit:** Full read-through of all 57 plugin files against 17 audit categories completed. 8 files corrected, 16 individual fixes applied, 0 blocking issues remaining. See `docs/v2-qa-report.md` for the full audit log.
 
 Additional testing (to be filled in during final PR creation):
 
-[ ] End-to-end `/sc-prd-generator` → `/sc-prd-to-phased-plans` → `/sc-design-system-gate` flow on a real project brief
-[ ] `/sc-environment-setup-gate` standalone run against a populated `.env.local`
-[ ] `/sc-frontend-design` against a frontend-tagged stage from the generated plan
-[ ] `/sc-the-orchestrator --auto-mvp` run through stages 1–3 on a greenfield project
+[ ] End-to-end `/prd-generator` → `/prd-to-phased-plans` → `/design-system-gate` flow on a real project brief
+[ ] `/environment-setup-gate` standalone run against a populated `.env.local`
+[ ] `/frontend-design` against a frontend-tagged stage from the generated plan
+[ ] `/orchestrator --auto-mvp` run through stages 1–3 on a greenfield project
 
 ---
 
@@ -194,15 +194,15 @@ All nine slash commands now use the `sc-` prefix (standing for **s**tage**c**oac
 
 | Old command | New command |
 |-------------|-------------|
-| `/prd-generator` | `/sc-prd-generator` |
-| `/prd-to-phased-plans` | `/sc-prd-to-phased-plans` |
-| `/the-orchestrator` | `/sc-the-orchestrator` |
-| `/sp-design-system-gate` | `/sc-design-system-gate` |
-| `/sp-ci-cd-scaffold` | `/sc-ci-cd-scaffold` |
-| `/sp-environment-setup-gate` | `/sc-environment-setup-gate` |
-| `/sp-frontend-design` | `/sc-frontend-design` |
-| `/sp-feature-delivery` | `/sc-feature-delivery` |
-| `/phased-dev-retrospective` | `/sc-phased-dev-retrospective` |
+| `/prd-generator` | `/prd-generator` |
+| `/prd-to-phased-plans` | `/prd-to-phased-plans` |
+| `/the-orchestrator` | `/orchestrator` |
+| `/sp-design-system-gate` | `/design-system-gate` |
+| `/sp-ci-cd-scaffold` | `/ci-cd-scaffold` |
+| `/sp-environment-setup-gate` | `/environment-setup-gate` |
+| `/sp-frontend-design` | `/frontend-design` |
+| `/sp-feature-delivery` | `/feature-delivery` |
+| `/phased-dev-retrospective` | `/retrospective` |
 
 ### Skill folder names preserved
 
