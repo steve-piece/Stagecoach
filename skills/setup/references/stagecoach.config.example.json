@@ -1,0 +1,57 @@
+// stagecoach.config.json — copy this file to your project root and edit.
+// All keys are optional; the plugin uses defaults for anything you omit.
+// See references/stagecoach-config-schema.md in the Stagecoach plugin
+// for the full schema and precedence rules.
+{
+  // Override per-agent model tier. Omit any agent to use the plugin default.
+  // Aliases: "haiku" | "sonnet" | "opus".
+  "modelTiers": {
+    // "implementer": "opus",
+    // "qualityReviewer": "opus",
+    // "ciCdGuardrails": "sonnet"
+  },
+
+  // Per-stage shape preferences.
+  "stages": {
+    // "maxTasksPerStage": 6,
+    // "targetFeatureStages": "20-30"
+  },
+
+  // Declare which MCPs the project has installed.
+  // The plugin reads this in addition to the project rules file.
+  "mcps": {
+    // "shadcn": true,
+    // "magic": false,
+    // "figma": false,
+    // "chromeDevTools": true,
+    // "supabase": false,
+    // "gitnexus": true
+  },
+
+  // Visual review tooling priority.
+  "visualReview": {
+    // "tools": ["claude-in-chrome", "chrome-devtools-mcp", "playwright"],
+    // "vizzly": false
+  },
+
+  // Add project-specific HITL categories beyond the four built-in.
+  "hitl": {
+    "additionalCategories": [
+      // { "name": "legal_review", "promptHint": "Legal sign-off needed before this lands." }
+    ]
+  },
+
+  // External rule-file imports (skips prd-to-phased-plans elicitation Q9 when non-empty).
+  "rules": {
+    "imports": [
+      // "https://github.com/your-org/agentic-rules/blob/main/monorepo-nextjs/CLAUDE.md"
+    ]
+  },
+
+  // Bootstrap defaults — used by /stagecoach:setup.
+  "bootstrap": {
+    // "variant": "single-app",
+    // "stack": "nextjs",
+    // "roadmapFile": "ROADMAP.local.md"
+  }
+}
