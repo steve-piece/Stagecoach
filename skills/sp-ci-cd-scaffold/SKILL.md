@@ -141,7 +141,7 @@ After Phase 6, report to the user:
 2. CI triggers and required status checks.
 3. Local verification commands and outcomes.
 4. Confirmed presence of all four scaffold artifacts:
-   - `.husky/pre-push`
+   - [ ]`.husky/pre-push`
    - `.github/pull_request_template.md`
    - `.github/workflows/e2e-coverage.yml`
    - `scripts/setup-branch-protection.sh`
