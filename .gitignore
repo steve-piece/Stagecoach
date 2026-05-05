@@ -1,3 +1,15 @@
 node_modules/
 .DS_Store
 *.log
+
+# Per-user AI tooling workspaces (NOT this plugin's content).
+# These hold a developer's personal skills, commands, agents, MCP configs,
+# and chat state — they should never ship with the plugin.
+.claude/
+.cursor/
+.aider*
+.continue/
+.codex/
+.windsurf/
+
+docs/
