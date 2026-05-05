@@ -2,7 +2,7 @@
 <!-- Slash command shim that loads the review-pipeline skill to review recent stage executions and draft plugin improvements. -->
 
 ---
-description: EXPERIMENTAL. Reviews recent stage executions, identifies friction patterns, drafts PRs to the plugin repo for improvements. Defaults to plugin path ~/phased-dev-workflow; override via PHASED_DEV_PLUGIN_PATH env var.
+description: EXPERIMENTAL. Reviews recent stage executions, identifies friction patterns, drafts PRs to the plugin repo for improvements. Defaults to plugin path ~/stagecoach; override via STAGECOACH_PLUGIN_PATH env var.
 ---
 
 # /review-pipeline
@@ -14,12 +14,12 @@ The skill reviews recent phased-plan executions and surfaces systemic friction p
 1. Asks which scope to review: last N stages, last project, or a specific skill.
 2. Reads stage execution logs, master checklists, and PR histories to identify recurring friction points.
 3. Synthesizes patterns across stages and proposes concrete improvements to plugin skills or references.
-4. Drafts one or more PRs to the plugin repo (`~/phased-dev-workflow` by default, or the path in `PHASED_DEV_PLUGIN_PATH`) for human review.
+4. Drafts one or more PRs to the plugin repo (`~/stagecoach` by default, or the path in `STAGECOACH_PLUGIN_PATH`) for human review.
 
 ## Configuration
 
-- Plugin path defaults to `~/phased-dev-workflow`.
-- Override by setting `PHASED_DEV_PLUGIN_PATH` in your environment.
+- Plugin path defaults to `~/stagecoach`.
+- Override by setting `STAGECOACH_PLUGIN_PATH` in your environment.
 
 ## When to use this command
 

@@ -12,7 +12,7 @@ Stagecoach scaffolds a cohesive design system, CI/CD with visual + design-system
 /add-plugin stagecoach
 ```
 
-Or clone manually: `git clone https://github.com/steve-piece/phased-dev-workflow.git` and add it as a plugin via your project rules file.
+Or clone manually: `git clone https://github.com/steve-piece/stagecoach.git` and add it as a plugin via your project rules file.
 
 ---
 
@@ -108,7 +108,7 @@ Full schema + precedence rules at [`skills/setup/references/stagecoach-config-sc
 
 ## Repository
 
-- GitHub: [steve-piece/phased-dev-workflow](https://github.com/steve-piece/phased-dev-workflow) (will be renamed to `stagecoach`)
+- GitHub: [steve-piece/stagecoach](https://github.com/steve-piece/stagecoach)
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
 
 ## License
