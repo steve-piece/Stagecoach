@@ -120,7 +120,7 @@ Stage 0 — Stagecoach's entry point. Three flows in one skill:
 - `references/model-tier-guide.md` — per-agent model tier defaults
 - `references/bootstrap-templates-catalog.md` — which scaffolders Step 1 wraps and why
 
-### write-prd
+### `write-prd`
 
 Generate a complete PRD from a free-form project brief. Plan-mode question gate (3–7 clarifying questions) before writing. Outputs a single markdown file with all eight sections (0 through 7). A `prd-reviewer` subagent runs automatically as the final step, with a 2-iteration revision loop before bubbling up via HITL.
 
