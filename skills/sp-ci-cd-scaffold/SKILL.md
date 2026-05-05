@@ -13,6 +13,15 @@ This skill bootstraps the CI/CD + E2E baseline that every later feature slice de
 
 This skill writes infrastructure, not product code. After it completes, `sp-feature-delivery` (driven by `the-orchestrator` or invoked directly) can safely begin shipping features.
 
+## Reference Files
+
+Read both before beginning:
+
+| File | Purpose |
+| --- | --- |
+| [references/scaffold-artifact-templates.md](references/scaffold-artifact-templates.md) | Verbatim file templates for every CI/CD artifact (workflows, husky hook, PR template, regex sweep script, etc.) |
+| [references/prd-ci-cd-checklist.md](references/prd-ci-cd-checklist.md) | Required guardrails for master-checklist updates, CI gate alignment, deterministic pipelines, slice-per-PR rule, and failure-artifact upload |
+
 ## Inputs and Preconditions
 
 - Repository exists with at least one app or package directory.
