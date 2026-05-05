@@ -1,120 +1,180 @@
 <!-- skills/the-orchestrator/SKILL.md -->
-<!-- Top-level orchestrator skill that drives a phased plan end-to-end by dispatching one Opus 4.7 stage-runner subagent per stage in strict sequence, verifying PRs, and ensuring clean return to main between stages. -->
+<!-- Top-level orchestrator skill. Conducts a phased plan by dispatching one stage-runner per stage. Default mode: supervised — dispatches one stage, returns to human, waits for "continue". -->
 
 ---
 name: the-orchestrator
-description: Drive an entire phased plan from start to finish by dispatching one Opus 4.7 stage-runner subagent per stage in strict sequence. Reads docs/plans/00_master_checklist.md, runs each stage_<n>_*.md through sp-feature-delivery (or sp-ci-cd-scaffold for the canned Stage 1), verifies the PR + tests, ensures clean return to main, then advances to the next stage. Use when the user runs /the-orchestrator, says "run the whole plan", "ship every stage", "automate the build", or "drive the phased plan to completion". Requires Opus 4.7 as the orchestrator and dispatches Opus 4.7 stage-runner subagents.
+description: Conduct a phased plan from docs/plans/00_master_checklist.md by dispatching one stage-runner subagent per stage. Default mode is supervised — runs one stage, reports results, and waits for human approval before advancing. Supports --auto-mvp and --auto-all flags. Use when the user runs /the-orchestrator, says "run the whole plan", "ship every stage", "automate the build", or "drive the phased plan to completion".
 ---
 
 # The Orchestrator
 
-This is the top-level workflow driver for phased projects. It sits between `prd-to-phased-plans` (which produces the static plan files) and the end of full implementation. Loaded on **Opus 4.7**, it loops through every stage in `docs/plans/00_master_checklist.md` and dispatches one **Opus 4.7 `stage-runner` subagent per stage** to actually do the work. Stages run **strictly sequentially** — never parallel — because each stage's PR must merge to `main` before the next begins.
+The orchestrator is a **conductor**, not an autopilot. It reads the master checklist, dispatches one stage at a time, and returns to the human between stages — unless a mode flag removes that pause.
 
-This skill replaces the manual workflow the user has been doing: opening a fresh chat for each stage and pasting `Complete all steps in @{STAGE_FILE} /sp-feature-delivery`. The orchestrator now does that loop autonomously, with explicit gates and a clean-`main` invariant between stages.
+## Modes
 
-## Subagent Roster
+| Invocation | Behavior |
+|---|---|
+| `/the-orchestrator` (default) | Dispatch one stage → report → **pause and wait for human "continue"** |
+| `/the-orchestrator --auto-mvp` | Auto-advance stages where `mvp: true` in frontmatter; pause before Phase 2 stages (`mvp: false`); pause on any HITL |
+| `/the-orchestrator --auto-all` | Auto-advance all stages; pause **only** on HITL |
 
-Each subagent lives in `./agents/`. **Read the file before dispatching** and pass the file's full body as the prompt to the `Task` tool.
+In every mode, the orchestrator **never advances past a HITL pause** until the human responds. It is the only surface that calls `ask_user_input_v0`.
 
-| When | Subagent file | `subagent_type` | Model (hard cap) | Mode |
-| --- | --- | --- | --- | --- |
-| Per stage (1..N) | [agents/stage-runner.md](agents/stage-runner.md) | `generalPurpose` | `claude-4.6-opus-high-thinking` | write |
-| Between stages, after merge | [agents/pr-reviewer.md](agents/pr-reviewer.md) | `generalPurpose` | `claude-4.6-sonnet-medium-thinking` | readonly |
+## Subagents
 
-**Hard model rule:**
-- `stage-runner` MUST run on `claude-4.6-opus-high-thinking`. No fallback. This is the user's explicit "Opus 4.7 pre-selected" requirement.
-- `pr-reviewer` MUST run on `claude-4.6-sonnet-medium-thinking` (acceptable fallback: `composer-2`, `gemini-3-flash`).
+| When | File | Model | Effort |
+|---|---|---|---|
+| Per stage | [agents/stage-runner.md](agents/stage-runner.md) | `opus` | high |
+| After each merge | [agents/pr-reviewer.md](agents/pr-reviewer.md) | `sonnet` | medium |
+
+Read each file in full before dispatching. Pass the file's body as the prompt to the `Task` tool.
+
+For model override paths, see `references/model-tier-guide.md` (created in Wave 4 — link resolves after that wave).
 
 ## Inputs and Preconditions
 
-- The current model is Opus 4.7 (orchestrator). If not, stop and tell the user to relaunch on Opus 4.7.
-- `docs/plans/00_master_checklist.md` exists.
-- Every stage referenced in the master checklist has a corresponding `docs/plans/stage_<n>_*.md` file.
+- `docs/plans/00_master_checklist.md` exists and is readable.
+- Every stage referenced in the master checklist has a `docs/plans/stage_<n>_*.md` file.
 - `git status --short` is clean and the current branch is `main`.
 - Local `main` is up to date with `origin/main` (`git pull --ff-only`).
-- `gh` CLI is installed and authenticated.
-- The `sp-ci-cd-scaffold`, `sp-feature-delivery`, `prd-to-phased-plans` skills are all loadable in this workspace.
+- `gh` CLI installed and authenticated.
 
 If any precondition fails, stop and surface the gap to the user before doing anything else.
+
+## Stage Routing
+
+The orchestrator reads each stage file's `type` frontmatter field and dispatches to the correct skill:
+
+| Stage `type` | Skill dispatched |
+|---|---|
+| `design-system` | `sp-design-system-gate` |
+| `ci-cd` | `sp-ci-cd-scaffold` |
+| `env-setup` | `sp-environment-setup-gate` |
+| `db-schema` | `sp-feature-delivery` (with DB context flag) |
+| `frontend` | `sp-frontend-design` |
+| `backend` | `sp-feature-delivery` |
+| `full-stack` | `sp-feature-delivery` |
+| `infrastructure` | `sp-feature-delivery` |
+
+Pass `SKILL_TO_LOAD` to the stage-runner so it loads the right skill without re-reading frontmatter.
 
 ## Workflow
 
 ### Phase 0 — Read the master checklist
 
 1. Read `docs/plans/00_master_checklist.md`.
-2. Build an ordered list of `(stage_n, stage_file_path, status, ship_blocking)` from the file.
-3. Identify the **first stage whose status is not `Completed`**. Treat that as the active starting point.
-4. If every stage is already `Completed`, skip to **Phase 2 — Final Report**.
-5. If any stage is missing its corresponding `stage_<n>_*.md` file, stop and ask the user before proceeding.
-6. Confirm the workspace is on `main`, clean tree, latest pulled.
+2. Build an ordered list of `(stage_n, stage_file_path, type, mvp, status)` from the file.
+3. Find the first stage whose status is not `Completed`. That is the active starting point.
+4. If every stage is `Completed`, skip to Phase 2 — Final Report.
+5. If any stage file is missing, stop and ask the user.
+6. Confirm workspace is on `main`, clean, latest pulled.
 
-### Phase 1 — Per-stage loop (sequential, never parallel)
+### Phase 1 — Per-stage loop (strictly sequential)
 
-For each stage from the active starting point to the last, in order:
+For each stage from the active starting point, in order:
 
-1. **Pre-stage state check.** Verify `git status` is clean, current branch is `main`, latest pulled. If not, stop.
-2. **Build the stage-runner prompt.** Read [references/per-stage-prompt-template.md](references/per-stage-prompt-template.md). Fill in `{STAGE_N}`, `{STAGE_FILE_PATH}`, and `{STAGE_GOAL}` from the master checklist + stage file.
-3. **Dispatch the `stage-runner` subagent.** Read [agents/stage-runner.md](agents/stage-runner.md) and pass its full body + the filled prompt template via the `Task` tool, with `model: "claude-4.6-opus-high-thinking"`. Wait for it to return a structured summary (`{stage_n, branch, pr_url, checklist_items_completed, on_main, tests_green, notes}`).
-4. **Dispatch the `pr-reviewer` subagent** (readonly, Sonnet 4.6). Read [agents/pr-reviewer.md](agents/pr-reviewer.md), pass the stage-runner's `pr_url` and `stage_file_path`, wait for `{verdict, scope_drift, ci_status, notes}`.
-5. **Walk [references/orchestrator-loop-checklist.md](references/orchestrator-loop-checklist.md) end-to-end.** If any item fails, surface it to the user and **stop the loop** — do not silently advance to the next stage.
-6. **Verify clean `main` invariant.** Run `git branch --list` and confirm only `main` (and any pre-existing long-lived branches the user explicitly listed) remain locally. If a leftover slice branch exists, run `git branch -d <name>` and prune any worktrees (`git worktree remove <path>`, `git worktree prune`). Confirm `git status --short` is empty on `main`.
-7. **Update the master checklist.** Flip the stage row in `00_master_checklist.md` from `In Progress` (or `Not Started`) to `Completed`. Per-task `[x]` flips were already done by `sp-feature-delivery` (or `sp-ci-cd-scaffold` for stage 1). The orchestrator only updates the stage-level status.
-8. **Report stage completion to the user.** One concise paragraph: stage N done, PR URL, checklist items closed, notes from pr-reviewer.
-9. Advance to the next stage. Repeat from step 1 until no stages remain.
+1. **Pre-stage state check.** Verify `git status` clean, on `main`, latest pulled.
+2. **Read stage frontmatter.** Determine `type`, `mvp`, `hitl_required`, `SKILL_TO_LOAD`.
+3. **Dispatch `stage-runner`.** Pass the full body of `agents/stage-runner.md` plus filled prompt variables (see Per-Stage Prompt Variables below). Wait for a structured return.
+4. **Handle HITL if returned.** If the stage-runner returns `needs_human: true`, see HITL Handling below before advancing.
+5. **Dispatch `pr-reviewer`** (read-only). Pass the stage-runner's `pr_url` and `stage_file_path`. Wait for verdict.
+6. **Walk the Per-Stage Gate Checklist** (see below). Stop the loop if any item fails.
+7. **Update master checklist.** Flip the stage row to `Completed`.
+8. **Report stage completion** to the user (see Progress Report Format).
+9. **Mode-based pause decision:**
+   - Default mode: always pause. Ask: "Stage N complete. Ready to advance to Stage N+1? (Reply 'continue' or give instructions.)"
+   - `--auto-mvp`: pause only if the next stage has `mvp: false` OR if HITL occurred.
+   - `--auto-all`: do not pause unless HITL occurred.
+10. Advance to next stage. Repeat.
 
 ### Phase 2 — Final Report
 
-When every stage in the master checklist is `Completed`:
+When every stage is `Completed`:
 
-1. Confirm `git status` clean, on `main`, no leftover branches, no leftover worktrees.
+1. Confirm `git status` clean, on `main`, no leftover branches or worktrees.
 2. Confirm every PR listed in stage-runner summaries is merged.
-3. Report to the user using the **Final Report Format** below.
+3. Output the Final Report Format.
 
-## Stage-Runner Dispatch Cheat Sheet
+## HITL Handling
 
-```
-Task(
-  subagent_type: "generalPurpose",
-  model: "claude-4.6-opus-high-thinking",   # NEVER substitute
-  description: "Run stage <N>",
-  prompt: <full body of agents/stage-runner.md, plus the filled-in
-           per-stage-prompt-template.md, plus the absolute path to
-           docs/plans/stage_<N>_*.md and the stage's goal sentence>,
-  readonly: false
-)
-```
+When a stage-runner returns `needs_human: true`:
 
-Approved fallback for `pr-reviewer` only: `composer-2`, `gemini-3-flash`. Never substitute `stage-runner` upward or downward.
+1. **Pause immediately.** Do not advance to the next step.
+2. **Translate the structured fields** into a plain-language user prompt:
+   - `hitl_category: prd_ambiguity` → prompt prefixed with "The stage hit a PRD ambiguity."
+   - `hitl_category: external_credentials` → prompt prefixed with "The stage needs external credentials or configuration."
+   - `hitl_category: destructive_operation` → prompt prefixed with "The stage is about to perform a destructive operation."
+   - `hitl_category: creative_direction` → prompt prefixed with "The stage needs creative direction."
+3. **Call `ask_user_input_v0`** with the `hitl_question` as the prompt body and the `hitl_context` as supplemental context.
+4. **Apply the answer** to the relevant context:
+   - `prd_ambiguity`: append the answer to PRD Section 6 (Open Questions).
+   - `external_credentials`: append credential confirmation to the project rules file (rules file format: cursor or claude).
+   - `destructive_operation`: record explicit approval in the stage notes.
+   - `creative_direction`: append the direction decision to the stage notes.
+5. **Re-dispatch the stage-runner** with the updated context appended to the prompt.
+
+Only the orchestrator calls `ask_user_input_v0`. Sub-agents bubble HITL up via the return contract — they never prompt the user directly.
+
+## Per-Stage Gate Checklist
+
+Walk this checklist after each stage before advancing. Stop and surface any failing item.
+
+**Stage Runner Return**
+[ ] `stage-runner` returned a complete structured summary (not partial, not an exception).
+[ ] `needs_human` is `false` (or HITL was resolved and stage re-ran successfully).
+[ ] `stage-runner` reported `pr_merged: true`.
+[ ] `stage-runner` reported `tests_green: true`.
+[ ] `stage-runner` reported `completion_checklist_all_checked: true`.
+
+**PR Reviewer Verdict**
+[ ] `pr-reviewer` was dispatched and returned.
+[ ] `pr-reviewer` returned `verdict: pass`.
+[ ] `ci_status: all_green` on the merged head SHA.
+[ ] `required_checks_failed` is empty.
+[ ] `scope_drift` is empty (or any drift was explicitly approved by the user).
+[ ] Design-system-compliance CI check passed (if `design-system-compliance` job exists).
+[ ] Visual diffs reviewed and approved (if `@visual` suite ran).
+[ ] `db/schema.sql` updated if any DB code was touched.
+[ ] Env-setup gate completion is recorded in the master checklist (for any stage after stage 3).
+
+**Git State — Clean Main Invariant**
+[ ] Current branch is `main`.
+[ ] `git status --short` is empty.
+[ ] `git pull --ff-only` succeeds with no new changes.
+[ ] No leftover slice branches from this stage (local or remote).
+[ ] No leftover git worktrees for this stage.
+
+**Master Checklist**
+[ ] `docs/plans/00_master_checklist.md` stage row shows `Status: Completed`.
+[ ] Per-task `[x]` flips are present (done by the dispatched skill, verified here).
+[ ] No other stage's status was accidentally modified.
+
+**Ready to Advance**
+[ ] Next stage file exists and is well-formed.
+[ ] User has not requested a stop.
+[ ] No unresolved HITL items remain for this stage.
 
 ## Per-Stage Prompt Variables
 
-Filled into [references/per-stage-prompt-template.md](references/per-stage-prompt-template.md):
+| Variable | Value |
+|---|---|
+| `{STAGE_N}` | Integer stage number, e.g. `3` |
+| `{STAGE_FILE_PATH}` | Workspace-relative path to `docs/plans/stage_<n>_*.md` |
+| `{STAGE_GOAL}` | The goal sentence from the stage file's `**Goal:**` line |
+| `{SKILL_TO_LOAD}` | Determined from stage `type` via the routing table above |
 
-- `{STAGE_N}` — the stage number (e.g. `2`).
-- `{STAGE_FILE_PATH}` — absolute or workspace-relative path to `docs/plans/stage_<n>_*.md`.
-- `{STAGE_GOAL}` — the goal sentence from the stage file.
-- `{SKILL_TO_LOAD}` — `sp-ci-cd-scaffold` for stage 1 (canned), `sp-feature-delivery` for every other stage.
-
-## Stage 1 Special Case
-
-Stage 1 is always the canned CI/CD scaffold (per `prd-to-phased-plans`). For Stage 1:
-
-- Set `{SKILL_TO_LOAD}` to `sp-ci-cd-scaffold`.
-- The stage-runner loads `sp-ci-cd-scaffold` instead of `sp-feature-delivery`.
-- Everything else (PR review, master checklist update, clean-main invariant) is identical.
+Fill these into the stage-runner prompt (see `agents/stage-runner.md` for the expected format). Pass the full body of `agents/stage-runner.md` alongside the filled prompt.
 
 ## Progress Report Format (per stage)
 
-After each stage completes:
-
 ```
-Stage <N> — <name> ✓ Completed
+Stage <N> — <name>: Completed
 - Branch: <slice branch name> (deleted)
 - PR: <pr url> (merged, CI green)
 - Checklist items closed: <count>
 - pr-reviewer verdict: pass | fail
 - Notes: <one line>
-On main, clean tree, advancing to Stage <N+1>.
+On main, clean tree. [Advancing to Stage <N+1> automatically. | Waiting for your "continue".]
 ```
 
 ## Final Report Format
@@ -132,28 +192,20 @@ Recommended next: <empty | open Phase 2 work | run another orchestrator pass>
 
 ## Hard Constraints
 
-- **Stage-runner model is non-negotiable.** Every `Task` dispatch for `stage-runner` MUST use `model: "claude-4.6-opus-high-thinking"`. No fallback. If unavailable, stop and tell the user.
-- **Strictly sequential.** Never dispatch two `stage-runner` subagents in parallel. Stage N+1 cannot begin until stage N's PR is merged, `main` is clean, and the loop checklist passed.
-- **Orchestrator never edits production code.** The orchestrator only reads plans, dispatches subagents, walks the loop checklist, and updates `00_master_checklist.md` stage-level statuses.
-- **Loop halts on first failed item.** If any item in `orchestrator-loop-checklist.md` fails, surface to the user and stop. Never silently advance.
-- **Clean-main invariant between stages.** After every stage, working tree must be clean on `main` with no leftover slice branches or worktrees. The orchestrator enforces this before dispatching the next stage-runner.
-- **Master checklist is the source of truth** for stage ordering and completion status. The orchestrator never re-orders stages.
-- **Stage 1 uses `sp-ci-cd-scaffold`**, not `sp-feature-delivery`. The orchestrator selects the right skill per stage.
-- **No new commands without authorization.** If the user did not run `/the-orchestrator` or one of the trigger phrases, do not auto-start.
+- **Strictly sequential.** Never dispatch two stage-runners in parallel. Stage N+1 cannot start until stage N's PR is merged, main is clean, and the gate checklist passed.
+- **Orchestrator never edits production code.** It only reads plans, dispatches subagents, walks the gate checklist, and updates `00_master_checklist.md` stage-level statuses.
+- **Gate halts on first failed item.** Never silently advance past a failing checklist item.
+- **Clean-main invariant.** Enforced before every stage-runner dispatch.
+- **Master checklist is source of truth** for stage ordering and completion. Never re-order stages.
+- **HITL goes through `ask_user_input_v0` only.** Sub-agents bubble up; orchestrator prompts.
+- **No new commands without authorization.** Only activate on `/the-orchestrator` or the listed trigger phrases.
 
 ## Triggers
 
 Follow this skill whenever the user:
 
-- runs `/the-orchestrator`
+- runs `/the-orchestrator` (optionally with `--auto-mvp` or `--auto-all`)
 - says "run the whole plan", "ship every stage", "automate the build", "drive the phased plan to completion", "execute all stages"
-- explicitly hands the orchestrator the master checklist and asks for autonomous delivery
+- explicitly passes the master checklist and asks for autonomous delivery
 
-If the user only wants one stage, redirect to `/sp-feature-delivery` (or `sp-ci-cd-scaffold` for stage 1).
-
-## Fallbacks
-
-- **No `pr-reviewer` model available?** Stop and tell the user. The PR review gate is required.
-- **No `stage-runner` model available?** Hard stop. Opus 4.7 is required for stage execution.
-- **Master checklist drift mid-run** (someone hand-edited stage statuses while the orchestrator was running)? Re-read the file before each loop iteration; if a stage already shows `Completed` but the orchestrator did not run it, ask the user before continuing.
-- **CI failure on a stage PR?** That is the stage-runner's responsibility (via `sp-feature-delivery` Phase 5). The orchestrator only advances after the stage-runner reports `tests_green: true` AND `pr-reviewer` returns `verdict: pass`.
+If the user wants one stage only, redirect to the appropriate skill per the routing table.

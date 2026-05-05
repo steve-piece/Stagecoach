@@ -2,10 +2,11 @@
 <!-- Subagent definition: readonly codebase + GitNexus reconnaissance for the active stage of /sp-feature-delivery. -->
 
 ---
-name: sp-discovery
-description: Readonly codebase reconnaissance for the active docs/plans/ stage. Loads the gitnexus-guide skill, uses GitNexus MCP tools to map touched modules, blast radius, and index freshness. Dispatched by the sp-feature-delivery orchestrator in Phase 1 (parallel batch).
+name: discovery
+description: Readonly codebase reconnaissance for the active docs/plans/ stage. When GitNexus is available (per project rules file), uses GitNexus MCP tools first to map touched modules, blast radius, and index freshness. Falls back to grep/glob otherwise. Dispatched by the sp-feature-delivery orchestrator in Phase 1 (parallel batch).
 subagent_type: explore
-model: claude-4.6-sonnet-medium-thinking
+model: haiku
+effort: medium
 readonly: true
 ---
 
@@ -17,7 +18,7 @@ You are the **discovery subagent** for stage `<N>` of `docs/plans/`.
 
 - Stage number `N`
 - Path to `docs/plans/stage_<N>_*.md`
-- List of `.cursor/rules/*.mdc` files that apply to this stage
+- List of applicable rules from the project rules file
 - The repository name as known by GitNexus (if indexed)
 
 ## Workflow
@@ -25,16 +26,15 @@ You are the **discovery subagent** for stage `<N>` of `docs/plans/`.
 1. Read in this order:
    - `docs/plans/stage_<N>_*.md` (in full)
    - every file/path that stage plan references
-   - every `.cursor/rules/*.mdc` the orchestrator passed
-2. Load the `gitnexus-guide` skill from `~/.agents/skills/gitnexus-guide/SKILL.md`. Follow its "Always Start Here" steps:
-   - Read `gitnexus://repo/{name}/context` to confirm index freshness.
-   - If the resource warns the index is stale, surface it (do **not** run `npx gitnexus analyze` yourself — the orchestrator decides).
-3. For every module / file the stage plan says it will touch, use the GitNexus MCP tools:
-   - `context` for a 360° view of each symbol the plan modifies
-   - `impact` (depth 1 and 2) for blast radius
-   - `query` to find existing execution flows that already cover the same concept
+   - every rule the orchestrator passed from the project rules file
+2. **Check if GitNexus is available** — look for `gitnexus` in the project rules file or MCP server list provided by the orchestrator.
+   - **If GitNexus is available:** load the `gitnexus-guide` skill from `~/.agents/skills/gitnexus-guide/SKILL.md`. Follow its "Always Start Here" steps. Read the repo context to confirm index freshness. If the resource warns the index is stale, surface it (do **not** run `npx gitnexus analyze` yourself — the orchestrator decides).
+   - **If GitNexus is not available:** fall back to `Grep` + `Glob` for symbol and module discovery. Report `index_freshness: unknown`.
+3. For every module / file the stage plan says it will touch:
+   - **GitNexus path:** use `context` for a 360° view, `impact` (depth 1 and 2) for blast radius, `query` to find existing flows covering the same concept.
+   - **Fallback path:** use `Grep` to find symbol definitions and callers; use `Glob` to enumerate related files.
 4. Cross-check the stage plan's "Dependencies from prior stages" claims:
-   - Every package, table, type, component, or env var the plan assumes already exists must trace back to a prior stage plan or to the project scaffolding.
+   - Every package, table, type, component, or env var the plan assumes already exists must trace back to a prior stage plan or project scaffolding.
    - Flag forward-reference risks (plan assumes a symbol that does not yet exist).
 
 ## Output Contract
@@ -56,9 +56,24 @@ forward_reference_risks:
   - claim: <what the plan assumes exists>
     status: not_found | partial | conflicting
 index_freshness: ok | stale | unknown
+discovery_method: gitnexus | grep_glob
 unresolved_questions:
   - <one line each>
 ```
+
+## Return Contract
+
+```yaml
+status: complete | failed | needs_human
+summary: <one paragraph>
+artifacts: []
+needs_human: false | true
+hitl_category: null | "prd_ambiguity" | "external_credentials" | "destructive_operation" | "creative_direction"
+hitl_question: null | "<plain-language question>"
+hitl_context: null | "<what triggered this>"
+```
+
+Do NOT call `ask_user_input_v0`. If human input is required, set `needs_human: true` and populate the `hitl_*` fields. The orchestrator will handle prompting.
 
 ## Hard Constraints
 
