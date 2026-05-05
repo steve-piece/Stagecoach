@@ -2,10 +2,10 @@
 name: sp-frontend-design
 description: End-to-end frontend feature delivery via specialized subagent pipeline. Handles type:frontend stages. Composes from shadcn blocks before crafting custom; ensures all UI states; visual review against design system before PR.
 user-invocable: true
-triggers: ["frontend stage", "deliver frontend slice", "/sp-frontend-design"]
+triggers: ["frontend stage", "deliver frontend slice", "/sc-frontend-design"]
 ---
 
-<!-- skills/sp-frontend-design/SKILL.md -->
+<!-- skills/sc-frontend-design/SKILL.md -->
 <!-- Orchestrator skill for type:frontend stages. Runs a 6-subagent pipeline: UX pattern selection → layout → block composition → (conditional) custom component crafting → UI state coverage → visual review. Shared agents (discovery, spec-reviewer, quality-reviewer, ci-cd-guardrails) are sourced from sp-feature-delivery. -->
 
 # sp-frontend-design
@@ -33,7 +33,7 @@ Read each file before dispatching; never inline its prompt.
 
 ## Skill-Specific Agents
 
-All six agents live in `skills/sp-frontend-design/agents/`. Read each file before dispatching.
+All six agents live in `skills/sc-frontend-design/agents/`. Read each file before dispatching.
 
 | Phase | Agent file | Model | Mode |
 | --- | --- | --- | --- |

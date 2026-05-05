@@ -1,11 +1,11 @@
-<!-- commands/prd-generator.md -->
+<!-- commands/sc-prd-generator.md -->
 <!-- Slash command shim that loads the prd-generator skill to generate a complete PRD from a free-form project brief. -->
 
 ---
 description: Generate a complete PRD (Product Requirements Document) from a free-form project brief. Use when the user provides a project description and wants a structured PRD, says "create a PRD", "write a PRD", "generate a PRD", "build a PRD", or "document requirements". Follows the Phased PRD Template v2 with 8 sections (0–7). References bundled defaults for tech stack, architecture, and delivery conventions.
 ---
 
-# /prd-generator
+# /sc-prd-generator
 
 Load and follow the [`prd-generator`](../skills/prd-generator/SKILL.md) skill.
 
@@ -18,6 +18,6 @@ The skill generates a complete, canonical PRD from a free-form project brief:
 
 ## When to use this command
 
-Use `/prd-generator` when you have a project description (however rough) and want a structured, implementation-ready PRD. The skill handles ambiguity resolution internally — you do not need a polished brief.
+Use `/sc-prd-generator` when you have a project description (however rough) and want a structured, implementation-ready PRD. The skill handles ambiguity resolution internally — you do not need a polished brief.
 
-For converting a completed PRD into phased implementation plans, use `/prd-to-phased-plans`.
+For converting a completed PRD into phased implementation plans, use `/sc-prd-to-phased-plans`.

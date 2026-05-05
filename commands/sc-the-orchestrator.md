@@ -1,11 +1,11 @@
-<!-- commands/the-orchestrator.md -->
+<!-- commands/sc-the-orchestrator.md -->
 <!-- Slash command shim that loads the the-orchestrator skill to drive a phased plan end-to-end via sequential Opus 4.7 stage-runner subagents. -->
 
 ---
 description: Drive an entire phased plan end-to-end by dispatching one Opus 4.7 stage-runner subagent per stage in strict sequence. Reads docs/plans/00_master_checklist.md, runs each stage through sp-feature-delivery (or sp-ci-cd-scaffold for stage 1), verifies each PR, ensures clean return to main, then advances. Requires Opus 4.7.
 ---
 
-# /the-orchestrator
+# /sc-the-orchestrator
 
 Load and follow the [`the-orchestrator`](../skills/the-orchestrator/SKILL.md) skill.
 
@@ -31,6 +31,6 @@ If any precondition fails, the skill stops and reports the gap before doing anyt
 
 ## When to use this command
 
-Use `/the-orchestrator` when you want the entire phased plan delivered autonomously and you don't want to paste `Complete all steps in @{STAGE_FILE} /sp-feature-delivery` for each stage by hand.
+Use `/sc-the-orchestrator` when you want the entire phased plan delivered autonomously and you don't want to paste `Complete all steps in @{STAGE_FILE} /sc-feature-delivery` for each stage by hand.
 
-For a single stage only, use `/sp-feature-delivery` (or `/sp-ci-cd-scaffold` for stage 1) directly.
+For a single stage only, use `/sc-feature-delivery` (or `/sc-ci-cd-scaffold` for stage 1) directly.

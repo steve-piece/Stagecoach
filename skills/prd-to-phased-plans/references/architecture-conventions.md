@@ -94,10 +94,6 @@ Structural-only rules:
 [ ] `ref` is passed as a standard prop; `forwardRef` is no longer required
 [ ] `<Context value={}>` is used directly as a provider
 
-## Auth-tagged stages (always apply when auth is in scope)
-
-[ ] Auth-related stages MUST include the dev-mode user switcher (see `references/canned-stages/auth-dev-mode-switcher-task.md`)
-
 ## How elicitation injects this into the project rules file
 
 The `prd-to-phased-plans` elicitation phase reads:

@@ -1,6 +1,6 @@
 ---
 name: sp-feature-delivery
-description: Orchestrate phased feature delivery from docs/plans/ using a parallel-subagent pipeline (discovery, checklist curation, implementation, spec + quality review) with branching, CI/E2E gates, and live master-checklist updates. Use when the user runs /sp-feature-delivery, says "deliver the next stage", "execute the plan", "ship stage N", "work the checklist", or "implement docs/plans".
+description: Orchestrate phased feature delivery from docs/plans/ using a parallel-subagent pipeline (discovery, checklist curation, implementation, spec + quality review) with branching, CI/E2E gates, and live master-checklist updates. Use when the user runs /sc-feature-delivery, says "deliver the next stage", "execute the plan", "ship stage N", "work the checklist", or "implement docs/plans".
 ---
 
 <!-- skills/sp-feature-delivery/SKILL.md -->
@@ -30,7 +30,7 @@ Each subagent lives in its own file under `./agents/`. Read the file before disp
 - One or more `docs/plans/stage_<n>_*.md` exist.
 - Clean git working tree, OR explicit user OK to proceed dirty.
 
-If `docs/plans/` is missing, instruct the user to run `/prd-to-phased-plans` first and stop.
+If `docs/plans/` is missing, instruct the user to run `/sc-prd-to-phased-plans` first and stop.
 
 ## Workflow
 

@@ -215,4 +215,4 @@ Anti-drift section. Explicit list of use cases, features, and segments that are 
 
 ---
 
-*PRD produced by `/prd-generator` v2. Reviewed by `prd-reviewer`. Feed this document to `/prd-to-phased-plans` after human sign-off.*
+*PRD produced by `/sc-prd-generator` v2. Reviewed by `prd-reviewer`. Feed this document to `/sc-prd-to-phased-plans` after human sign-off.*

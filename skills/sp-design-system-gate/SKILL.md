@@ -2,7 +2,7 @@
 name: sp-design-system-gate
 description: Bootstrap the project design system as Stage 1. Validates Claude Design bundle if present, otherwise expands brand brief. Outputs globals.css, Tailwind config, design-system.md, and design-system rules in project rules file. Required before any UI work.
 user-invocable: true
-triggers: ["scaffold design system", "stage 1 design", "/sp-design-system-gate"]
+triggers: ["scaffold design system", "stage 1 design", "/sc-design-system-gate"]
 ---
 
 # sp-design-system-gate

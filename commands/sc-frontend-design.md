@@ -1,11 +1,11 @@
-<!-- commands/sp-frontend-design.md -->
+<!-- commands/sc-frontend-design.md -->
 <!-- Slash command shim that loads the sp-frontend-design skill for end-to-end frontend feature delivery via a specialized subagent pipeline. -->
 
 ---
 description: End-to-end frontend feature delivery via specialized subagent pipeline. Handles type:frontend stages. Composes from shadcn blocks before crafting custom; ensures all UI states; visual review against design system before PR.
 ---
 
-# /sp-frontend-design
+# /sc-frontend-design
 
 Load and follow the [`sp-frontend-design`](../skills/sp-frontend-design/SKILL.md) skill.
 
@@ -26,4 +26,4 @@ The skill delivers frontend feature stages via a specialized subagent pipeline:
 
 ## When to use this command
 
-Use `/sp-frontend-design` to deliver a frontend stage manually. The orchestrator (`/the-orchestrator`) routes `type: frontend` stages to this skill automatically.
+Use `/sc-frontend-design` to deliver a frontend stage manually. The orchestrator (`/sc-the-orchestrator`) routes `type: frontend` stages to this skill automatically.
