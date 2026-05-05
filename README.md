@@ -16,35 +16,40 @@ Or clone manually: `git clone https://github.com/steve-piece/stagecoach.git` and
 
 ---
 
-## Quickstart
-
-```text
-/stagecoach:setup           # Stage 0 — bootstrap project + per-project config (or first-time install of system-wide defaults)
-/stagecoach:write-prd       # Brief → docs/prd-<slug>.md
-/stagecoach:plan-phases     # PRD → docs/plans/00_master_checklist.md + 4 canned + 20–30 feature stages
-/stagecoach:run-pipeline    # Drive every stage end-to-end (default mode pauses between stages)
-```
-
-After the initial plan ships, use `/stagecoach:add-feature` to bolt on more features without rewriting the plan.
-
----
-
 ## Workflow
+
+The pipeline, step by step:
+
+- **setup** — Bootstraps a new project (or drops config into an existing one) and checks the CI/CD baseline.
+- **write-prd** — Turns a free-form project brief into a structured PRD.
+- **plan-phases** — Decomposes the PRD into a master checklist, three foundation stages (plus an optional db-schema stage if the PRD has a backend), and 20–30 feature stages.
+- **add-feature** — Skip ahead. Adds new stages directly to a project that already shipped.
+- **run-pipeline** — Drives the entire plan stage-by-stage, dispatching the right skill per stage.
+- **init-design-system** — Validates or generates the design system; no UI ships until tokens lock.
+- **scaffold-ci-cd** — Wires CI/CD, Playwright, design-system-compliance, and visual-regression baselines.
+- **setup-environment** — Walks through external service setup and verifies `.env.local` is fully populated.
+- **ship-frontend** — Delivers frontend stages through a 6-agent design pipeline ending in a visual review gate.
+- **ship-feature** — Delivers backend, full-stack, and DB stages with an implementer plus spec, quality, and CI/CD reviewers.
+- **review-pipeline** *(experimental)* — After the plan ships, surfaces friction patterns and drafts improvements back to the plugin.
 
 ```mermaid
 flowchart TD
-    Setup["/stagecoach:setup"]
-    Setup --> PRD["/stagecoach:write-prd"]
-    PRD --> Phased["/stagecoach:plan-phases"]
-    Phased --> Run["/stagecoach:run-pipeline"]
-    Add["/stagecoach:add-feature<br/>(adding to a project<br/>that already shipped)"] --> Run
-    Run --> Stages["Stages 1–4 canned<br/>+ 5..N feature stages"]
-    Stages --> Done(["✅ Done"])
+    Setup["setup"] --> PRD["write-prd"]
+    PRD --> Phased["plan-phases"]
+    Phased --> Run["run-pipeline"]
+    Add["add-feature<br/>(post-launch additions)"] --> Run
+
+    Run --> S1["init-design-system"]
+    S1 --> S2["scaffold-ci-cd"]
+    S2 --> S3["setup-environment"]
+    S3 --> Features["ship-frontend  or  ship-feature<br/>(per stage type)"]
+    Features --> Review["review-pipeline"]
+    Review --> Done(["✅ Done"])
 ```
 
-Two ways in: build a fresh project end-to-end starting from `/stagecoach:setup`, or add features to an already-shipped project starting from `/stagecoach:add-feature`. Either way, the same delivery + CI gates run.
+Two ways in: build a fresh project end-to-end starting from `setup`, or add features to an already-shipped project starting from `add-feature`. Either way, the same delivery + CI gates run. Stage 4 (db-schema-foundation, conditional) routes to `ship-feature` with a DB flag — bundled into the `ship-frontend or ship-feature` node above for visual simplicity.
 
-**Foundation stages** (always run, in order):
+**Foundation stages** (run before any feature stage; Stage 4 only when the PRD has a backend):
 
 | # | Stage | Skill |
 |---|---|---|
@@ -60,19 +65,19 @@ Hard caps per stage: **6 tasks**, ~10–15 files changed, completable in one fre
 
 ## Skills
 
-| Skill | Slash command | Role |
+| Skill | Slash command | Description |
 |---|---|---|
-| `setup` | `/stagecoach:setup` | Stage 0 — first-time install, new-project scaffold, OR per-project config + CI/CD baseline check (auto-detects flow) |
-| `write-prd` | `/stagecoach:write-prd` | Brief → 8-section PRD; plan-mode question gate (3–7 Qs) + automatic `prd-reviewer` |
-| `plan-phases` | `/stagecoach:plan-phases` | PRD → master checklist + 4 canned + 20–30 feature stages; 12-Q context elicitation |
-| `init-design-system` | `/stagecoach:init-design-system` | Stage 1 design-system gate (bundle-first or brief-first) |
-| `setup-environment` | `/stagecoach:setup-environment` | Stage 3 — provisioning checklist + env-verifier |
-| `scaffold-ci-cd` | `/stagecoach:scaffold-ci-cd` | Stage 2 CI/CD baseline (workflows, husky, design-system-compliance, `@visual` Playwright, conditional `db-schema-drift`) |
-| `ship-frontend` | `/stagecoach:ship-frontend` | `type:frontend` stages — 6-agent pipeline (UX → layout → block-composer → component-crafter → state-illustrator → visual-reviewer) |
-| `ship-feature` | `/stagecoach:ship-feature` | `type:backend / full-stack / db-schema / infrastructure` stages — implementer (`opus, xhigh`) + spec/quality/CI reviewers |
-| `add-feature` | `/stagecoach:add-feature` | Bolt 1+ new features onto an existing master checklist via `complexity-assessor` + incremental `phased-plan-writer` |
-| `run-pipeline` | `/stagecoach:run-pipeline` | Conduct the entire plan end-to-end (default mode pauses per stage; `--auto-mvp` and `--auto-all` flags available) |
-| `review-pipeline` | `/stagecoach:review-pipeline` | (Experimental) cross-stage friction detection after a full plan completes |
+| `setup` | `/stagecoach:setup` | Bootstraps a new project or drops Stagecoach config into an existing one. Auto-detects which flow you're in and checks for the CI/CD baseline. |
+| `write-prd` | `/stagecoach:write-prd` | Turns a free-form project brief into a structured 8-section PRD, asking clarifying questions when the brief is ambiguous. |
+| `plan-phases` | `/stagecoach:plan-phases` | Decomposes a finalized PRD into a master checklist, foundation stages, and 20–30 vertical-slice feature stages. |
+| `init-design-system` | `/stagecoach:init-design-system` | Validates or generates the project design system — globals.css, Tailwind config, and design-system rules — so all UI work starts from locked tokens. |
+| `scaffold-ci-cd` | `/stagecoach:scaffold-ci-cd` | Wires up the CI/CD baseline: GitHub workflows, Playwright, design-system-compliance, visual regression, and (when applicable) DB schema drift checks. |
+| `setup-environment` | `/stagecoach:setup-environment` | Walks the user through external service setup and verifies `.env.local` is fully populated before features can ship. |
+| `ship-frontend` | `/stagecoach:ship-frontend` | Delivers a frontend stage through a 6-agent design pipeline and gates the PR on a passing visual review against the design system. |
+| `ship-feature` | `/stagecoach:ship-feature` | Delivers a backend, full-stack, or DB stage with an implementer agent plus spec, quality, and CI/CD reviewers. |
+| `add-feature` | `/stagecoach:add-feature` | Bolts new features onto a project that already shipped, assessing complexity and writing fresh stage files into the existing master checklist. |
+| `run-pipeline` | `/stagecoach:run-pipeline` | Drives a full phased plan from start to finish, dispatching the right skill per stage and pausing for approval between stages by default. |
+| `review-pipeline` | `/stagecoach:review-pipeline` | Experimental. After a plan completes, looks for friction patterns across recent stages and drafts improvements back to the plugin. |
 
 Each skill's full reference, sub-agents, and completion checklist live in `skills/<name>/SKILL.md`.
 
