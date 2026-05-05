@@ -5,7 +5,7 @@ version: "2.0"
 
 # Model Tier Guide
 
-The phased-dev-workflow plugin uses three model tiers across all sub-agents. Each tier maps to an Anthropic alias that auto-resolves to the latest version per provider.
+The Stagecoach plugin uses three model tiers across all sub-agents. Each tier maps to an Anthropic alias that auto-resolves to the latest version per provider.
 
 | Tier | Alias | Use cases | Effort default |
 |---|---|---|---|

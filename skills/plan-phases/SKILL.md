@@ -101,7 +101,7 @@ After all answers, assemble and write the project rules file before dispatching 
 ### Layering precedence (document in project rules file header)
 
 ```
-Priority 1 (highest): phased-dev-workflow baseline (web standards, security, framework facts)
+Priority 1 (highest): Stagecoach baseline (web standards, security, framework facts)
 Priority 2: project-specific rules (imported via Q9)
 Priority 3 (lowest): external rule files
 ```

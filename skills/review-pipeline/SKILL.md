@@ -1,6 +1,6 @@
 ---
 name: review-pipeline
-description: EXPERIMENTAL. Reviews recent stage executions, identifies friction patterns, drafts PRs to the plugin repo for improvements. Defaults to plugin path ~/phased-dev-workflow; override via PHASED_DEV_PLUGIN_PATH env var.
+description: EXPERIMENTAL. Reviews recent stage executions, identifies friction patterns, drafts PRs to the plugin repo for improvements. Defaults to plugin path ~/stagecoach; override via STAGECOACH_PLUGIN_PATH env var.
 user-invocable: true
 triggers: ["/stagecoach:review-pipeline", "/review-pipeline", "review the workflow", "improve the plugin"]
 experimental: true
@@ -20,7 +20,7 @@ Stagecoach skill that reviews how recent stages and skills executed, identifies 
 - Propose concrete changes (skill prompts, agent prompts, reference files, bug fixes, or new files)
 - Draft one or more PRs to the plugin repo for human review and merge
 
-This skill does not modify production code in your project. It only targets the plugin repo at `~/phased-dev-workflow` (or `PHASED_DEV_PLUGIN_PATH` if set).
+This skill does not modify production code in your project. It only targets the plugin repo at `~/stagecoach` (or `STAGECOACH_PLUGIN_PATH` if set).
 
 ---
 
@@ -29,11 +29,11 @@ This skill does not modify production code in your project. It only targets the 
 Before invoking this skill, verify:
 
 1. **Plugin path** — The plugin must exist at one of:
-   - `~/phased-dev-workflow` (expands to `/Users/<username>/phased-dev-workflow` on macOS)
-   - Absolute path set in the `PHASED_DEV_PLUGIN_PATH` environment variable (checked first if set)
-   - The skill expands `~` on macOS using the shell; if `PHASED_DEV_PLUGIN_PATH` is set in the environment, that value takes precedence
+   - `~/stagecoach` (expands to `/Users/<username>/stagecoach` on macOS)
+   - Absolute path set in the `STAGECOACH_PLUGIN_PATH` environment variable (checked first if set)
+   - The skill expands `~` on macOS using the shell; if `STAGECOACH_PLUGIN_PATH` is set in the environment, that value takes precedence
 
-2. **`gh` CLI** — Must be installed and authenticated against the plugin repo (`steve-piece/phased-dev-workflow`). Run `gh auth status` to verify before proceeding.
+2. **`gh` CLI** — Must be installed and authenticated against the plugin repo (`steve-piece/stagecoach`). Run `gh auth status` to verify before proceeding.
 
 3. **Invocation** — User invokes via `/review-pipeline`. Natural-language triggers: "review the workflow", "improve the plugin".
 
@@ -48,7 +48,7 @@ flowchart LR
   Read --> Analyze["retrospective-reviewer (opus)<br/>identifies friction patterns"]
   Analyze --> Draft["Draft proposal:<br/>- skill change<br/>- agent prompt change<br/>- new reference file<br/>- bug fix"]
   Draft --> Confirm["Surface to user:<br/>'these are the proposed changes,<br/>open PR?'"]
-  Confirm -->|yes| PR["cd ~/phased-dev-workflow<br/>+ gh PR creation"]
+  Confirm -->|yes| PR["cd ~/stagecoach<br/>+ gh PR creation"]
   Confirm -->|no| Done["log proposals locally"]
 ```
 
@@ -93,7 +93,7 @@ If the user chooses **No**: write the proposals to `docs/review-pipeline-<yyyy-m
 Resolve the plugin path:
 
 ```bash
-PLUGIN_PATH="${PHASED_DEV_PLUGIN_PATH:-$HOME/phased-dev-workflow}"
+PLUGIN_PATH="${STAGECOACH_PLUGIN_PATH:-$HOME/stagecoach}"
 cd "$PLUGIN_PATH"
 ```
 
@@ -156,7 +156,7 @@ Every PR opened by this skill follows these conventions:
 
 The following limits are hard constraints — not suggestions:
 
-1. **Max 1 retrospective PR per week per project.** Before opening a PR, check `gh pr list --repo steve-piece/phased-dev-workflow --label retrospective --state open` to verify no retrospective PR is already open for this project within the past 7 days. If one exists, append the new proposals to the existing PR instead of opening a duplicate.
+1. **Max 1 retrospective PR per week per project.** Before opening a PR, check `gh pr list --repo steve-piece/stagecoach --label retrospective --state open` to verify no retrospective PR is already open for this project within the past 7 days. If one exists, append the new proposals to the existing PR instead of opening a duplicate.
 
 2. **Never auto-merge.** All PRs open as drafts. The skill does not call `gh pr merge` under any circumstances.
 
@@ -180,7 +180,7 @@ hitl_context: null | "<what triggered this>"
 ```
 
 **HITL triggers for this skill:**
-- Plugin path does not exist and `PHASED_DEV_PLUGIN_PATH` is not set → `needs_human: true`, `hitl_category: prd_ambiguity`, `hitl_question: "The plugin path ~/phased-dev-workflow does not exist and PHASED_DEV_PLUGIN_PATH is not set. What is the correct path to the plugin repo?"`
+- Plugin path does not exist and `STAGECOACH_PLUGIN_PATH` is not set → `needs_human: true`, `hitl_category: prd_ambiguity`, `hitl_question: "The plugin path ~/stagecoach does not exist and STAGECOACH_PLUGIN_PATH is not set. What is the correct path to the plugin repo?"`
 - `gh` CLI is not authenticated → `needs_human: true`, `hitl_category: external_credentials`, `hitl_question: "gh CLI is not authenticated. Please run 'gh auth login' and then re-invoke the skill."`
 - PR creation fails (e.g., label does not exist, branch push rejected) → `needs_human: true`, `hitl_category: destructive_operation`
 
@@ -191,7 +191,7 @@ This skill does NOT call `ask_user_input_v0` for HITL resolution — it bubbles 
 ## Completion Checklist
 
 [ ] Scope determined (last N stages, last project, or specific skill)
-[ ] Plugin path resolved (`PHASED_DEV_PLUGIN_PATH` checked first, then `~/phased-dev-workflow`)
+[ ] Plugin path resolved (`STAGECOACH_PLUGIN_PATH` checked first, then `~/stagecoach`)
 [ ] `gh` CLI authentication verified before attempting any PR creation
 [ ] Execution data gathered: stage files, git log, recent PRs, HITL escalation records
 [ ] `retrospective-reviewer` (opus) dispatched with all gathered data

@@ -4,6 +4,22 @@ All notable changes to **Stagecoach** are recorded here. The format is loosely [
 
 ---
 
+## [2.2.1] — 2026-05-05
+
+### Changed
+- **GitHub repo renamed** from `steve-piece/phased-dev-workflow` to `steve-piece/stagecoach`. GitHub redirects the old URL, but every plugin manifest, README, and skill reference now points to the canonical new URL.
+- **Default plugin path renamed** from `~/phased-dev-workflow` to `~/stagecoach` (used by `/stagecoach:review-pipeline` to locate the plugin repo for retrospective PRs). If you kept your local clone at `~/phased-dev-workflow`, set the env var override below.
+- **Env var renamed:** `PHASED_DEV_PLUGIN_PATH` → `STAGECOACH_PLUGIN_PATH`. Used to override the default plugin path for `review-pipeline`. Set in your shell rc:
+  ```sh
+  export STAGECOACH_PLUGIN_PATH="$HOME/wherever/your/clone/lives"
+  ```
+- **`package.json` `name`** renamed `phased-dev-workflow` → `stagecoach` for consistency with the plugin manifest and repo.
+
+### Migration
+If you renamed your local clone to `~/stagecoach`, no env var needed. If you kept it at `~/phased-dev-workflow` (or anywhere else), add `STAGECOACH_PLUGIN_PATH` to your shell rc with the absolute path. The old `PHASED_DEV_PLUGIN_PATH` env var is no longer read.
+
+---
+
 ## [2.2.0] — 2026-05-05
 
 ### Added
