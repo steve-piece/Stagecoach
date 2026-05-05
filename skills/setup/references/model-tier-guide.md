@@ -25,13 +25,13 @@ The table below reflects the **actual current values** in each agent file. Where
 
 | Skill | Agent | Model | Effort | Readonly |
 |---|---|---|---|---|
-| **prd-generator** | prd-reviewer | `sonnet` | medium | — |
-| **prd-to-phased-plans** | ci-cd-scaffold-stage-writer | `sonnet` | medium | — |
-| **prd-to-phased-plans** | db-schema-stage-writer | `sonnet` | medium | — |
-| **prd-to-phased-plans** | design-system-stage-writer | `sonnet` | medium | — |
-| **prd-to-phased-plans** | env-setup-stage-writer | `sonnet` | medium | — |
-| **prd-to-phased-plans** | master-checklist-synthesizer | `sonnet` | medium | — |
-| **prd-to-phased-plans** | phased-plan-writer | `sonnet` | medium | — |
+| **write-prd** | prd-reviewer | `sonnet` | medium | — |
+| **plan-phases** | ci-cd-scaffold-stage-writer | `sonnet` | medium | — |
+| **plan-phases** | db-schema-stage-writer | `sonnet` | medium | — |
+| **plan-phases** | design-system-stage-writer | `sonnet` | medium | — |
+| **plan-phases** | env-setup-stage-writer | `sonnet` | medium | — |
+| **plan-phases** | master-checklist-synthesizer | `sonnet` | medium | — |
+| **plan-phases** | phased-plan-writer | `sonnet` | medium | — |
 | **init-design-system** | bundle-validator | `sonnet` | medium | — |
 | **init-design-system** | compliance-pre-check | `sonnet` | medium | — |
 | **init-design-system** | token-expander | `opus` | high | — |
@@ -48,6 +48,8 @@ The table below reflects the **actual current values** in each agent file. Where
 | **ship-frontend** | modern-ux-expert | `sonnet` | medium | — |
 | **ship-frontend** | state-illustrator | `sonnet` | medium | — |
 | **ship-frontend** | visual-reviewer | `sonnet` | medium | yes |
+| **add-feature** | complexity-assessor | `sonnet` | medium | yes |
+| **add-feature** | phased-plan-writer (incremental mode) | `sonnet` | medium | — |
 | **run-pipeline** | pr-reviewer | `sonnet` | medium | yes |
 | **run-pipeline** | stage-runner | `opus` | high | — |
 | **review-pipeline** | retrospective-reviewer | `opus` | high | — |

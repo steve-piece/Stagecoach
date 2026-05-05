@@ -41,7 +41,7 @@
     ]
   },
 
-  // External rule-file imports (skips prd-to-phased-plans elicitation Q9 when non-empty).
+  // External rule-file imports (skips plan-phases elicitation Q9 when non-empty).
   "rules": {
     "imports": [
       // "https://github.com/your-org/agentic-rules/blob/main/monorepo-nextjs/CLAUDE.md"

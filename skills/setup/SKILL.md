@@ -61,29 +61,27 @@ If the user explicitly asks for first-time install (e.g. "configure my Stagecoac
 
 ---
 
-## Flow B — New project (Bootstrap + Config)
+## Flow B — New project (Bootstrap + Config + CI/CD baseline)
 
-**Goal:** scaffold a fresh project on disk, then drop in a per-project `stagecoach.config.json` and a gitignored `ROADMAP.local.md`.
+**Goal:** scaffold a fresh project on disk, drop in a per-project `stagecoach.config.json`, gitignored `ROADMAP.local.md`, and offer to scaffold the CI/CD baseline.
 
 **When this fires:** working directory contains no `package.json` (parent folder of a new project).
 
-**Step 1 — Project Bootstrap (REQUIRED in Flow B)**
+**Step 1 — Project Bootstrap (REQUIRED in Flow B)** — see [Step 1](#step-1--project-bootstrap) below.
 
-See [Step 1 — Project Bootstrap](#step-1--project-bootstrap) below.
+**Step 2 — Per-project Config Customization (REQUIRED)** — see [Step 2](#step-2--per-project-config-customization) below.
 
-**Step 2 — Per-project Config Customization (REQUIRED)**
-
-See [Step 2 — Per-project Config Customization](#step-2--per-project-config-customization) below.
+**Step 3 — CI/CD Baseline Check (REQUIRED — but the SCAFFOLD action is optional)** — see [Step 3](#step-3--cicd-baseline-check-flow-b-and-flow-c-only--skipped-in-flow-a) below. Detects whether the baseline exists; offers to scaffold via `/stagecoach:scaffold-ci-cd` if not.
 
 ---
 
-## Flow C — Existing project (Config only)
+## Flow C — Existing project (Config + CI/CD baseline)
 
-**Goal:** drop a per-project `stagecoach.config.json` into a project that already exists.
+**Goal:** drop a per-project `stagecoach.config.json` into a project that already exists, then check CI/CD readiness.
 
 **When this fires:** working directory contains a `package.json`.
 
-Skip Step 1 entirely. Go straight to **Step 2 — Per-project Config Customization**.
+Skip Step 1 entirely. Run **Step 2** then **Step 3**. Step 3 is what makes this flow viable for projects that aren't going through the full PRD-to-phased-dev workflow — `add-feature` and `ship-feature` need the CI/CD baseline to be present.
 
 ---
 
@@ -254,7 +252,40 @@ Generate the JSONC file. Use [`references/stagecoach.config.example.json`](refer
 - Flow A target: `~/.stagecoach/defaults.json` (create the directory if missing: `mkdir -p ~/.stagecoach`)
 - Flow B / C target: `<project-root>/stagecoach.config.json`
 
-Print the resolved values back to the user before exiting.
+Print the resolved values back to the user before continuing to Step 3.
+
+---
+
+## Step 3 — CI/CD Baseline Check (Flow B and Flow C only — skipped in Flow A)
+
+Apps that haven't run `/stagecoach:scaffold-ci-cd` lack the gates that `/stagecoach:ship-feature` expects (typecheck, lint, design-system-compliance, `@feature` E2E, `@regression-core` E2E, `@visual` E2E, optional `db-schema-drift`). This step detects whether the baseline exists and offers to scaffold it for projects that aren't going through the full PRD-to-phased-dev workflow.
+
+### Detection
+
+Check the working directory (Flow C) or the newly-scaffolded project root (Flow B) for these markers:
+
+| Marker | What "present" looks like |
+|---|---|
+| `.github/workflows/ci.yml` | Has `typecheck`, `lint`, and at least one test job (unit/integration/e2e) |
+| `.github/workflows/design-system-compliance.yml` | Exists |
+| `.husky/pre-push` | Exists and runs the same gates as CI |
+| `.github/pull_request_template.md` | Exists |
+
+If ALL four markers are present and look complete, set `ci_cd_ready: true` and skip the rest of Step 3 (just announce: *"CI/CD baseline detected. Proceeding to next-step pointer."*).
+
+If any marker is missing, set `ci_cd_ready: false` and ask the user.
+
+### Q-ci-cd-baseline (only if `ci_cd_ready: false`)
+
+> "This project doesn't have the Stagecoach CI/CD baseline (one or more of: ci.yml, design-system-compliance.yml, husky pre-push hook, PR template). The `ship-feature` and `add-feature` skills depend on these gates being green before opening a PR. Want to scaffold the baseline now?"
+> single_select: ["Yes — scaffold CI/CD baseline now (recommended)", "No — skip; I'll handle CI my own way"]
+
+If "Yes": print *"Run `/stagecoach:scaffold-ci-cd` next — it will run on a dedicated `chore/scaffold-ci-cd` branch and open a PR. Once that PR merges, return here and run `/stagecoach:add-feature` (or `/stagecoach:write-prd` for a full PRD-to-app run)."*
+
+If "No": warn the user and continue:
+> ⚠️ **Without the CI/CD baseline:** `/stagecoach:ship-feature`'s Phase 5 (CI/CD gates) will likely fail because the `ci-cd-guardrails` agent expects the baseline workflows to exist. You can still run individual feature skills (`/stagecoach:ship-frontend`, `/stagecoach:ship-feature`), but you'll need to manually wire equivalent gates in your own CI for the per-stage `@visual` and `design-system-compliance` checks. To re-enable the offer later, delete `.stagecoach/.skip-ci-cd` and re-run `/stagecoach:setup`.
+
+If the user chose "No": create a sentinel file `.stagecoach/.skip-ci-cd` so future `/stagecoach:setup` runs skip Q-ci-cd-baseline.
 
 ### Phase — Print next-step pointer
 
@@ -264,18 +295,26 @@ For Flow A:
 For Flow B:
 > Project scaffolded at `<absolute-path>` with `stagecoach.config.json` and `ROADMAP.local.md`.
 >
+> **CI/CD baseline:** <"present" | "scaffold pending — run /stagecoach:scaffold-ci-cd next" | "skipped per user choice">
+>
 > **Next steps:**
 > 1. `cd <project-name>`
 > 2. (Optional) Edit `stagecoach.config.json` to refine any defaults
 > 3. (Optional) Add brief notes to `ROADMAP.local.md`
-> 4. Run `/stagecoach:write-prd` to write the PRD
+> 4. Run `/stagecoach:scaffold-ci-cd` (if Step 3 said scaffold pending)
+> 5. Run `/stagecoach:write-prd` to write the PRD (full PRD-to-app flow), OR run `/stagecoach:add-feature` later if you only want to bolt features onto an existing master checklist
 >
 > The Stagecoach pipeline from here is: PRD → phased plans → design system gate → CI/CD scaffold → env setup → optional DB schema → 20-30 vertical-slice feature stages.
 
 For Flow C:
 > Config written to `<project-root>/stagecoach.config.json`. Future Stagecoach skill runs in this project will honor these settings.
 >
-> Next: `/stagecoach:write-prd` (if you don't have a PRD yet) or `/stagecoach:plan-phases` (if you do).
+> **CI/CD baseline:** <"present" | "scaffold pending — run /stagecoach:scaffold-ci-cd next" | "skipped per user choice">
+>
+> **Next steps:**
+> - **Have a PRD already?** Run `/stagecoach:plan-phases` to generate phased plans.
+> - **No PRD yet?** Run `/stagecoach:write-prd` to write one against this existing app's surface area.
+> - **Just want to add a feature or two?** Run `/stagecoach:add-feature` directly. Note: without a master checklist (no `docs/plans/`), add-feature will redirect you back here. To go from existing-app → add-feature flow, run `/stagecoach:write-prd` first to give the complexity assessor grounding context.
 
 ---
 
@@ -317,7 +356,10 @@ hitl_context: "Detected existing package.json at the working directory; user exp
 [ ] Generated config file is at the correct path (Flow A: `~/.stagecoach/defaults.json`; Flow B/C: project root)
 [ ] (Flow B only) `.gitignore` includes the personal-scratchpad and AI-tooling-workspace entries
 [ ] (Flow B only) Initial git commit created on `main`
-[ ] Next-step pointer printed to the user
+[ ] Step 3 (CI/CD baseline check) ran in Flow B and Flow C (skipped in Flow A)
+[ ] Step 3 detected ci_cd_ready accurately based on the four markers
+[ ] (Step 3 + ci_cd_ready false + user said no) `.stagecoach/.skip-ci-cd` sentinel file written
+[ ] Next-step pointer printed to the user, including CI/CD baseline status line
 
 ---
 

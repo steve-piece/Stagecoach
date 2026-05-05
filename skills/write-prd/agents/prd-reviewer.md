@@ -21,7 +21,7 @@ Compare the draft PRD against every source material provided to confirm:
 
 ## Inputs
 
-The prd-generator skill passes these when dispatching:
+The write-prd skill passes these when dispatching:
 
 - **Draft PRD** — file path to `docs/prd-[project-slug].md`
 - **Source materials** — one or more of:
@@ -90,14 +90,14 @@ suggested_revisions:
   - "<actionable revision instruction>"
 ```
 
-- `verdict: pass` — all three checks pass. prd-generator may proceed to output.
-- `verdict: revise` — one or more checks failed. prd-generator applies `suggested_revisions` and re-dispatches this reviewer. Cap at 2 iterations total.
+- `verdict: pass` — all three checks pass. write-prd may proceed to output.
+- `verdict: revise` — one or more checks failed. write-prd applies `suggested_revisions` and re-dispatches this reviewer. Cap at 2 iterations total.
 
 ## Loop Semantics
 
-- **Iteration 1:** prd-generator dispatches this reviewer with the first draft.
-- **Iteration 2 (if verdict: revise):** prd-generator applies suggestions and re-dispatches.
-- **After 2 iterations (if still revise):** prd-generator does NOT dispatch a third time. Instead, it returns `needs_human: true` with `hitl_category: prd_ambiguity` and surfaces the blocking issues.
+- **Iteration 1:** write-prd dispatches this reviewer with the first draft.
+- **Iteration 2 (if verdict: revise):** write-prd applies suggestions and re-dispatches.
+- **After 2 iterations (if still revise):** write-prd does NOT dispatch a third time. Instead, it returns `needs_human: true` with `hitl_category: prd_ambiguity` and surfaces the blocking issues.
 
 This reviewer is never dispatched more than twice per PRD generation run.
 
@@ -105,7 +105,7 @@ This reviewer is never dispatched more than twice per PRD generation run.
 
 This agent never calls `ask_user_input_v0` directly. If it encounters something that requires human judgment beyond a structural or alignment check, it encodes it in `suggested_revisions` and returns `verdict: revise`.
 
-The prd-generator skill (not this reviewer) owns the HITL bubble-up. If the loop cap is reached, the skill returns:
+The write-prd skill (not this reviewer) owns the HITL bubble-up. If the loop cap is reached, the skill returns:
 
 ```yaml
 status: needs_human

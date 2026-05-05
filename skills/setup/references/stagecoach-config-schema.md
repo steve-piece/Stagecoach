@@ -61,7 +61,7 @@ When two sources disagree, the higher-precedence source wins. The orchestrator l
     "retrospectiveReviewer": "opus"
   },
 
-  // Per-stage shape preferences for prd-to-phased-plans + ship-feature.
+  // Per-stage shape preferences for plan-phases + ship-feature.
   "stages": {
     "maxTasksPerStage": 6,            // hard cap per stage; default 6
     "targetFeatureStages": "20-30"    // splitter aims for this band; "10-15" or "30-40" also reasonable
@@ -98,8 +98,8 @@ When two sources disagree, the higher-precedence source wins. The orchestrator l
     ]
   },
 
-  // External rule-file imports (matches prd-to-phased-plans elicitation Q9).
-  // When non-empty, prd-to-phased-plans skips Q9 and uses these directly.
+  // External rule-file imports (matches plan-phases elicitation Q9).
+  // When non-empty, plan-phases skips Q9 and uses these directly.
   "rules": {
     "imports": [
       // "https://github.com/your-org/agentic-rules/blob/main/monorepo-nextjs/CLAUDE.md"

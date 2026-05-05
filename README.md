@@ -62,6 +62,25 @@ flowchart TD
 2. **`/stagecoach:plan-phases`** decomposes the PRD into `docs/plans/00_master_checklist.md` plus four canned foundation stages and 20–30 vertical-slice feature stages. Linear is optional — a question gate in this skill asks whether to mirror to issue-tracking.
 3. **`/stagecoach:run-pipeline`** drives the entire plan end-to-end. For each stage it dispatches a `stage-runner` subagent that loads the right skill, verifies the result via a `pr-reviewer` subagent, and advances only after a clean `main`.
 
+### Adding features after the original plan ships
+
+Once the original PRD-to-app run is complete (every stage in the master checklist marked `Completed`), use **`/stagecoach:add-feature`** to bolt on additional features without rewriting the whole plan:
+
+```mermaid
+flowchart TD
+    Add["/stagecoach:add-feature"]
+    Add --> Detect{"docs/plans/<br/>00_master_checklist.md<br/>exists?"}
+    Detect -- No --> Setup["redirect to /stagecoach:setup<br/>(includes Step 3 CI/CD<br/>baseline check)"]
+    Detect -- Yes --> Elicit["plan-mode question gate<br/>(features, relationships,<br/>conventions, mvp band)"]
+    Elicit --> Assess["complexity-assessor<br/>(sonnet, medium)"]
+    Assess --> Auth["surface breakdown<br/>+ user authorization"]
+    Auth --> Write["phased-plan-writer<br/>(incremental mode)<br/>writes new stage_N+1..N+k"]
+    Write --> Master["update<br/>00_master_checklist.md"]
+    Master --> Handoff["/stagecoach:ship-feature<br/>or /stagecoach:run-pipeline"]
+```
+
+The new stages flow through the same `ship-feature` pipeline as the original work, so they get the full CI gate (`@feature` + `@regression-core` + `@visual` + design-system-compliance + `db-schema-drift` if applicable). For non-Stagecoach apps that want to use Stagecoach for incremental feature delivery, run `/stagecoach:setup` first — Step 3 (new in v2.2) checks for the CI/CD baseline and offers to scaffold it.
+
 ## Stage Architecture
 
 ### Stage 0 — Setup (entry point for every Stagecoach project)
@@ -183,6 +202,14 @@ Orchestrate `type: backend | full-stack | infrastructure | db-schema` feature st
 - `quality-reviewer` — code quality + DB schema verification (opus, high)
 - `ci-cd-guardrails` — CI/CD safety pass (sonnet, medium)
 
+### add-feature
+
+Bolt new features onto an existing project mid-flight. Auto-detects whether the project was built with Stagecoach (`docs/plans/00_master_checklist.md` present) or not. For Stagecoach projects: runs the `complexity-assessor` subagent to judge single-stage vs multi-stage per feature, surfaces the proposed breakdown for user authorization, then dispatches `phased-plan-writer` in incremental mode to write the new stage files (continuing the existing stage numbering) and updates the master checklist. Hands off to `/stagecoach:ship-feature` (single stage) or `/stagecoach:run-pipeline` (multiple stages) for delivery — both exercise the full CI gate. For non-Stagecoach apps, redirects to `/stagecoach:setup` (which now includes a Step 3 CI/CD baseline check for apps not going through the full PRD-to-phased-dev workflow).
+
+**Dispatched subagents:**
+- `complexity-assessor` — sonnet, medium; judges single-stage vs multi-stage and proposes the per-feature stage breakdown (read-only)
+- `phased-plan-writer` (incremental mode, borrowed from `plan-phases`) — sonnet, medium; writes one stage file per invocation
+
 ### run-pipeline
 
 Drive an entire phased plan end-to-end as a conductor (NOT autopilot). Reads the master checklist, dispatches the correct skill per stage `type`, verifies each PR via a `pr-reviewer` subagent, enforces the clean-`main` invariant between stages. The orchestrator is the **only** surface that prompts the human — all subagents bubble HITL triggers up via the structured return contract.
@@ -207,9 +234,10 @@ Cross-stage friction detection after a full plan completes. Reads the master che
 
 | Command (published form) | Skill loaded | When to use |
 |---|---|---|
-| `/stagecoach:setup` | `setup` | Stage 0 — first-time install, new-project scaffold, OR per-project config (auto-detects flow) |
+| `/stagecoach:setup` | `setup` | Stage 0 — first-time install, new-project scaffold, OR per-project config + CI/CD baseline check (auto-detects flow) |
 | `/stagecoach:write-prd` | `write-prd` | Turn a free-form brief into a structured PRD |
 | `/stagecoach:plan-phases` | `plan-phases` | Decompose a PRD into foundation + feature stage files |
+| `/stagecoach:add-feature` | `add-feature` | Bolt 1+ new features onto an existing master checklist after the original PRD-to-app run |
 | `/stagecoach:run-pipeline` | `run-pipeline` | Drive the entire plan end-to-end |
 | `/stagecoach:init-design-system` | `init-design-system` | Run the design system stage standalone |
 | `/stagecoach:scaffold-ci-cd` | `scaffold-ci-cd` | Bootstrap CI/CD infrastructure (auto-runs as Stage 2) |
@@ -299,7 +327,10 @@ Unless overridden in the PRD elicitation questions, projects use:
 - **`bootstrap` skill folded into the new `setup` umbrella.** Standalone `bootstrap` skill removed; its functionality is now Step 1 of `/stagecoach:setup`. The setup skill auto-detects whether you're starting fresh (Flow B) or in an existing project (Flow C) and runs the right flow.
 - **First-time install flow added.** A separate Flow A inside `/stagecoach:setup` creates `~/.stagecoach/defaults.json` so future projects can opt in to your machine-wide defaults via a single Group 1 question instead of re-answering the per-section setup questions.
 - **References moved into the setup skill.** `references/model-tier-guide.md`, `references/stagecoach-config-schema.md`, and the root-level `stagecoach.config.example.json` all moved to `skills/setup/references/`. Cross-references updated.
-- **Migration steps:** if you had any local docs / scripts referencing the old paths or skill names, update them. If you had a per-project `stagecoach.config.json` from v2.1, no changes — the schema is unchanged.
+- **NEW — `/stagecoach:add-feature` skill.** Bolts new features onto an existing project after the original PRD-to-app run is complete. Auto-detects Stagecoach-built vs not vs no-project-on-disk and routes accordingly. For Stagecoach projects, runs the `complexity-assessor` subagent (judges single-stage vs multi-stage), writes new stage files via `phased-plan-writer` in incremental mode, and hands off to `ship-feature` for delivery. For non-Stagecoach apps, redirects to `setup`.
+- **NEW — `phased-plan-writer` incremental mode.** The agent now operates in two modes: `plan-phases` mode (original PRD-to-app run, stages 5+) and `incremental` mode (dispatched by `add-feature`, any stage number, no PRD context required, complexity-assessor output as primary input).
+- **NEW — Step 3 CI/CD baseline check in setup.** Flow B and Flow C now check for the four CI/CD baseline markers (ci.yml, design-system-compliance.yml, husky pre-push, PR template) and offer to scaffold via `/stagecoach:scaffold-ci-cd` if missing. This makes Stagecoach viable for apps that aren't going through the full PRD-to-phased-dev workflow but still want the per-feature CI gate.
+- **Migration steps:** if you had any local docs / scripts referencing the old paths or skill names, update them. If you had a per-project `stagecoach.config.json` from v2.1, no changes — the schema is unchanged. If you have a Stagecoach project that already shipped its plan, you can immediately run `/stagecoach:add-feature` to extend it.
 
 ### From v2.0 to v2.1
 
