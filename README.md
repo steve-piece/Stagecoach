@@ -36,27 +36,23 @@ All Stagecoach slash commands are auto-namespaced under `stagecoach:` once the p
 
 ```mermaid
 flowchart TD
-    Start([new project — nothing on disk yet]):::optional
-    Start --> Bootstrap["/stagecoach:bootstrap (Stage 0)"]
+    Bootstrap["/stagecoach:bootstrap<br/>(Stage 0, optional)"]
     Bootstrap --> Root["new project root<br/>+ stagecoach.config.json<br/>+ ROADMAP.local.md"]
-
     Root --> Brief["Project Brief + Brand Assets"]
-    Brief --> CD["Claude Design (out-of-band, optional)"]:::optional
-    CD --> Bundle["Claude Design handoff bundle"]
+    Brief --> CD["Claude Design<br/>(out-of-band, optional)"]
+    CD --> Bundle["handoff bundle"]
     Brief --> PRDGen["/stagecoach:prd-generator"]
     Bundle --> PRDGen
     PRDGen --> PRD["docs/prd-slug.md"]
     PRD --> Phased["/stagecoach:prd-to-phased-plans"]
-    Phased --> Plans["docs/plans/<br/>00_master_checklist.md<br/>+ stage_1_design_system_gate.md (canned)<br/>+ stage_2_ci_cd_scaffold.md (canned)<br/>+ stage_3_env_setup_gate.md (canned)<br/>+ stage_4_db_schema_foundation.md (canned, conditional)<br/>+ stage_5..N feature stages (20-30, vertical slices)"]
+    Phased --> Plans["docs/plans/<br/>00_master_checklist.md<br/>+ stages 1-4 canned<br/>+ stages 5..N feature"]
     Plans --> Orchestrator["/stagecoach:orchestrator"]
-    Orchestrator -->|stage 1| DSGate["sp-design-system-gate"]
-    Orchestrator -->|stage 2| Scaffold["sp-ci-cd-scaffold"]
-    Orchestrator -->|stage 3| EnvGate["sp-environment-setup-gate"]
-    Orchestrator -->|stage 4| DBSchema["sp-feature-delivery (DB context)"]
-    Orchestrator -->|type:frontend| FE["sp-frontend-design"]
-    Orchestrator -->|type:backend/full| Feature["sp-feature-delivery"]
-
-    classDef optional stroke-dasharray: 5 5;
+    Orchestrator --> DSGate["Stage 1: design-system-gate"]
+    Orchestrator --> Scaffold["Stage 2: ci-cd-scaffold"]
+    Orchestrator --> EnvGate["Stage 3: env-setup-gate"]
+    Orchestrator --> DBSchema["Stage 4: db-schema (cond.)"]
+    Orchestrator --> FE["frontend stages: sp-frontend-design"]
+    Orchestrator --> Feature["backend / full-stack: sp-feature-delivery"]
 ```
 
 ### The high-level loop
