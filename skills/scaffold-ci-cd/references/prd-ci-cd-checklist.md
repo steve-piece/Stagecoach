@@ -3,7 +3,9 @@
 These rules govern how master-checklist updates, CI gates, and PR shape interact across every Stagecoach run. The orchestrator surfaces these as guardrails to every stage skill that touches CI workflows or the master checklist; scaffold-ci-cd itself enforces them when scaffolding the baseline.
 
 [ ] Before any phased-plan integration run, update `docs/plans/00_master_checklist.md` with current stage status and exact in-scope checklist items.
+
 [ ] After any phased-plan integration run, immediately update `docs/plans/00_master_checklist.md` with completion status, notes, and verification outcomes.
+
 [ ] CI must gate merges on: lint, typecheck, unit/integration tests, `@feature` E2E, `@regression-core` E2E, `@visual` E2E, design-system-compliance, and (if applicable) db-schema-drift.
 [ ] Do not mark checklist items complete until all required local and CI gates are green for that slice.
 [ ] Expand CI/E2E coverage when shared routes, components, schemas, or APIs are modified; include both changed-flow and regression-core tests.
