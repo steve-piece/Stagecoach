@@ -35,6 +35,8 @@ If a config-supplied answer covers a question, log a one-liner ("Q9 answered fro
 
 Ask each question with `ask_user_input_v0` before writing any files. Answers build the project rules file section by section.
 
+**Always provide a recommended answer in available options.**
+
 **Q1 — MVP scope**
 > "Is this MVP-only (everything ships in Phase 1) or do you want an MVP + Phase 2 split?"
 > single_select: ["MVP only — all stages are Phase 1", "MVP + Phase 2 — flag which stages are post-launch"]

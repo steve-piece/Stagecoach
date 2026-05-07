@@ -4,6 +4,37 @@ All notable changes to **Stagecoach** are recorded here. The format is loosely [
 
 ---
 
+## [3.0.0] — 2026-05-07
+
+Major restructure: subagent-driven everything, single delivery loop, real per-stage verification.
+
+### Added
+- **`/stagecoach:deliver-stage`** — the new everyday delivery loop. Replaces both `/ship-feature` and `/ship-frontend`. Reads the master checklist, picks the next `Not Started` stage, dispatches the right sub-skill or internal pipeline by `type:`, runs the per-stage review pipeline, and opens the PR. Run it once per slice, in a fresh chat, until the master checklist is done.
+- **Phase 6 — basic-checks-runner** (lint / typecheck / build) gates the per-stage output summary. No "stage complete" report until these pass.
+- **Phase 7 — aggregating-test-reviewer** with type-aware depth: full review (dev-server boot + Claude-in-Chrome browser UAT + visual diff against tokens) for `frontend` / `full-stack` slices; reduced review (CI gates only) for `backend` / `db-schema` / `infrastructure`; skipped for foundation stages where Phase 6 is sufficient.
+- **fix-attempter agent** — first-pass targeted-fix when basic-checks or aggregating-review fails.
+- **debug-instrumenter agent** — second-pass; adds `// INSTRUMENT`-marked logging into still-failing modules so the next fix-attempter dispatch has data. Orchestrator strips instrumentation after the green run.
+- **`/library` operator-only preview route** — `init-design-system` now scaffolds a Storybook-like in-app component preview at `app/(dashboard)/library/` (or detected route-group equivalent) after the design-system bootstrap. Left sidebar with search + entries, main pane showing every variant × every state, sidebar bottom rail theme toggle (Sun/Moon, persisted via `next-themes`). The route is audited out of every navigation surface (sidebar, top nav, mobile sheet, sitemap, robots, breadcrumbs) and seeded with a Buttons example. Owned by the new `library-route-scaffolder` agent.
+- **Phase 4.5 — Library Preview Gate** in deliver-stage's frontend pipeline. Non-skippable. Fires when a stage either (a) authors a new component or block, OR (b) modifies any user-visible surface (props, copy, content, variants, states, styles) of an existing library component as it appears in a production route. Pure internal refactors with no rendered-output delta are exempt. Owned by the new `library-entry-writer` agent, dispatched in `mode: "new"` (append a fresh `/library/<slug>` entry) or `mode: "modify"` (update the existing entry's matrix with the delta). The orchestrator HITLs the user with `hitl_category: "creative_direction"` for explicit approval / revision (cap 2 loops) / rejection before any production-route import or consumer-side user-visible edit lands.
+- **26 new subagents** authored across the plugin so every heavy workflow step has an owner: `rules-loader`, `basic-checks-runner`, `aggregating-test-reviewer`, `fix-attempter`, `debug-instrumenter`, `library-entry-writer` (deliver-stage); `scaffold-discovery`, `framework-detector`, `e2e-installer`, `workflow-writer`, `husky-installer`, `lint-config-writer`, `branch-protection-writer`, `local-gates-runner` (scaffold-ci-cd, which previously had zero); `env-scanner`, `github-secrets-scanner`, `checklist-generator` (setup-environment); `library-route-scaffolder` (init-design-system); `bootstrap-runner`, `config-generator`, `ci-cd-detector` (setup); `brief-analyzer`, `consistency-checker` (write-prd); `stage-decomposer`, `rules-assembler` (plan-phases); `proposal-drafter` (review-pipeline).
+- **"Always provide a recommended answer"** directive added to every clarifying-question phase across the plugin (scaffold-ci-cd, setup, plan-phases, write-prd, add-feature, init-design-system, review-pipeline, deliver-stage Phase 2).
+
+### Changed
+- **`/ship-feature` and `/ship-frontend` are gone.** They're replaced by `/stagecoach:deliver-stage`. The frontend pipeline (modern-ux-expert → layout-architect → block-composer → component-crafter → state-illustrator → visual-reviewer) lives under `skills/deliver-stage/agents/frontend/` and runs as Phase 4 of `deliver-stage` when the active stage has `type: frontend`.
+- **Foundation skills are now sub-skills of `deliver-stage`.** Physically moved under `skills/sub-disciplines/` (`init-design-system`, `scaffold-ci-cd`, `setup-environment`). They remain user-invocable as escape hatches; documentation everywhere now labels them "Sub-skill of `/stagecoach:deliver-stage`."
+- **`/run-pipeline` is now explicitly experimental.** It no longer duplicates stage-routing logic; its `stage-runner` agent is a thin wrapper that invokes `/stagecoach:deliver-stage` per stage. Same artifacts, same Phase 6/7 gates, regardless of whether you run `deliver-stage` directly or through `run-pipeline`. README diagram now shows `run-pipeline` as a dashed sidecar.
+- **`scaffold-ci-cd` SKILL.md slimmed from 275 lines to ~190** — the workflow is now an orchestrator that dispatches eight specialized agents instead of inlining detection, template-writing, husky install, eslint config, and branch-protection logic.
+- **`setup-environment` SKILL.md now dispatches `env-scanner` / `github-secrets-scanner` / `checklist-generator`** instead of inlining the scanning and checklist-rendering logic.
+- **`/stagecoach:add-feature` now hands off to `/stagecoach:deliver-stage`** (was: `/ship-feature`).
+
+### Migration
+- `/ship-feature` → `/stagecoach:deliver-stage` (drop-in for backend/full-stack/db-schema/infrastructure stages).
+- `/ship-frontend` → `/stagecoach:deliver-stage` (auto-routes to the frontend pipeline when the stage has `type: frontend`).
+- Existing `/run-pipeline` invocations continue to work; the only behavioral change is that each stage now runs through `deliver-stage`'s Phase 6/7 verifications.
+- Foundation-skill commands (`/init-design-system`, `/scaffold-ci-cd`, `/setup-environment`) still work as escape hatches; the documented entry point is `deliver-stage`, which dispatches them automatically by stage type.
+
+---
+
 ## [2.2.1] — 2026-05-05
 
 ### Changed

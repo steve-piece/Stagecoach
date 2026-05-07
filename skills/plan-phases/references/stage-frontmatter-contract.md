@@ -85,4 +85,4 @@ Every stage must include `tests_passing`. Common additional criteria by type:
 This contract is referenced by:
 - `skills/plan-phases/agents/` — all stage writer agents
 - `skills/run-pipeline/SKILL.md` — for stage routing by `type`
-- `skills/ship-feature/SKILL.md` — receives stage frontmatter as execution context
+- `skills/deliver-stage/SKILL.md` — receives stage frontmatter as execution context

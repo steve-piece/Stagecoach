@@ -52,7 +52,7 @@ After `create-turbo` runs, the user typically removes the example apps (`apps/we
 If you want to add a stack, the contract is:
 1. Add a new `Q3 — Stack` option to `skills/setup/SKILL.md`'s plan-mode gate.
 2. Add the scaffold invocation to Phase 2.
-3. Verify the downstream skills (`init-design-system`, `scaffold-ci-cd`, `ship-frontend`, `ship-feature`) work with the new stack — many will not without per-stack adapters.
+3. Verify the downstream skills (`init-design-system`, `scaffold-ci-cd`, `deliver-stage` (incl. frontend pipeline)) work with the new stack — many will not without per-stack adapters.
 
 In practice this is a much larger change than just adding a scaffold command. Adding a non-Next.js stack to Stagecoach is a v3 conversation, not a v2.x patch.
 

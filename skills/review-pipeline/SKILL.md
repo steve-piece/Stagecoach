@@ -54,7 +54,10 @@ flowchart LR
 
 ### Step 1 — Determine scope
 
-Ask the user (via `ask_user_input_v0`) which scope to review:
+Ask the user (via `ask_user_input_v0`) which scope to review.
+
+**Always provide a recommended answer in available options.**
+
 
 > "Which scope should I review for this retrospective?"
 > single_select:

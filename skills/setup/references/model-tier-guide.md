@@ -36,18 +36,18 @@ The table below reflects the **actual current values** in each agent file. Where
 | **init-design-system** | compliance-pre-check | `sonnet` | medium | — |
 | **init-design-system** | token-expander | `opus` | high | — |
 | **setup-environment** | env-verifier | `haiku` | low | — |
-| **ship-feature** | checklist-curator | `sonnet` | medium | yes |
-| **ship-feature** | ci-cd-guardrails | `sonnet` | medium | yes |
-| **ship-feature** | discovery | `haiku` | medium | yes |
-| **ship-feature** | implementer | `opus` | xhigh | — |
-| **ship-feature** | quality-reviewer | `opus` | high | yes |
-| **ship-feature** | spec-reviewer | `sonnet` | medium | yes |
-| **ship-frontend** | block-composer | `sonnet` | medium | — |
-| **ship-frontend** | component-crafter | `sonnet` | medium | — |
-| **ship-frontend** | layout-architect | `sonnet` | medium | — |
-| **ship-frontend** | modern-ux-expert | `sonnet` | medium | — |
-| **ship-frontend** | state-illustrator | `sonnet` | medium | — |
-| **ship-frontend** | visual-reviewer | `sonnet` | medium | yes |
+| **deliver-stage** | checklist-curator | `sonnet` | medium | yes |
+| **deliver-stage** | ci-cd-guardrails | `sonnet` | medium | yes |
+| **deliver-stage** | discovery | `haiku` | medium | yes |
+| **deliver-stage** | implementer | `opus` | xhigh | — |
+| **deliver-stage** | quality-reviewer | `opus` | high | yes |
+| **deliver-stage** | spec-reviewer | `sonnet` | medium | yes |
+| **deliver-stage** (frontend) | block-composer | `sonnet` | medium | — |
+| **deliver-stage** (frontend) | component-crafter | `sonnet` | medium | — |
+| **deliver-stage** (frontend) | layout-architect | `sonnet` | medium | — |
+| **deliver-stage** (frontend) | modern-ux-expert | `sonnet` | medium | — |
+| **deliver-stage** (frontend) | state-illustrator | `sonnet` | medium | — |
+| **deliver-stage** (frontend) | visual-reviewer | `sonnet` | medium | yes |
 | **add-feature** | complexity-assessor | `sonnet` | medium | yes |
 | **add-feature** | phased-plan-writer (incremental mode) | `sonnet` | medium | — |
 | **run-pipeline** | pr-reviewer | `sonnet` | medium | yes |
