@@ -16,7 +16,7 @@ This skill is the orchestrator for the CI/CD baseline. It does not write workflo
 | File | Purpose |
 | --- | --- |
 | [references/scaffold-artifact-templates.md](references/scaffold-artifact-templates.md) | Verbatim file templates for every CI/CD artifact (workflows, husky hook, PR template, regex sweep script, etc.). Every implementer agent reads this before writing. |
-| [references/prd-ci-cd-checklist.md](references/prd-ci-cd-checklist.md) | Required guardrails for master-checklist updates, CI gate alignment, deterministic pipelines, slice-per-PR rule, and failure-artifact upload. |
+| [references/prd-ci-cd-checklist.md](references/prd-ci-cd-checklist.md) | **Project-wide runtime guardrails**, not scaffold-time setup. Master-checklist updates, CI gate alignment, deterministic pipelines, slice-per-PR rule, failure-artifact upload — these apply to every agent on every PR. Sub-block G of Phase 3 appends this content into the project rules file (CLAUDE.md / AGENTS.md) so every later stage skill picks it up automatically. |
 
 ## Subagent Roster
 
@@ -93,8 +93,28 @@ Each sub-block dispatches its agent, waits for the structured return, and commit
 | D | (orchestrator direct) | `.github/pull_request_template.md` from the templates file |
 | E | `lint-config-writer` | eslint-plugin-tailwindcss config additions, `.stylelintrc.json`, `.gitignore` updates |
 | F | `branch-protection-writer` | `scripts/setup-branch-protection.sh` (executable) |
+| G | (orchestrator direct) | Project rules file (CLAUDE.md / AGENTS.md) "CI/CD Operational Rules" section populated from `references/prd-ci-cd-checklist.md` |
 
-After each sub-block, run a spec-compliance + code-quality review pass (reuse `deliver-stage/agents/spec-reviewer.md` and `deliver-stage/agents/quality-reviewer.md`). Fix findings before moving to the next sub-block.
+After each sub-block A–F, run a spec-compliance + code-quality review pass (reuse `deliver-stage/agents/spec-reviewer.md` and `deliver-stage/agents/quality-reviewer.md`). Fix findings before moving to the next sub-block. Sub-block G is a deterministic file write and does not need a review pass.
+
+#### Sub-block G — Append CI/CD operational rules to the project rules file
+
+The orchestrator (no subagent dispatch — this is a small, deterministic write similar to sub-block D's PR template):
+
+1. Locate the project rules file. If `plan-phases` ran first, the file already exists at `CLAUDE.md` or `AGENTS.md` per Q12, with a placeholder section labeled "CI/CD Operational Rules — populated by `scaffold-ci-cd`" written by the `rules-assembler` agent.
+2. If the placeholder is present, replace its body with the contents of `references/prd-ci-cd-checklist.md` (preserving the `[ ]` checkbox format verbatim — these are runtime gates the user and every agent walk on every PR, not one-time scaffold checks).
+3. If the placeholder is absent (e.g. the project skipped `plan-phases` and ran `/scaffold-ci-cd` directly as an escape hatch), append a new section to the project rules file:
+   ```markdown
+   <!-- stagecoach: ci-cd-operational-rules-start -->
+   ## CI/CD Operational Rules
+
+   These rules govern how master-checklist updates, CI gates, and PR shape interact across every Stagecoach run. They apply to every agent on every PR — not only to the one-time CI/CD scaffolding.
+
+   <!-- contents of references/prd-ci-cd-checklist.md, verbatim -->
+   <!-- stagecoach: ci-cd-operational-rules-end -->
+   ```
+4. **Idempotent re-runs.** If the section markers already exist, replace the body in place; never duplicate the section. User-edited content between the markers should be surfaced as a conflict via HITL `destructive_operation` rather than overwritten silently.
+5. If neither `CLAUDE.md` nor `AGENTS.md` exists at the project root, create `CLAUDE.md` with just this section plus a one-line precedence header. Surface to the user that a fuller rules file should ideally be assembled by `/plan-phases`.
 
 ### Phase 4 — Local Verification Gates
 
@@ -168,6 +188,7 @@ Run this checklist at the end of every run. Do **not** consider the scaffold "do
 [ ] `.eslintrc.json` (or equivalent) has `eslint-plugin-tailwindcss` config additions.
 [ ] `.stylelintrc.json` exists with CSS-file token checks.
 [ ] `.gitignore` excludes `playwright-report/`, `test-results/`, `.playwright/`, and Vizzly diff artifacts.
+[ ] Project rules file (`CLAUDE.md` or `AGENTS.md`) has a "CI/CD Operational Rules" section populated verbatim from `references/prd-ci-cd-checklist.md`, delimited by the `<!-- stagecoach: ci-cd-operational-rules-{start,end} -->` markers, so every later stage skill picks up the runtime guardrails automatically.
 
 ### 2. Test Suites and Scripts Present
 

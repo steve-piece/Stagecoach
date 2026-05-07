@@ -55,6 +55,9 @@ You are the **rules-assembler** for `/plan-phases`. Your job: produce a clean, l
    **Placeholder section for design-system rules**
    - Empty section labeled "Design System Rules — populated by `init-design-system`". This anchor is what `init-design-system` later fills.
 
+   **Placeholder section for CI/CD operational rules**
+   - Empty section labeled "CI/CD Operational Rules — populated by `scaffold-ci-cd`". This anchor is what `scaffold-ci-cd` later fills with the contents of [`skills/sub-disciplines/scaffold-ci-cd/references/prd-ci-cd-checklist.md`](../../sub-disciplines/scaffold-ci-cd/references/prd-ci-cd-checklist.md). These are runtime guardrails (master-checklist updates, CI gate alignment, deterministic pipelines, slice-per-PR rule, failure-artifact upload) that every agent on every PR must respect — they live in the project rules file because they apply to all stage skills, not just to the one-time CI/CD scaffolding.
+
 4. Write the assembled content to the target file path.
 
 ## Output Contract
@@ -68,6 +71,7 @@ sections_written:
   - stagecoach_workflow_notes
   - project_specific_imports     # one entry per Q9 URL
   - design_system_placeholder
+  - ci_cd_operational_placeholder
 preexisting_content_preserved: true | false
 total_lines_written: <int>
 imports_fetched: [<URLs>]
