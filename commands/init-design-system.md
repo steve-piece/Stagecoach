@@ -1,26 +1,29 @@
 <!-- commands/init-design-system.md -->
-<!-- Slash command shim that loads the init-design-system skill to bootstrap the project design system as Stage 1. -->
+<!-- Slash command that loads the init-design-system skill. Sub-skill of /deliver-stage; auto-dispatched on type:design-system stages. -->
 
 ---
-description: Bootstrap the project design system as Stage 1. Validates Claude Design bundle if present, otherwise expands brand brief. Outputs globals.css, Tailwind config, design-system.md, and design-system rules in project rules file. Required before any UI work.
+description: Sub-skill of /stagecoach:deliver-stage. Bootstraps the project design system. Validates Claude Design bundle if present, otherwise expands brand brief. Outputs globals.css, Tailwind config, design-system.md, and design-system rules in project rules file. Auto-dispatched by /deliver-stage on type:design-system stages; invoke directly to re-run the design-system foundation manually.
 ---
 
 # /init-design-system
 
-Load and follow the [`init-design-system`](../skills/init-design-system/SKILL.md) skill.
+Load and follow the [`init-design-system`](../skills/sub-disciplines/init-design-system/SKILL.md) skill.
 
-The skill runs canned Stage 1 of every project — validate or generate a complete design system before any feature work begins:
+**Sub-skill of `/stagecoach:deliver-stage`.** This skill is normally dispatched automatically when `deliver-stage` encounters a `type: design-system` stage. Run it directly only when you need to re-validate or re-generate the design-system foundation outside the normal stage loop.
 
-1. Checks for an uploaded Claude Design bundle. If present, validates and extracts tokens. If absent, expands the brand brief using defaults.
-2. Outputs canonical token files: `globals.css`, Tailwind config, and `design-system.md`.
-3. Writes design-system rules into the project rules file so every subsequent stage inherits them.
-4. Opens a PR to `main` and verifies it passes CI before returning.
+The skill validates or generates a complete design system before any feature work begins:
+
+1. Detects mode — bundle-first (Claude Design export provided) or brief-first (brand description only).
+2. Validates token completeness via `compliance-pre-check`. Refuses to complete until every required token category is satisfied.
+3. Writes `app/globals.css`, `tailwind.config.ts`, and `docs/design-system.md`.
+4. Captures project-specific code patterns (variant library, status indicators, icon library, etc.).
+5. Appends the design-system rules block to the project rules file.
 
 ## Preconditions
 
-- Working tree is clean on `main`.
 - A brand brief or Claude Design bundle is available (or defaults are acceptable).
+- Project rules file path known (CLAUDE.md or AGENTS.md).
 
 ## When to use this command
 
-Use `/init-design-system` to run Stage 1 manually. The orchestrator (`/run-pipeline`) invokes this automatically when driving a full plan. No UI feature work should begin until this gate completes.
+Use `/init-design-system` directly only as an escape hatch — for example, if your design tokens drifted and you want a clean re-validation pass. The everyday entry point is `/stagecoach:deliver-stage`, which runs this sub-skill automatically when the next pending stage has `type: design-system`.

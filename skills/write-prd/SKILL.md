@@ -35,6 +35,8 @@ After reading the brief and any uploaded specs, MUST enter plan mode before gene
 
 **Analyze the brief for ambiguities, then generate 3–7 clarifying questions.** Do not generate more than 7. Cover only what is genuinely ambiguous after inference from context and defaults. Present questions ONE AT A TIME using `ask_user_input_v0` (use `single_select` or `multi_select` where possible — avoid free-text when a choice set is realistic).
 
+**Always provide a recommended answer in available options.**
+
 **Question topics to cover (only if ambiguous in the brief):**
 
 - **Target users** — who specifically will use this product? (if vague)

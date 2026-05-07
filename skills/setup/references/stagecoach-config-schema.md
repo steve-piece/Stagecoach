@@ -61,14 +61,14 @@ When two sources disagree, the higher-precedence source wins. The orchestrator l
     "retrospectiveReviewer": "opus"
   },
 
-  // Per-stage shape preferences for plan-phases + ship-feature.
+  // Per-stage shape preferences for plan-phases + deliver-stage.
   "stages": {
     "maxTasksPerStage": 6,            // hard cap per stage; default 6
     "targetFeatureStages": "20-30"    // splitter aims for this band; "10-15" or "30-40" also reasonable
   },
 
-  // Which MCPs the project has installed. Read by ship-frontend,
-  // ship-feature, init-design-system.
+  // Which MCPs the project has installed. Read by deliver-stage (frontend pipeline),
+  // deliver-stage, init-design-system.
   // If the project rules file ALSO declares MCPs, this config wins.
   "mcps": {
     "shadcn": true,
@@ -79,7 +79,7 @@ When two sources disagree, the higher-precedence source wins. The orchestrator l
     "gitnexus": true
   },
 
-  // Visual review tooling for ship-frontend's visual-reviewer.
+  // Visual review tooling for deliver-stage's visual-reviewer.
   // The "tools" array is an ORDERED priority list — the agent uses
   // the first available one. Defaults match the plugin's hardcoded
   // priority: claude-in-chrome > chrome-devtools-mcp > playwright > vizzly.

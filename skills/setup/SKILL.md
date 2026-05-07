@@ -81,7 +81,7 @@ If the user explicitly asks for first-time install (e.g. "configure my Stagecoac
 
 **When this fires:** working directory contains a `package.json`.
 
-Skip Step 1 entirely. Run **Step 2** then **Step 3**. Step 3 is what makes this flow viable for projects that aren't going through the full PRD-to-phased-dev workflow — `add-feature` and `ship-feature` need the CI/CD baseline to be present.
+Skip Step 1 entirely. Run **Step 2** then **Step 3**. Step 3 is what makes this flow viable for projects that aren't going through the full PRD-to-phased-dev workflow — `add-feature` and `deliver-stage` need the CI/CD baseline to be present.
 
 ---
 
@@ -197,6 +197,8 @@ If no: continue to Group 2.
 
 One question per top-level config section. Multi-select where multiple apply, single-select otherwise. Sections that take freeform input ("custom rules", "additional categories", "bootstrap defaults") include a "No / skip" option plus a text-input alternative.
 
+**Always provide a recommended answer in available options.**
+
 **Q-modelTiers**
 > "How do you want to handle per-agent model tier assignments? Each agent has a default tier per [`skills/setup/references/model-tier-guide.md`](references/model-tier-guide.md). Most projects don't need overrides."
 > single_select: ["Use plugin defaults (recommended)", "I'll edit the modelTiers block manually after generation"]
@@ -258,7 +260,7 @@ Print the resolved values back to the user before continuing to Step 3.
 
 ## Step 3 — CI/CD Baseline Check (Flow B and Flow C only — skipped in Flow A)
 
-Apps that haven't run `/stagecoach:scaffold-ci-cd` lack the gates that `/stagecoach:ship-feature` expects (typecheck, lint, design-system-compliance, `@feature` E2E, `@regression-core` E2E, `@visual` E2E, optional `db-schema-drift`). This step detects whether the baseline exists and offers to scaffold it for projects that aren't going through the full PRD-to-phased-dev workflow.
+Apps that haven't run `/stagecoach:scaffold-ci-cd` lack the gates that `/stagecoach:deliver-stage` expects (typecheck, lint, design-system-compliance, `@feature` E2E, `@regression-core` E2E, `@visual` E2E, optional `db-schema-drift`). This step detects whether the baseline exists and offers to scaffold it for projects that aren't going through the full PRD-to-phased-dev workflow.
 
 ### Detection
 
@@ -277,13 +279,13 @@ If any marker is missing, set `ci_cd_ready: false` and ask the user.
 
 ### Q-ci-cd-baseline (only if `ci_cd_ready: false`)
 
-> "This project doesn't have the Stagecoach CI/CD baseline (one or more of: ci.yml, design-system-compliance.yml, husky pre-push hook, PR template). The `ship-feature` and `add-feature` skills depend on these gates being green before opening a PR. Want to scaffold the baseline now?"
+> "This project doesn't have the Stagecoach CI/CD baseline (one or more of: ci.yml, design-system-compliance.yml, husky pre-push hook, PR template). The `deliver-stage` and `add-feature` skills depend on these gates being green before opening a PR. Want to scaffold the baseline now?"
 > single_select: ["Yes — scaffold CI/CD baseline now (recommended)", "No — skip; I'll handle CI my own way"]
 
 If "Yes": print *"Run `/stagecoach:scaffold-ci-cd` next — it will run on a dedicated `chore/scaffold-ci-cd` branch and open a PR. Once that PR merges, return here and run `/stagecoach:add-feature` (or `/stagecoach:write-prd` for a full PRD-to-app run)."*
 
 If "No": warn the user and continue:
-> ⚠️ **Without the CI/CD baseline:** `/stagecoach:ship-feature`'s Phase 5 (CI/CD gates) will likely fail because the `ci-cd-guardrails` agent expects the baseline workflows to exist. You can still run individual feature skills (`/stagecoach:ship-frontend`, `/stagecoach:ship-feature`), but you'll need to manually wire equivalent gates in your own CI for the per-stage `@visual` and `design-system-compliance` checks. To re-enable the offer later, delete `.stagecoach/.skip-ci-cd` and re-run `/stagecoach:setup`.
+> ⚠️ **Without the CI/CD baseline:** `/stagecoach:deliver-stage`'s Phase 8 (CI/CD guardrails) will likely fail because the `ci-cd-guardrails` agent expects the baseline workflows to exist. You can still run `/stagecoach:deliver-stage`, but you'll need to manually wire equivalent gates in your own CI for the per-stage `@visual` and `design-system-compliance` checks. To re-enable the offer later, delete `.stagecoach/.skip-ci-cd` and re-run `/stagecoach:setup`.
 
 If the user chose "No": create a sentinel file `.stagecoach/.skip-ci-cd` so future `/stagecoach:setup` runs skip Q-ci-cd-baseline.
 

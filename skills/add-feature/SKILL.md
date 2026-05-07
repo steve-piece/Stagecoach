@@ -1,6 +1,6 @@
 ---
 name: add-feature
-description: Add one or more features to an existing project mid-flight. Auto-detects whether the project was built with Stagecoach (has docs/plans/), wasn't (existing app, needs setup first), or doesn't exist yet (needs bootstrap). For Stagecoach projects, runs complexity assessment, writes new stage files via phased-plan-writer (extending the master checklist), and hands off to /stagecoach:ship-feature for delivery. Use when the user wants to bolt on extra features after the original PRD-to-app run is complete.
+description: Add one or more features to an existing project mid-flight. Auto-detects whether the project was built with Stagecoach (has docs/plans/), wasn't (existing app, needs setup first), or doesn't exist yet (needs bootstrap). For Stagecoach projects, runs complexity assessment, writes new stage files via phased-plan-writer (extending the master checklist), and hands off to /stagecoach:deliver-stage for delivery. Use when the user wants to bolt on extra features after the original PRD-to-app run is complete.
 model: opus
 effort: high
 user-invocable: true
@@ -8,7 +8,7 @@ triggers: ["/stagecoach:add-feature", "/add-feature", "add a feature", "add feat
 ---
 
 <!-- skills/add-feature/SKILL.md -->
-<!-- Mid-flight feature addition. Detects project state, assesses complexity, writes incremental stage files, hands off to ship-feature. For non-Stagecoach apps, redirects to setup. -->
+<!-- Mid-flight feature addition. Detects project state, assesses complexity, writes incremental stage files, hands off to deliver-stage. For non-Stagecoach apps, redirects to setup. -->
 
 # Add Feature
 
@@ -77,7 +77,9 @@ Announce which path applies and why before continuing.
 
 ### Phase 1 — Feature elicitation (Plan Mode)
 
-Ask the user with `ask_user_input_v0`, one question at a time:
+Ask the user with `ask_user_input_v0`, one question at a time.
+
+**Always provide a recommended answer in available options.**
 
 **Q-features**
 > "What feature(s) do you want to add? List each as a one-line summary. (You can paste multiple — one per line.)"
@@ -183,7 +185,7 @@ Print:
 > - `stage_30_admin-csv-export.md` (backend, mvp)
 >
 > **Next:**
-> - For ONE stage: `/stagecoach:ship-feature` — runs the standard 6-agent delivery pipeline (discovery → checklist-curator → implementer → spec-reviewer → quality-reviewer → ci-cd-guardrails) against the next `Not Started` stage.
+> - For ONE stage: `/stagecoach:deliver-stage` — runs the standard 6-agent delivery pipeline (discovery → checklist-curator → implementer → spec-reviewer → quality-reviewer → ci-cd-guardrails) against the next `Not Started` stage.
 > - For MULTIPLE new stages in sequence: `/stagecoach:run-pipeline` — orchestrator drives them all end-to-end with per-stage approval pauses (default mode).
 >
 > All new stages will go through the full CI gate (`@feature` + `@regression-core` + `@visual` + design-system-compliance + db-schema-drift if applicable). Visual + design-system-compliance gates require the project to have already run `/stagecoach:scaffold-ci-cd` — if absent, the orchestrator will surface that and ask whether to scaffold first.

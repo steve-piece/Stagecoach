@@ -23,4 +23,4 @@ The skill transforms a finalized PRD into a complete, ordered set of implementat
 
 ## When to use this command
 
-Use `/plan-phases` once you have a completed PRD and are ready to produce the full implementation plan. The output is the input for `/run-pipeline` or individual stage commands (`/ship-feature`, `/scaffold-ci-cd`).
+Use `/plan-phases` once you have a completed PRD and are ready to produce the full implementation plan. The output is the input for `/stagecoach:deliver-stage` (everyday loop, run once per slice) or `/stagecoach:run-pipeline` (experimental autonomous multi-stage delivery).
