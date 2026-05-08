@@ -20,35 +20,29 @@ Or clone manually: `git clone https://github.com/steve-piece/stagecoach.git` and
 
 ## Workflow
 
-The everyday loop, step by step:
-
-- **setup** — Bootstraps a new project (or drops config into an existing one) and checks the CI/CD baseline.
-- **write-prd** — Turns a free-form project brief into a structured PRD.
-- **plan-phases** — Decomposes the PRD into a master checklist, three foundation stages (plus an optional db-schema stage), and 20–30 feature stages.
-- **deliver-stage** — The everyday delivery loop. Run once per slice, in a fresh chat, until the master checklist is done. Routes by stage `type:` and dispatches the right sub-skill (init-design-system / scaffold-ci-cd / setup-environment) or internal pipeline (frontend / backend / full-stack / db-schema). Frontend stages also pass through a non-skippable **Library Preview Gate** (Phase 4.5) — every new component AND every consumer-side edit that changes a user-visible surface of an existing library component gets staged into the operator-only `/library` route for explicit user approval before any production-route edit lands. Gates the PR on lint/type/build + a type-aware aggregating test review. **Stops at "slice committed locally, ready for review"** — push, PR, CI watch, merge, and cleanup are handed off to `/ship-pr` so you can run a manual visual UAT first.
-- **add-feature** — Skip ahead. Bolts new stages directly onto a project that already shipped, commits the new plan files on a `chore/add-stages-...` branch, then hands off to `/ship-pr` (chore PR) or `/deliver-stage` (start delivery).
-- **ship-pr** — Take a feature branch with locally-committed work and ship it: pre-flight safety checks → push → PR open → CI watch (with auto-fix loop on red, capped at 3 attempts) → user-authorized merge → main sync + branch and worktree cleanup. Decoupled from `deliver-stage` and `add-feature` so you can review or UAT the slice locally before deciding to ship.
+| Step | What it does |
+|---|---|
+| `setup` | Bootstrap a project (or drop config into an existing one). Detects CI/CD baseline. |
+| `write-prd` | Free-form brief → structured PRD. |
+| `plan-phases` | PRD → master checklist + foundation stages + 20–30 feature stages. |
+| `deliver-stage` | Everyday delivery loop. One slice per fresh chat. Routes by stage `type:`; dispatches the right sub-skill (`init-design-system` / `scaffold-ci-cd` / `setup-environment`) or internal pipeline (frontend / backend / full-stack / db-schema). Frontend slices clear the **Library Preview Gate** — new components and consumer-side surface changes stage into `/library` for explicit approval. Gates on lint / type / build + a type-aware test review. Stops at *slice committed locally, ready for review*. |
+| `add-feature` | Bolt new stages onto a shipped project. Commits plan files on `chore/add-stages-…`. |
+| `ship-pr` | Pre-flight → push → PR → CI watch (auto-fix loop, capped at 3 attempts) → authorized merge → cleanup. |
 
 ```mermaid
 flowchart TD
     Setup["setup"] --> PRD["write-prd"]
     PRD --> Phased["plan-phases"]
-    Phased --> Deliver["deliver-stage<br/>(slice committed locally,<br/>ready for review)"]
-    Add["add-feature<br/>(post-launch additions)"] --> Deliver
-
-    Deliver --> Ship["ship-pr<br/>(push → CI watch →<br/>merge → cleanup)"]
-    Ship -->|next slice| Deliver
-    Ship --> Done(["✅ Master checklist complete"])
-
-    Run["run-pipeline<br/>(EXPERIMENTAL —<br/>autonomous multi-stage)"] -.->|dispatches per stage| Deliver
-    Review["review-pipeline<br/>(retrospective)"] -.->|after shipping| Ship
-
-    classDef experimental stroke-dasharray:5 5,fill:#fffbe6,stroke:#b58900,color:#333
-    class Run,Review experimental
-    linkStyle 7,8 stroke:#b58900,stroke-dasharray:5 5
+    Phased --> Deliver["deliver-stage<br/>(slice ready for review)"]
+    Add["add-feature<br/>(post-launch)"] --> Deliver
+    Deliver --> Ship["ship-pr<br/>(push → CI → merge)"]
+    Ship --> Q{"Master checklist<br/>complete?"}
+    Q -->|No| NewChat["New chat / worktree"]
+    NewChat --> Deliver
+    Q -->|Yes| Done(["✅ Complete"])
 ```
 
-Two ways in: build a fresh project end-to-end starting from `setup`, or add features to an already-shipped project starting from `add-feature`. Either way, **`deliver-stage` is the everyday delivery surface.** Run it, finish a slice, start a fresh chat, run it again. The dashed-line sidecars (`run-pipeline`, `review-pipeline`) are experimental — they wrap or follow `deliver-stage` rather than replace it.
+`deliver-stage` is the daily surface. Finish a slice, start a fresh chat, run it again — until the checklist is green.
 
 **Foundation stages** (run before any feature stage; Stage 4 only when the PRD has a backend) are dispatched automatically by `deliver-stage` based on each stage's `type:` frontmatter:
 
@@ -77,10 +71,8 @@ Hard caps per stage: **6 tasks**, ~10–15 files changed, completable in one fre
 | `init-design-system` | `/stagecoach:init-design-system` | **Sub-skill of `deliver-stage`.** Validates or generates the design system. Auto-dispatched on `type: design-system` stages; invoke directly only as an escape hatch. |
 | `scaffold-ci-cd` | `/stagecoach:scaffold-ci-cd` | **Sub-skill of `deliver-stage`.** Wires the CI/CD baseline. Auto-dispatched on `type: ci-cd` stages; invoke directly to repair CI manually. |
 | `setup-environment` | `/stagecoach:setup-environment` | **Sub-skill of `deliver-stage`.** Walks external service setup and verifies `.env.local`. Auto-dispatched on `type: env-setup` stages; invoke directly to re-verify env state. |
-| `run-pipeline` *(experimental)* | `/stagecoach:run-pipeline` | Autonomous multi-stage variant of `deliver-stage`. Drives every remaining stage in one chat session. Use only when you explicitly want autonomous multi-stage delivery and accept the reliability tradeoff. |
-| `review-pipeline` *(experimental)* | `/stagecoach:review-pipeline` | After a plan completes, surfaces friction patterns across recent stages and drafts improvements back to the plugin. |
 
-Each skill's full reference, sub-agents, and completion checklist live in `skills/<name>/SKILL.md`.
+Each skill's full reference, sub-agents, and completion checklist live in `skills/<name>/SKILL.md`. Two more — `run-pipeline` and `review-pipeline` — are documented separately under [Experimental skills](#experimental-skills).
 
 ---
 
@@ -117,6 +109,19 @@ Full schema + precedence rules at [`skills/setup/references/stagecoach-config-sc
 - **Model tiers.** Three aliases (`haiku`, `sonnet`, `opus`); heavier tiers go to producing/verifying agents (`implementer` = `opus, xhigh`; `quality-reviewer` = `opus, high`). Full per-agent table at [`skills/setup/references/model-tier-guide.md`](skills/setup/references/model-tier-guide.md).
 - **Visual review tooling priority** (hardcoded, no discovery): Claude in Chrome > Chrome DevTools MCP > Playwright > Vizzly. Full-page screenshots only at 375 / 768 / 1280 / 1920 viewports.
 - **One slice per PR.** Default branch naming: `feat/stage-<n>-<scope>`.
+
+---
+
+## Experimental skills
+
+> Not currently reliable in Claude Code or Cursor — agent attention drifts on long-running multi-stage tasks. Untested elsewhere; curious how they hold up in systems with stronger long-horizon multi-agent orchestration.
+
+The intent: once `setup`, `write-prd`, `plan-phases`, and the design-system foundation are locked in — a coherent UI/UX language committed via `/library` — `/run-pipeline` lets the coding agent take over and dispatch `/deliver-stage` per slice fully autonomously until the master checklist is green. `/review-pipeline` follows shipping with a retrospective that drafts plugin improvements back to disk.
+
+| Skill | Slash command | Description |
+|---|---|---|
+| `run-pipeline` | `/stagecoach:run-pipeline` | Autonomous multi-stage variant of `deliver-stage`. Drives every remaining stage in one chat session. |
+| `review-pipeline` | `/stagecoach:review-pipeline` | After a plan completes, surfaces friction patterns across recent stages and drafts improvements back to the plugin. |
 
 ---
 
