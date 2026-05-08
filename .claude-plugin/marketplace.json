@@ -7,7 +7,7 @@
     {
       "name": "stagecoach",
       "source": "./",
-      "description": "Stagecoach is a Claude Code plugin that takes a project from a free-form brief to a shipping production web app through a phased, subagent-driven workflow. v3 collapses ship-feature + ship-frontend into a single /stagecoach:deliver-stage loop that routes by stage type, dispatches the right sub-skill automatically, gates every PR on lint/type/build + a type-aware aggregating test review, and runs a non-skippable Library Preview Gate (Phase 4.5) for every new component and every consumer-side edit to a user-visible surface.",
+      "description": "Stagecoach is a Claude Code plugin that takes a project from a free-form brief to a shipping production web app through a phased, subagent-driven workflow. v3 collapses ship-feature + ship-frontend into /stagecoach:deliver-stage (routes by stage type, gates on lint/type/build + type-aware aggregating test review, runs a non-skippable Library Preview Gate for every new component and every consumer-side user-visible edit) and adds /stagecoach:ship-pr as the universal closeout — push, PR, CI watch with auto-fix loop on red, user-authorized merge, main sync, branch + worktree cleanup.",
       "version": "3.0.0",
       "keywords": [
         "prd",

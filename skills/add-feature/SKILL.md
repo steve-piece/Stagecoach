@@ -175,18 +175,25 @@ Status: Not Started
 
 Use the same checklist row format as the existing stages in the file. Do NOT alter completed stages' rows.
 
-### Phase 6 — Handoff
+### Phase 6 — Commit + Handoff
 
-Print:
+1. **Stage and commit the new plan files** on a `chore/add-stages-<lo>-<hi>` branch (e.g. `chore/add-stages-28-30` for three new stages 28–30):
+   - Create the branch off `main`: `git checkout -b chore/add-stages-<lo>-<hi>`
+   - Stage every new `docs/plans/stage_<n>_*.md` file plus the modified `docs/plans/00_master_checklist.md`
+   - Conventional commit: `chore: add stages <lo>-<hi> (<feature names>)` with a body listing each new stage and its `type:` / `mvp:` flag
+   - Working tree should be clean on the branch after this commit
+2. **Do NOT push or open a PR from this skill.** That's `/stagecoach:ship-pr`'s responsibility — keeping the same separation as `/deliver-stage`.
+3. Print the handoff message:
 
-> Stage(s) added to `docs/plans/00_master_checklist.md`:
+> Stage(s) added to `docs/plans/00_master_checklist.md` and committed on branch `chore/add-stages-<lo>-<hi>`:
 > - `stage_28_reviews-shell.md` (frontend, mvp)
 > - `stage_29_reviews-data.md` (full-stack, mvp)
 > - `stage_30_admin-csv-export.md` (backend, mvp)
 >
-> **Next:**
-> - For ONE stage: `/stagecoach:deliver-stage` — runs the standard 6-agent delivery pipeline (discovery → checklist-curator → implementer → spec-reviewer → quality-reviewer → ci-cd-guardrails) against the next `Not Started` stage.
-> - For MULTIPLE new stages in sequence: `/stagecoach:run-pipeline` — orchestrator drives them all end-to-end with per-stage approval pauses (default mode).
+> **Next steps (pick one):**
+> - **Ship the plan changes as a chore PR first** (recommended for clean separation): run `/stagecoach:ship-pr`. The plan-only PR opens, CI runs (lint / link-check on the new files), you approve merge, the chore branch is cleaned up. Then start a fresh chat and run `/stagecoach:deliver-stage` to ship the first new stage.
+> - **Skip the chore PR — start delivery immediately**: switch back to `main` (`git checkout main`), then run `/stagecoach:deliver-stage`. The first slice's PR will mix the new plan files with the implementation.
+> - **Multi-stage autonomous delivery (experimental)**: `/stagecoach:run-pipeline` drives every new stage end-to-end with per-stage approval pauses. Best for batches you want shipped without per-stage babysitting.
 >
 > All new stages will go through the full CI gate (`@feature` + `@regression-core` + `@visual` + design-system-compliance + db-schema-drift if applicable). Visual + design-system-compliance gates require the project to have already run `/stagecoach:scaffold-ci-cd` — if absent, the orchestrator will surface that and ask whether to scaffold first.
 
@@ -268,7 +275,8 @@ Then return.
 [ ] (Path A only) Assessment surfaced to user; user authorization received
 [ ] (Path A only) phased-plan-writer dispatched once per new stage (incremental mode)
 [ ] (Path A only) Master checklist updated with new stage rows (existing rows untouched)
-[ ] (Path A only) Handoff message printed with next-step pointer
+[ ] (Path A only) New plan files + master-checklist update committed on a `chore/add-stages-<lo>-<hi>` branch (no push, no PR — handed off to `/stagecoach:ship-pr`)
+[ ] (Path A only) Handoff message printed with the three next-step options (`/ship-pr` for plan-only chore PR / direct `/deliver-stage` / `/run-pipeline` for batch)
 [ ] (Path B only) HITL bubble surfaced; user redirected to /stagecoach:setup
 [ ] (Path C only) HITL bubble surfaced; user redirected to /stagecoach:setup for bootstrap
 
