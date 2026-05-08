@@ -234,12 +234,22 @@ Dispatch `ci-cd-guardrails` with the slice diff + workflow inventory + E2E inven
 
 When every in-scope item is `[x]`:
 
-1. Flip stage status `In Progress` → `Completed` in `00_master_checklist.md`.
-2. Open the PR via `gh pr create` (or `git-commit-push-pr` / `new-branch-and-pr` skill if available).
-3. Wait for CI/CD; patch on the same branch until all checks are green.
-4. After CI green + PR merged: sync `main`, clean up the slice branch + worktree.
-5. Walk the **Completion Checklist** (below). The feature is not done until every box is `[x]`.
-6. Report to the user using the **Progress Report Format**.
+1. Flip stage status `In Progress` → `Completed` in `docs/plans/00_master_checklist.md` (commit this change on the slice branch).
+2. Confirm the slice branch has every commit it needs and the working tree is clean (`git status --short` empty).
+3. Walk the **Completion Checklist** (below). The slice is not "ready to ship" until every box up through §4 is `[x]`.
+4. Report to the user using the **Progress Report Format**, ending with the **Handoff to `/ship-pr`** message.
+
+**This skill stops here — at "slice committed locally, ready for review."** It does NOT push, open a PR, watch CI, merge, or clean up. That's `/stagecoach:ship-pr`'s job, intentionally separated so you can run a manual visual UAT, do a local code review, or rebase against fresh main before deciding to ship.
+
+#### Handoff to `/ship-pr`
+
+End your final message with:
+
+> Slice complete on branch `<branch>` — every gate passed locally, master checklist updated, slice committed.
+>
+> **Next:** Review the diff at your pace (visual UAT, manual code review, anything else). When you're ready to ship, run `/stagecoach:ship-pr`. It will run pre-flight safety checks, push, open the PR, watch CI (with an auto-fix loop on red), pause for your merge approval, and on approval merge + sync main + delete local and remote branch + remove the worktree.
+>
+> If CI fails on the PR, `/ship-pr`'s `ci-fix-attempter` agent applies targeted fixes for up to 3 attempts before bubbling to you — so this hand-off is genuinely "review and walk away" if you want it to be.
 
 ---
 
@@ -280,7 +290,7 @@ After each task and at stage closeout:
 
 ## Completion Checklist
 
-Run at the end of every slice. Do not report the feature "done" until every box is `[x]`.
+Run at the end of every slice. Do not report the slice "ready to ship" until every box up through §4 is `[x]`. Sections §5 (PR + CI) and §6 (cleanup) belong to `/stagecoach:ship-pr` and are not this skill's responsibility.
 
 ### 1. Plan Tasks Complete
 
@@ -308,14 +318,14 @@ Skip only if the stage is `type: backend`, `db-schema`, or `infrastructure` with
 [ ] Inline notes added next to any item whose scope deviated from the plan.
 [ ] Edits committed on the slice branch (not on `main`).
 
-### 3. PR Created and Submitted
+### 3. Slice Committed Locally (ready for review)
 
-[ ] One slice = one PR. No bundling unless the user authorized it in Phase 2.
 [ ] Branch follows naming: `feat/` | `fix/` | `chore/` + `stage-<n>-<scope>`.
-[ ] PR description references: stage + slice, checklist items closed, test evidence, screenshots/logs if UI.
-[ ] PR is targeted at `main` and is not draft unless the user requested draft.
+[ ] Slice committed on the feature branch (no uncommitted leftover changes).
+[ ] `ci-cd-guardrails` returned `verdict: pass` (the slice has the E2E coverage CI will gate on).
+[ ] One slice = one PR worth of changes. No bundling unless the user authorized it in Phase 2.
 
-### 4. E2E Tests Added to CI/CD (if applicable)
+### 4. E2E Tests Added (if applicable)
 
 Skip only if the slice is documentation-only or has zero observable behavior change.
 
@@ -323,26 +333,25 @@ Skip only if the slice is documentation-only or has zero observable behavior cha
 [ ] Critical existing flows touched by this slice covered by `@regression-core`.
 [ ] `.github/workflows/ci.yml` and `e2e.yml` exist and reference the new specs.
 [ ] Failure artifacts (trace / video / report) upload step is present in the workflow.
-[ ] New specs run green locally before pushing.
+[ ] New specs run green locally before the slice is considered ready to ship.
 
-### 5. CI/CD Passing on the PR
+---
 
-[ ] `ci-cd-guardrails` returned `verdict: pass`.
-[ ] All required GitHub Actions checks completed and green.
-[ ] If any check failed: read logs, patch on the same branch, push, repeat until all pass.
-[ ] Final CI run reflects the latest commit on the PR head.
+### Handed off to `/stagecoach:ship-pr` — NOT this skill's responsibility
 
-### 6. Branch Cleanup and Return to Main
+The following sections live in [`/stagecoach:ship-pr`](../ship-pr/SKILL.md)'s Completion Checklist. They are listed here for cross-reference only; this skill does not run them.
 
-Only after CI is fully green and the PR is merged:
+#### 5. PR open + CI green (handled by `/ship-pr` Phase 1–3)
+- Branch pushed to `origin`; PR open against `main`; PR URL surfaced.
+- `gh pr checks <pr> --watch` returned exit 0 on the latest head SHA.
+- If the auto-fix loop ran, the final attempt cleared green.
 
-[ ] PR merged into `main`.
-[ ] Local `main` updated: `git checkout main && git pull --ff-only origin main`.
-[ ] Local slice branch deleted: `git branch -d <branch>`.
-[ ] Remote slice branch deleted (skip if auto-deleted by GitHub).
-[ ] If a worktree was used: `git worktree remove <path>` and `git worktree prune`.
-[ ] Final `git status` shows clean tree on `main`.
-[ ] Final state reported to the user using the Progress Report Format.
+#### 6. Merge + Cleanup (handled by `/ship-pr` Phase 4–5)
+- Merge authorized at the user gate; PR state is `MERGED`.
+- Local `main` synced with `--ff-only`.
+- Local + remote slice branch deleted.
+- Worktree removed + pruned (if used).
+- `git status --short` empty; fully synced with `origin/main`.
 
 ---
 
