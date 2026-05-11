@@ -1,6 +1,6 @@
 ---
 name: write-prd
-description: Generate a complete PRD (Product Requirements Document) from a free-form project brief. Use when the user provides a project description and wants a structured PRD, says "create a PRD", "write a PRD", "generate a PRD", "build a PRD", or "document requirements". Follows the Phased PRD Template v2 with 8 sections (0–7). References bundled defaults for tech stack, architecture, and delivery conventions.
+description: Turn a project brief into a structured 8-section PRD with phased implementation guidance.
 model: opus
 effort: high
 ---

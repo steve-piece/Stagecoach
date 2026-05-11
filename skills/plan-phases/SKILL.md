@@ -1,6 +1,6 @@
 ---
 name: plan-phases
-description: Decompose a finalized PRD into phased development plans — design-system stage, CI/CD scaffold, env-setup gate, optional DB schema foundation, 20-30 vertical-slice feature stages, a master checklist, and a populated project rules file. Use when the user has a completed PRD and wants an implementation-ready plan. Also use when the user says "break this into phases", "create a development plan", or "phased approach".
+description: Transform a PRD into an ordered roadmap with design-system, CI/CD, and 20-30 vertical-slice feature stages.
 ---
 
 # PRD to Phased Plans

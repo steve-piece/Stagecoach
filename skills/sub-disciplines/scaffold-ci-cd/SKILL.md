@@ -3,7 +3,7 @@
 
 ---
 name: scaffold-ci-cd
-description: Sub-skill of /stagecoach:deliver-stage. Bootstraps the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore/scaffold-ci-cd branch. Auto-dispatched by /deliver-stage on type:ci-cd stages; user-invocable as an escape hatch when CI drifts and you need to repair it outside the normal phased flow.
+description: Wire CI/CD, E2E testing, and design-system compliance gates. Auto-dispatched by deliver-stage on ci-cd stages.
 user-invocable: true
 ---
 

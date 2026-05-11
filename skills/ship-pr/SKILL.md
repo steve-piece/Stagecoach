@@ -3,7 +3,7 @@
 
 ---
 name: ship-pr
-description: Take a feature branch with locally-committed work and ship it end-to-end. Runs pre-flight safety checks (not on main, branch + worktree state confirmed), commits any remaining changes, pushes, opens the PR via gh, watches CI to settle (auto-dispatches ci-fix-attempter to push targeted fixes on red, capped at 3 attempts), surfaces a merge-authorization prompt to the user when CI is green, and on user approval merges + syncs main + deletes local and remote branch + removes worktree. Decoupled from /deliver-stage and /add-feature so you can review or UAT the slice locally first. Use after /deliver-stage or /add-feature finishes (slice committed locally, ready for review), when you say "ship the pr", "submit the pr", "open and merge the pr", "ship this branch", or run /ship-pr.
+description: Ship a feature branch: push, open PR, watch CI (auto-fix on red), merge on approval, and cleanup.
 user-invocable: true
 triggers: ["/stagecoach:ship-pr", "/ship-pr", "ship the pr", "submit the pr", "open and merge the pr", "ship this branch", "ship this slice"]
 ---

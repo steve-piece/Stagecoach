@@ -1,6 +1,6 @@
 ---
 name: init-design-system
-description: Sub-skill of /stagecoach:deliver-stage. Bootstraps the project design system. Validates Claude Design bundle if present, otherwise expands brand brief. Outputs globals.css, Tailwind config, design-system.md, and design-system rules in project rules file. Auto-dispatched by /deliver-stage on type:design-system stages; user-invocable as an escape hatch to re-run the design-system foundation manually.
+description: Bootstrap your design system: tokens, Tailwind config, and design rules. Auto-dispatched by deliver-stage on design-system stages.
 user-invocable: true
 triggers: ["/stagecoach:init-design-system", "/init-design-system", "scaffold design system", "design-system stage"]
 ---

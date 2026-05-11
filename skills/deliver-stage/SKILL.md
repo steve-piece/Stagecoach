@@ -3,7 +3,7 @@
 
 ---
 name: deliver-stage
-description: The everyday stage-delivery orchestrator. Reads the master checklist, picks the next Not-Started stage, dispatches the right sub-skill (init-design-system / scaffold-ci-cd / setup-environment) or internal pipeline (frontend / backend / full-stack / db-schema) by stage type, runs spec/quality review, basic checks (lint/type/build), and a type-aware aggregating test review (dev server + browser UAT for frontend; CI gates only for backend), then opens the PR. Use when the user runs /deliver-stage, says "deliver the next stage", "ship stage N", "work the checklist", "ship a slice", or "execute docs/plans".
+description: Execute one stage from your master checklist: spec review, implementation, testing, and PR open.
 user-invocable: true
 triggers: ["/stagecoach:deliver-stage", "/deliver-stage", "deliver the next stage", "ship the next slice", "work the checklist"]
 ---

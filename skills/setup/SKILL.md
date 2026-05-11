@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Stagecoach setup orchestrator — three flows in one skill. (1) First-time install — creates a system-wide ~/.stagecoach/defaults.json so future projects can opt in to your defaults. (2) New project — bootstraps a fresh single-app or Turborepo monorepo, then creates the per-project stagecoach.config.json. (3) Existing project — skips the bootstrap and goes straight to per-project config customization. Use for any first-touch interaction with Stagecoach.
+description: Bootstrap a new project or configure Stagecoach in an existing one. Auto-detects your setup context and scaffolds the right foundation.
 model: opus
 effort: high
 user-invocable: true

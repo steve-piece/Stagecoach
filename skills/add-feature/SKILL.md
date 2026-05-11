@@ -1,6 +1,6 @@
 ---
 name: add-feature
-description: Add one or more features to an existing project mid-flight. Auto-detects whether the project was built with Stagecoach (has docs/plans/), wasn't (existing app, needs setup first), or doesn't exist yet (needs bootstrap). For Stagecoach projects, runs complexity assessment, writes new stage files via phased-plan-writer (extending the master checklist), and hands off to /stagecoach:deliver-stage for delivery. Use when the user wants to bolt on extra features after the original PRD-to-app run is complete.
+description: Add one or more features to an existing project mid-flight. Auto-detects project type and extends the master checklist.
 model: opus
 effort: high
 user-invocable: true

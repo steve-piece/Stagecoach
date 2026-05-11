@@ -3,7 +3,7 @@
 
 ---
 name: setup-environment
-description: Sub-skill of /stagecoach:deliver-stage. Scans .env.example files, generates a manual setup checklist for external services (Supabase, Stripe, Resend, etc.), waits for user confirmation, and verifies all keys populated. Auto-dispatched by /deliver-stage on type:env-setup stages; user-invocable as an escape hatch to re-verify env state.
+description: Scan environment requirements and verify all external service credentials are populated. Auto-dispatched on env-setup stages.
 user-invocable: true
 triggers: ["/stagecoach:setup-environment", "/setup-environment", "env setup", "env-setup stage"]
 ---

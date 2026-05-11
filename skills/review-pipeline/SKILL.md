@@ -1,6 +1,6 @@
 ---
 name: review-pipeline
-description: EXPERIMENTAL. Reviews recent stage executions, identifies friction patterns, drafts PRs to the plugin repo for improvements. Defaults to plugin path ~/stagecoach; override via STAGECOACH_PLUGIN_PATH env var.
+description: EXPERIMENTAL. Review stage execution friction and draft improvements back to the plugin.
 user-invocable: true
 triggers: ["/stagecoach:review-pipeline", "/review-pipeline", "review the workflow", "improve the plugin"]
 experimental: true

@@ -3,7 +3,7 @@
 
 ---
 name: run-pipeline
-description: EXPERIMENTAL. Drive an entire phased plan from docs/plans/00_master_checklist.md to completion in one chat session by dispatching /deliver-stage per stage. Default mode is supervised — runs one stage via deliver-stage, reports results, and waits for human approval before advancing. Supports --auto-mvp and --auto-all flags. The everyday delivery tool is /deliver-stage (one slice per chat). Use run-pipeline only when you explicitly want autonomous multi-stage delivery and accept that long sessions can drift. Triggers — /run-pipeline, "run the whole plan", "ship every stage", "automate the build", or "drive the phased plan to completion".
+description: EXPERIMENTAL. Drive your entire phased plan to completion in one session (supervised by default).
 experimental: true
 ---
 
