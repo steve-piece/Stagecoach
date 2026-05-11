@@ -3,6 +3,24 @@
   "version": "1.0.0",
   "private": false,
   "description": "PRD generation, phased implementation planning, and CI/CD infrastructure hardening for project workflows.",
+  "bin": {
+    "stagecoach": "./bin/stagecoach.js"
+  },
+  "scripts": {
+    "install:dry-run": "node ./bin/stagecoach.js install --target both --dry-run",
+    "install:skills:dry-run": "node ./bin/stagecoach.js install --mode skills --skill setup --skill deliver-stage --dry-run"
+  },
+  "files": [
+    "bin",
+    "commands",
+    "skills",
+    "scripts/install",
+    ".cursor-plugin",
+    ".claude-plugin",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

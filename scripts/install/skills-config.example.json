@@ -1,0 +1,8 @@
+// scripts/install/skills-config.example.json
+// Example JSONC config for selecting individual Stagecoach skills during installation.
+{
+  "mode": "skills",
+  "target": "both",
+  "skillsDir": "./.stagecoach-installs/skills",
+  "skills": ["setup", "deliver-stage", "ship-pr"]
+}

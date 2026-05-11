@@ -16,6 +16,44 @@ Every heavy workflow step is a subagent. Skill files are orchestrator-only — c
 
 Or clone manually: `git clone https://github.com/steve-piece/stagecoach.git` and add it as a plugin via your project rules file.
 
+### CLI install pattern (NPX)
+
+For automation or repeatable setup, use the package CLI:
+
+```bash
+npx stagecoach install --target both
+```
+
+That command installs Stagecoach plugin assets for both hosts by default:
+
+- Cursor: `~/.cursor/plugins/stagecoach`
+- Claude Code: `~/.claude/plugins/stagecoach`
+
+Use `--target cursor` or `--target claude` to scope installs.
+
+### Individual skills install options (`skills.sh` style)
+
+Install only selected skills + matching command shims:
+
+```bash
+npx stagecoach install --mode skills --skill setup --skill deliver-stage
+```
+
+By default, selected skills are copied into:
+
+- `./.stagecoach-installs/skills/skills/*`
+- `./.stagecoach-installs/skills/commands/*`
+
+Override destination with `--skills-dir <path>`.
+
+Optional JSONC config (example at `scripts/install/skills-config.example.json`):
+
+```bash
+npx stagecoach install --mode skills --config ./scripts/install/skills-config.example.json
+```
+
+`/add-plugin stagecoach` remains the shortest interactive path; the CLI path is better when you want scriptable, idempotent setup.
+
 ---
 
 ## Workflow
