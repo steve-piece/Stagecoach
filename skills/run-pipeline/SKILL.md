@@ -1,11 +1,12 @@
-<!-- skills/run-pipeline/SKILL.md -->
-<!-- EXPERIMENTAL multi-stage orchestrator. Drives a phased plan to completion in one chat session by dispatching /deliver-stage per stage. The everyday tool is /deliver-stage (run once per slice, fresh chat each time); run-pipeline is a sidecar for users who want autonomous multi-stage delivery and accept the reliability tradeoff. -->
-
 ---
 name: run-pipeline
 description: EXPERIMENTAL. Drive your entire phased plan to completion in one session (supervised by default).
 experimental: true
+user-invocable: true
+triggers: ["/stagecoach:run-pipeline", "/run-pipeline", "run the pipeline", "run pipeline", "autonomous delivery", "run all stages"]
 ---
+<!-- skills/run-pipeline/SKILL.md -->
+<!-- EXPERIMENTAL multi-stage orchestrator. Drives a phased plan to completion in one chat session by dispatching /deliver-stage per stage. The everyday tool is /deliver-stage (run once per slice, fresh chat each time); run-pipeline is a sidecar for users who want autonomous multi-stage delivery and accept the reliability tradeoff. -->
 
 # The Orchestrator (EXPERIMENTAL)
 

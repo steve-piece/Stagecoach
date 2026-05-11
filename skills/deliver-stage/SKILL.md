@@ -1,12 +1,11 @@
-<!-- skills/deliver-stage/SKILL.md -->
-<!-- The everyday delivery loop. Reads the master checklist, picks the next Not-Started stage, dispatches the right sub-skill or internal pipeline by stage type, runs basic checks + type-aware aggregating test review, and opens the PR. Replaces v2 ship-feature + ship-frontend in v3. -->
-
 ---
 name: deliver-stage
 description: Execute one stage from your master checklist: spec review, implementation, testing, and PR open.
 user-invocable: true
 triggers: ["/stagecoach:deliver-stage", "/deliver-stage", "deliver the next stage", "ship the next slice", "work the checklist"]
 ---
+<!-- skills/deliver-stage/SKILL.md -->
+<!-- The everyday delivery loop. Reads the master checklist, picks the next Not-Started stage, dispatches the right sub-skill or internal pipeline by stage type, runs basic checks + type-aware aggregating test review, and opens the PR. Replaces v2 ship-feature + ship-frontend in v3. -->
 
 # /deliver-stage — The Everyday Delivery Loop
 

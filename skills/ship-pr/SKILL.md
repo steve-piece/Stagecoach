@@ -1,12 +1,11 @@
-<!-- skills/ship-pr/SKILL.md -->
-<!-- Standalone skill that takes a feature branch with locally-committed work and ships it through PR open → CI watch (with auto-fix loop on red) → user-authorized merge → main sync + branch and worktree cleanup. Decoupled from /deliver-stage and /add-feature so the operator can review / UAT the slice locally before deciding to ship. -->
-
 ---
 name: ship-pr
 description: Ship a feature branch: push, open PR, watch CI (auto-fix on red), merge on approval, and cleanup.
 user-invocable: true
 triggers: ["/stagecoach:ship-pr", "/ship-pr", "ship the pr", "submit the pr", "open and merge the pr", "ship this branch", "ship this slice"]
 ---
+<!-- skills/ship-pr/SKILL.md -->
+<!-- Standalone skill that takes a feature branch with locally-committed work and ships it through PR open → CI watch (with auto-fix loop on red) → user-authorized merge → main sync + branch and worktree cleanup. Decoupled from /deliver-stage and /add-feature so the operator can review / UAT the slice locally before deciding to ship. -->
 
 # /ship-pr
 

@@ -1,6 +1,6 @@
 {
   "name": "stagecoach",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "private": false,
   "description": "PRD generation, phased implementation planning, and CI/CD infrastructure hardening for project workflows.",
   "bin": {
@@ -24,7 +24,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/steve-piece/madewell-dev-workflow"
+    "url": "https://github.com/steve-piece/stagecoach"
   },
   "keywords": [
     "cursor-plugin",

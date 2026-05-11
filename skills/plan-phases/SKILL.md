@@ -1,6 +1,8 @@
 ---
 name: plan-phases
 description: Transform a PRD into an ordered roadmap with design-system, CI/CD, and 20-30 vertical-slice feature stages.
+user-invocable: true
+triggers: ["/stagecoach:plan-phases", "/plan-phases", "plan phases", "break into phases", "phased plan", "create a development plan", "decompose the prd"]
 ---
 
 # PRD to Phased Plans

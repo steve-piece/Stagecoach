@@ -1,11 +1,11 @@
-<!-- skills/sub-disciplines/scaffold-ci-cd/SKILL.md -->
-<!-- Sub-skill of /stagecoach:deliver-stage. Orchestrator-only: dispatches eight specialized agents to bootstrap the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore/scaffold-ci-cd branch. -->
-
 ---
 name: scaffold-ci-cd
 description: Wire CI/CD, E2E testing, and design-system compliance gates. Auto-dispatched by deliver-stage on ci-cd stages.
 user-invocable: true
+triggers: ["/stagecoach:scaffold-ci-cd", "/scaffold-ci-cd", "scaffold ci/cd", "set up ci", "bootstrap quality gates", "ci-cd stage"]
 ---
+<!-- skills/sub-disciplines/scaffold-ci-cd/SKILL.md -->
+<!-- Sub-skill of /stagecoach:deliver-stage. Orchestrator-only: dispatches eight specialized agents to bootstrap the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore/scaffold-ci-cd branch. -->
 
 # CI/CD Scaffold (sub-skill of `/deliver-stage`)
 
