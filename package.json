@@ -1,5 +1,5 @@
 {
-  "name": "stagecoach",
+  "name": "@steve-piece/stagecoach",
   "version": "3.0.0",
   "private": false,
   "description": "PRD generation, phased implementation planning, and CI/CD infrastructure hardening for project workflows.",
@@ -22,6 +22,9 @@
     "LICENSE"
   ],
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/steve-piece/stagecoach"

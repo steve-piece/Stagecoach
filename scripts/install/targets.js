@@ -18,7 +18,7 @@ function resolveTargets(args) {
     pluginTargets.push({
       host: "cursor",
       rootDir: cursorDir,
-      installDir: path.join(cursorDir, "stagecoach"),
+      installDir: path.join(cursorDir, "local", "stagecoach"),
       manifestDir: ".cursor-plugin",
     });
   }
