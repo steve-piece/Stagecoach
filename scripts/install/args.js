@@ -136,9 +136,9 @@ function renderHelp() {
     "  --help                    Show this help output",
     "",
     "Examples:",
-    "  npx @steve-piece/stagecoach install --target both",
-    "  npx @steve-piece/stagecoach install --mode skills --skill setup --skill deliver-stage",
-    "  npx @steve-piece/stagecoach install --mode skills --config ./skills.sh.config.json",
+    "  npx stage-coach install --target both",
+    "  npx stage-coach install --mode skills --skill setup --skill deliver-stage",
+    "  npx stage-coach install --mode skills --config ./skills.sh.config.json",
   ].join("\n");
 }
 

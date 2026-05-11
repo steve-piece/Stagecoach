@@ -21,7 +21,7 @@ Or clone manually: `git clone https://github.com/steve-piece/stagecoach.git` and
 For automation or repeatable setup, use the package CLI:
 
 ```bash
-npx @steve-piece/stagecoach install --target both
+npx stage-coach install --target both
 ```
 
 Or run straight from GitHub without an npm install:
@@ -42,7 +42,7 @@ Use `--target cursor` or `--target claude` to scope installs.
 Install only selected skills + matching command shims:
 
 ```bash
-npx @steve-piece/stagecoach install --mode skills --skill setup --skill deliver-stage
+npx stage-coach install --mode skills --skill setup --skill deliver-stage
 ```
 
 By default, selected skills are copied into:
@@ -55,7 +55,7 @@ Override destination with `--skills-dir <path>`.
 Optional JSONC config (example at `scripts/install/skills-config.example.json`):
 
 ```bash
-npx @steve-piece/stagecoach install --mode skills --config ./scripts/install/skills-config.example.json
+npx stage-coach install --mode skills --config ./scripts/install/skills-config.example.json
 ```
 
 `/add-plugin stagecoach` remains the shortest interactive path; the CLI path is better when you want scriptable, idempotent setup.
