@@ -65,7 +65,7 @@ target_band_compliance: in-band | over | under
 foundation_stages_planned: [1, 2, 3, 4]  # 4 only if Q3=Yes
 out_of_scope_respected: true | false
 notes:
-  - <one line each — e.g. "Auth feature gets dev-mode user switcher task injected">
+  - <one line each — e.g. "Auth feature gets dev-mode auth helpers task injected (auto-login + user switcher)">
 ```
 
 ## Return Contract

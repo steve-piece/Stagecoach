@@ -53,7 +53,7 @@ For each feature in `features`:
 - `full-stack` — the feature touches both UI and server code in a single coordinated slice
 - `infrastructure` — the feature is non-app (e.g. CI changes, deploy infra)
 
-**c. Auth detection.** If the feature involves login, RBAC, permissions, sessions, or anything labeled `[auth]`, set `auth_tagged: true`. The phased-plan-writer will inject the dev-mode user switcher task.
+**c. Auth detection.** If the feature involves login, RBAC, permissions, sessions, or anything labeled `[auth]`, set `auth_tagged: true`. The phased-plan-writer will inject the dev-mode auth helpers task (localhost auto-login + user switcher banner, as one combined task).
 
 **d. Slice detection.** Default to `vertical` (UI + route + data + tests in one PR). Only choose `horizontal` if the feature is genuinely cross-cutting (e.g. "add Sentry to every error boundary" — which probably shouldn't go through add-feature anyway).
 
@@ -132,5 +132,5 @@ hitl_context: null | "<what triggered this>"
 - **No subagent dispatch.** Don't call other sub-agents. Single-shot judgment.
 - **Honor `max_tasks_per_stage`.** Every proposed stage must satisfy this cap.
 - **Never propose a stage type that isn't in the allowed set** (`design-system | ci-cd | env-setup | db-schema | frontend | backend | full-stack | infrastructure`).
-- **Never assume the dev-mode user switcher task is already added** — `auth_tagged: true` is the signal phased-plan-writer needs to inject it.
+- **Never assume the dev-mode auth helpers task is already added** — `auth_tagged: true` is the signal phased-plan-writer needs to inject it (the combined auto-login + user switcher task).
 - **HITL bubble-up only.** Never call `ask_user_input_v0` directly. The orchestrator surfaces all HITL prompts.

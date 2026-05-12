@@ -39,7 +39,7 @@ Stage numbers in this mode are **whatever the add-feature skill assigned** (alwa
 **Behavior that's identical across modes:**
 - The required file structure (frontmatter contract, sections, exit criteria)
 - The 6-task hard cap (overrideable per project via `stages.maxTasksPerStage` in `bytheslice.config.json`)
-- The auth-tagged stage detection + dev-mode user switcher injection
+- The auth-tagged stage detection + dev-mode auth helpers injection (localhost auto-login + user switcher banner, as one combined task)
 - The hard rules (no forward references, no placeholders, explicit paths, `[ ]` checkboxes only, project-rules-file generic phrasing)
 - The output contract
 
@@ -100,7 +100,7 @@ Never write more than 6 numbered tasks. If scope requires more, flag `hitl_requi
 - (plan-phases mode) PRD Section 2 has a feature labeled `[auth]`
 - (incremental mode) `complexity_assessor_output.auth_tagged` is `true`
 
-**When auth-tagged:** append the dev-mode user switcher task to the stage's task list. Read the exact task from `references/canned-stages/auth-dev-mode-switcher-task.md`. This task counts toward the 6-task cap.
+**When auth-tagged:** append the dev-mode auth helpers task to the stage's task list. Read the exact task from `references/canned-stages/auth-dev-mode-switcher-task.md`. It is **one combined task** with two sub-bullets that must ship together (localhost auto-login + user switcher banner) — stages cannot claim partial credit for shipping only one. This combined task counts as a single entry toward the 6-task cap.
 
 ## Workflow
 
