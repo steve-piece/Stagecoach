@@ -89,7 +89,7 @@ Ask each question with `ask_user_input_v0` before writing any files. Answers bui
 > If PRD Section 2 or 4 specifies an auth provider, use that. Otherwise ask:
 > "Which auth provider?"
 > single_select: ["Clerk", "Auth.js / NextAuth", "Supabase Auth", "Lucia", "None / custom", "Other (I'll specify)"]
-> → drives auth feature stage scope; if auth present, phased-plan-writer injects the dev-mode user switcher task (see `references/canned-stages/auth-dev-mode-switcher-task.md`)
+> → drives auth feature stage scope; if auth present, phased-plan-writer injects the dev-mode auth helpers task — bundling localhost auto-login (opt-in via `DEV_AUTH_BYPASS`) + seeded-user switcher banner (see `references/canned-stages/auth-dev-mode-switcher-task.md`)
 
 **Q11 — Deployment target**
 > "Deployment target? (Default: Vercel)"
@@ -188,7 +188,7 @@ CLAUDE.md or AGENTS.md (per Q12)
 - **One PR per stage**: stages are independently reviewable and mergeable
 - **No forward references**: stages may only reference packages, tables, or components built in prior stages
 - **Exit criteria are testable**: "pnpm test passes" not "looks good"
-- **Auth stages always get the dev-mode user switcher task** (see `references/canned-stages/auth-dev-mode-switcher-task.md`)
+- **Auth stages always get the dev-mode auth helpers task** — one combined task bundling localhost auto-login (opt-in via `DEV_AUTH_BYPASS`) + seeded-user switcher banner; both sub-bullets ship together (see `references/canned-stages/auth-dev-mode-switcher-task.md`)
 
 ## Stage frontmatter contract
 

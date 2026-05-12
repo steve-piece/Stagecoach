@@ -147,7 +147,7 @@ Read `../plan-phases/agents/phased-plan-writer.md` and dispatch it ONCE PER NEW 
 - `mvp:` flag from Q-mvp-band
 - Scope: in-scope tasks list (≤ `stages.maxTasksPerStage`, default 6)
 - Context: feature description + complexity-assessor rationale + relationship to existing features + similar-stage frontmatter for pattern matching
-- Auth-tagged? If yes, the writer auto-injects the dev-mode user switcher task (per [`auth-dev-mode-switcher-task.md`](../plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md))
+- Auth-tagged? If yes, the writer auto-injects the dev-mode auth helpers task — localhost auto-login (opt-in via `DEV_AUTH_BYPASS`) + user switcher banner, as one combined task (per [`auth-dev-mode-switcher-task.md`](../plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md))
 - Dependencies: stages this new feature depends on (from `depends_on:` frontmatter — usually `[]` or just the design-system + db-schema foundation stages already built)
 - The project rules file path
 
@@ -261,7 +261,7 @@ Then return.
 - **Never alter completed stage rows.** add-feature only APPENDS new stages. Existing stages are read-only context.
 - **One slice per PR is still the rule.** Pass `pr_style` from Q-pr-style to phased-plan-writer; default is one PR per stage.
 - **Honor `stages.maxTasksPerStage`** from `bytheslice.config.json` (default 6). The complexity-assessor uses this when proposing breakdowns.
-- **Auth-tagged stages must inject the dev-mode user switcher task.** This is mandatory per [`auth-dev-mode-switcher-task.md`](../plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md). The phased-plan-writer handles this in incremental mode the same way it does in plan-phases mode.
+- **Auth-tagged stages must inject the dev-mode auth helpers task** — one combined task with two sub-bullets (localhost auto-login + user switcher banner) that ship together. This is mandatory per [`auth-dev-mode-switcher-task.md`](../plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md). The phased-plan-writer handles this in incremental mode the same way it does in plan-phases mode.
 - **Out-of-scope guard.** If the user proposes features that contradict the original PRD's "Out of Scope" section (Section 7), surface as HITL `prd_ambiguity` BEFORE writing any stage files.
 
 ---
