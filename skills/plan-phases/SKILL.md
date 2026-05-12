@@ -2,7 +2,7 @@
 name: plan-phases
 description: Transform a PRD into an ordered roadmap with design-system, CI/CD, and 20-30 vertical-slice feature stages.
 user-invocable: true
-triggers: ["/stagecoach:plan-phases", "/plan-phases", "plan phases", "break into phases", "phased plan", "create a development plan", "decompose the prd"]
+triggers: ["/bytheslice:plan-phases", "/plan-phases", "plan phases", "break into phases", "phased plan", "create a development plan", "decompose the prd"]
 ---
 
 # PRD to Phased Plans
@@ -24,14 +24,14 @@ Transform a finalized PRD into a complete, ordered set of implementation stages 
 
 ## Project Config (optional)
 
-Before Phase 1, check for `stagecoach.config.json` at the project root. Honor these keys (see [`skills/setup/references/stagecoach-config-schema.md`](../setup/references/stagecoach-config-schema.md) for the full schema):
+Before Phase 1, check for `bytheslice.config.json` at the project root. Honor these keys (see [`skills/setup/references/bytheslice-config-schema.md`](../setup/references/bytheslice-config-schema.md) for the full schema):
 
 - `rules.imports` — when non-empty, **skip Q9** (external rule-file imports) and use these URLs directly
 - `stages.targetFeatureStages` — pass to phased-plan-writer to tune the splitter (default `"20-30"`; smaller band = larger slices)
 - `stages.maxTasksPerStage` — pass to phased-plan-writer (default `6`; warn if user set `> 8`)
 - `mcps.*` — pre-fills Q5 (Supabase MCP) and Q7 (design MCPs) so the elicitation skips already-answered questions
 
-If a config-supplied answer covers a question, log a one-liner ("Q9 answered from stagecoach.config.json — skipping") and move to the next question.
+If a config-supplied answer covers a question, log a one-liner ("Q9 answered from bytheslice.config.json — skipping") and move to the next question.
 
 ## Phase 1: Context Elicitation
 
@@ -105,7 +105,7 @@ After all answers, assemble and write the project rules file before dispatching 
 ### Layering precedence (document in project rules file header)
 
 ```
-Priority 1 (highest): Stagecoach baseline (web standards, security, framework facts)
+Priority 1 (highest): ByTheSlice baseline (web standards, security, framework facts)
 Priority 2: project-specific rules (imported via Q9)
 Priority 3 (lowest): external rule files
 ```

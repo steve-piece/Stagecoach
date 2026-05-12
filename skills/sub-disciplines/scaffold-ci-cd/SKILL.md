@@ -2,10 +2,10 @@
 name: scaffold-ci-cd
 description: Wire CI/CD, E2E testing, and design-system compliance gates. Auto-dispatched by deliver-stage on ci-cd stages.
 user-invocable: true
-triggers: ["/stagecoach:scaffold-ci-cd", "/scaffold-ci-cd", "scaffold ci/cd", "set up ci", "bootstrap quality gates", "ci-cd stage"]
+triggers: ["/bytheslice:scaffold-ci-cd", "/scaffold-ci-cd", "scaffold ci/cd", "set up ci", "bootstrap quality gates", "ci-cd stage"]
 ---
 <!-- skills/sub-disciplines/scaffold-ci-cd/SKILL.md -->
-<!-- Sub-skill of /stagecoach:deliver-stage. Orchestrator-only: dispatches eight specialized agents to bootstrap the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore/scaffold-ci-cd branch. -->
+<!-- Sub-skill of /bytheslice:deliver-stage. Orchestrator-only: dispatches eight specialized agents to bootstrap the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore/scaffold-ci-cd branch. -->
 
 # CI/CD Scaffold (sub-skill of `/deliver-stage`)
 
@@ -46,7 +46,7 @@ The PR template (Phase 3D) is small enough that the orchestrator writes it direc
 
 | State | Action |
 |---|---|
-| Fully built (every scaffold artifact present and CI green) | Stop. Report "baseline already in place". Recommend `/stagecoach:deliver-stage` for the next slice. |
+| Fully built (every scaffold artifact present and CI green) | Stop. Report "baseline already in place". Recommend `/bytheslice:deliver-stage` for the next slice. |
 | Partially built (some artifacts present, others missing) | Run discovery, dispatch only the agents that fill the gaps; never overwrite existing artifacts without surfacing to the user. |
 | Not yet started (clean repo, no `.github/workflows/`) | Run the full pipeline end-to-end. |
 
@@ -105,13 +105,13 @@ The orchestrator (no subagent dispatch — this is a small, deterministic write 
 2. If the placeholder is present, replace its body with the contents of `references/prd-ci-cd-checklist.md` (preserving the `[ ]` checkbox format verbatim — these are runtime gates the user and every agent walk on every PR, not one-time scaffold checks).
 3. If the placeholder is absent (e.g. the project skipped `plan-phases` and ran `/scaffold-ci-cd` directly as an escape hatch), append a new section to the project rules file:
    ```markdown
-   <!-- stagecoach: ci-cd-operational-rules-start -->
+   <!-- bytheslice: ci-cd-operational-rules-start -->
    ## CI/CD Operational Rules
 
-   These rules govern how master-checklist updates, CI gates, and PR shape interact across every Stagecoach run. They apply to every agent on every PR — not only to the one-time CI/CD scaffolding.
+   These rules govern how master-checklist updates, CI gates, and PR shape interact across every ByTheSlice run. They apply to every agent on every PR — not only to the one-time CI/CD scaffolding.
 
    <!-- contents of references/prd-ci-cd-checklist.md, verbatim -->
-   <!-- stagecoach: ci-cd-operational-rules-end -->
+   <!-- bytheslice: ci-cd-operational-rules-end -->
    ```
 4. **Idempotent re-runs.** If the section markers already exist, replace the body in place; never duplicate the section. User-edited content between the markers should be surfaced as a conflict via HITL `destructive_operation` rather than overwritten silently.
 5. If neither `CLAUDE.md` nor `AGENTS.md` exists at the project root, create `CLAUDE.md` with just this section plus a one-line precedence header. Surface to the user that a fuller rules file should ideally be assembled by `/plan-phases`.
@@ -167,7 +167,7 @@ Follow this skill whenever the user:
 - says "scaffold ci/cd", "set up CI", "bootstrap quality gates", "set up Playwright + GitHub Actions"
 - has `deliver-stage` reach a `type: ci-cd` stage in the master checklist (auto-dispatch)
 
-If the repo already has the baseline, stop and recommend `/stagecoach:deliver-stage` instead.
+If the repo already has the baseline, stop and recommend `/bytheslice:deliver-stage` instead.
 
 ---
 
@@ -188,7 +188,7 @@ Run this checklist at the end of every run. Do **not** consider the scaffold "do
 [ ] `.eslintrc.json` (or equivalent) has `eslint-plugin-tailwindcss` config additions.
 [ ] `.stylelintrc.json` exists with CSS-file token checks.
 [ ] `.gitignore` excludes `playwright-report/`, `test-results/`, `.playwright/`, and Vizzly diff artifacts.
-[ ] Project rules file (`CLAUDE.md` or `AGENTS.md`) has a "CI/CD Operational Rules" section populated verbatim from `references/prd-ci-cd-checklist.md`, delimited by the `<!-- stagecoach: ci-cd-operational-rules-{start,end} -->` markers, so every later stage skill picks up the runtime guardrails automatically.
+[ ] Project rules file (`CLAUDE.md` or `AGENTS.md`) has a "CI/CD Operational Rules" section populated verbatim from `references/prd-ci-cd-checklist.md`, delimited by the `<!-- bytheslice: ci-cd-operational-rules-{start,end} -->` markers, so every later stage skill picks up the runtime guardrails automatically.
 
 ### 2. Test Suites and Scripts Present
 

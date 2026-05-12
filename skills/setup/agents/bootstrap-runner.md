@@ -31,7 +31,7 @@ You are the **bootstrap-runner** for `/setup` Flow B. Your job: scaffold the pro
 4. Initial commit:
    ```
    git add -A
-   git commit -m "chore: scaffold project via /stagecoach:setup\n\nStack: Next.js\nVariant: <variant>"
+   git commit -m "chore: scaffold project via /bytheslice:setup\n\nStack: Next.js\nVariant: <variant>"
    ```
 5. Append to `.gitignore` (preserving existing entries):
    ```

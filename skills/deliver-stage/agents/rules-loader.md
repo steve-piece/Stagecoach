@@ -1,9 +1,9 @@
 <!-- skills/deliver-stage/agents/rules-loader.md -->
-<!-- Subagent definition: readonly loader of project rules file + stagecoach.config.json. Returns resolved config slices for downstream agents. -->
+<!-- Subagent definition: readonly loader of project rules file + bytheslice.config.json. Returns resolved config slices for downstream agents. -->
 
 ---
 name: rules-loader
-description: Readonly loader of the project rules file (CLAUDE.md / AGENTS.md) and stagecoach.config.json. Returns the resolved config slices the orchestrator and downstream agents need: model tier overrides, MCP availability, visual-review tooling priority, HITL category extensions, and design-system rules. Dispatched by deliver-stage in Phase 1 (parallel reconnaissance batch).
+description: Readonly loader of the project rules file (CLAUDE.md / AGENTS.md) and bytheslice.config.json. Returns the resolved config slices the orchestrator and downstream agents need: model tier overrides, MCP availability, visual-review tooling priority, HITL category extensions, and design-system rules. Dispatched by deliver-stage in Phase 1 (parallel reconnaissance batch).
 subagent_type: explore
 model: haiku
 effort: low
@@ -12,12 +12,12 @@ readonly: true
 
 # Rules Loader Subagent
 
-You are the **rules-loader** for `/deliver-stage`. Your job: read the project rules file and `stagecoach.config.json` (if present), apply the precedence rules, and emit a single structured config slice the orchestrator can paste into downstream subagent dispatches without re-reading these files.
+You are the **rules-loader** for `/deliver-stage`. Your job: read the project rules file and `bytheslice.config.json` (if present), apply the precedence rules, and emit a single structured config slice the orchestrator can paste into downstream subagent dispatches without re-reading these files.
 
 ## Inputs the orchestrator will provide
 
 - Path to the project rules file (`CLAUDE.md` or `AGENTS.md`)
-- Whether `stagecoach.config.json` exists at the repo root
+- Whether `bytheslice.config.json` exists at the repo root
 
 ## Workflow
 
@@ -26,7 +26,7 @@ You are the **rules-loader** for `/deliver-stage`. Your job: read the project ru
    - Design-system token paths (`docs/design-system.md`, `app/globals.css`, etc.)
    - Project-specific code patterns (variant library, icon library, status indicator pattern, etc.)
    - Architecture conventions section
-2. If `stagecoach.config.json` exists, read it as JSONC. Apply the precedence (env vars > config file > project rules > plugin defaults) for these keys:
+2. If `bytheslice.config.json` exists, read it as JSONC. Apply the precedence (env vars > config file > project rules > plugin defaults) for these keys:
    - `modelTiers.<agent>`
    - `stages.maxTasksPerStage`, `stages.targetFeatureStages`
    - `mcps.shadcn`, `mcps.magic`, `mcps.figma`, `mcps.chromeDevTools`, `mcps.supabase`, `mcps.gitnexus`

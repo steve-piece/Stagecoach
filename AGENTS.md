@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **stagecoach** (1084 symbols, 1176 relationships, 0 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **bytheslice** (1084 symbols, 1176 relationships, 0 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -24,10 +24,10 @@ This project is indexed by GitNexus as **stagecoach** (1084 symbols, 1176 relati
 
 | Resource | Use for |
 |----------|---------|
-| `gitnexus://repo/stagecoach/context` | Codebase overview, check index freshness |
-| `gitnexus://repo/stagecoach/clusters` | All functional areas |
-| `gitnexus://repo/stagecoach/processes` | All execution flows |
-| `gitnexus://repo/stagecoach/process/{name}` | Step-by-step execution trace |
+| `gitnexus://repo/bytheslice/context` | Codebase overview, check index freshness |
+| `gitnexus://repo/bytheslice/clusters` | All functional areas |
+| `gitnexus://repo/bytheslice/processes` | All execution flows |
+| `gitnexus://repo/bytheslice/process/{name}` | Step-by-step execution trace |
 
 ## CLI
 

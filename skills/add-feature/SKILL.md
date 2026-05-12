@@ -4,15 +4,15 @@ description: Add one or more features to an existing project mid-flight. Auto-de
 model: opus
 effort: high
 user-invocable: true
-triggers: ["/stagecoach:add-feature", "/add-feature", "add a feature", "add features", "extend the app", "bolt on a feature", "what about adding"]
+triggers: ["/bytheslice:add-feature", "/add-feature", "add a feature", "add features", "extend the app", "bolt on a feature", "what about adding"]
 ---
 
 <!-- skills/add-feature/SKILL.md -->
-<!-- Mid-flight feature addition. Detects project state, assesses complexity, writes incremental stage files, hands off to deliver-stage. For non-Stagecoach apps, redirects to setup. -->
+<!-- Mid-flight feature addition. Detects project state, assesses complexity, writes incremental stage files, hands off to deliver-stage. For non-ByTheSlice apps, redirects to setup. -->
 
 # Add Feature
 
-Bolt new features onto an existing project without restarting from a fresh PRD. Used after `/stagecoach:run-pipeline` has already shipped the original plan, OR for adding Stagecoach to an existing non-Stagecoach project.
+Bolt new features onto an existing project without restarting from a fresh PRD. Used after `/bytheslice:run-pipeline` has already shipped the original plan, OR for adding ByTheSlice to an existing non-ByTheSlice project.
 
 The flow auto-detects which state the project is in and either runs the addition flow directly or redirects you to the right entry point first.
 
@@ -23,7 +23,7 @@ The flow auto-detects which state the project is in and either runs the addition
 | [`skills/plan-phases/references/stage-frontmatter-contract.md`](../plan-phases/references/stage-frontmatter-contract.md) | YAML frontmatter shape every new stage file must match |
 | [`skills/plan-phases/references/templates.md`](../plan-phases/references/templates.md) | Stage plan + master checklist templates |
 | [`skills/plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md`](../plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md) | Auto-injected if any new feature is auth-tagged |
-| [`skills/setup/references/stagecoach-config-schema.md`](../setup/references/stagecoach-config-schema.md) | Honors `stages.maxTasksPerStage` from `stagecoach.config.json` |
+| [`skills/setup/references/bytheslice-config-schema.md`](../setup/references/bytheslice-config-schema.md) | Honors `stages.maxTasksPerStage` from `bytheslice.config.json` |
 
 ## Sub-agents
 
@@ -36,7 +36,7 @@ The flow auto-detects which state the project is in and either runs the addition
 
 ## Project Config
 
-Honor these `stagecoach.config.json` keys when present (see [`skills/setup/references/stagecoach-config-schema.md`](../setup/references/stagecoach-config-schema.md)):
+Honor these `bytheslice.config.json` keys when present (see [`skills/setup/references/bytheslice-config-schema.md`](../setup/references/bytheslice-config-schema.md)):
 
 - `stages.maxTasksPerStage` — passed to phased-plan-writer for the new stage(s)
 - `modelTiers.complexityAssessor` — overrides this skill's complexity-assessor model
@@ -48,13 +48,13 @@ Run this detection before doing any work. It picks one of three paths.
 
 ```
 1. Does docs/plans/00_master_checklist.md exist?
-   Yes → Path A (Stagecoach-built project — proceed with feature addition)
+   Yes → Path A (ByTheSlice-built project — proceed with feature addition)
    No  → continue to step 2
 
 2. Does package.json exist in the working directory?
-   Yes → Path B (existing app, not Stagecoach — redirect to /stagecoach:setup
+   Yes → Path B (existing app, not ByTheSlice — redirect to /bytheslice:setup
                   for config + CI/CD baseline before re-invoking add-feature)
-   No  → Path C (no project on disk — redirect to /stagecoach:setup for
+   No  → Path C (no project on disk — redirect to /bytheslice:setup for
                   full bootstrap before any feature work)
 ```
 
@@ -62,7 +62,7 @@ Announce which path applies and why before continuing.
 
 ---
 
-## Path A — Stagecoach-built project (assess → write stages → handoff)
+## Path A — ByTheSlice-built project (assess → write stages → handoff)
 
 ### Phase 0 — Orientation
 
@@ -70,7 +70,7 @@ Announce which path applies and why before continuing.
 2. Read every `docs/plans/stage_*.md` quickly (frontmatter only — `name`, `type`, `slice`, `mvp`, `depends_on`, `completion_criteria`).
 3. Find the highest existing stage number. New stages will start at `<highest> + 1`.
 4. Read the original PRD at `docs/prd-*.md` if present — useful for the "don't drift outside scope" check, but NOT required.
-5. Read `stagecoach.config.json` at the project root if present.
+5. Read `bytheslice.config.json` at the project root if present.
 6. Read the project rules file (`CLAUDE.md` or `AGENTS.md`).
 7. Confirm git state: `git status --short`, `git rev-parse --abbrev-ref HEAD`. Should be clean and on `main`.
 8. Switch to **Plan Mode**.
@@ -114,7 +114,7 @@ Read `agents/complexity-assessor.md` and dispatch it. Pass:
 - The conventions choice (Q-conventions)
 - The current highest stage number
 - Frontmatter excerpts from the most-recent 3-5 stages (for pattern matching)
-- The `stagecoach.config.json` (esp. `stages.maxTasksPerStage`)
+- The `bytheslice.config.json` (esp. `stages.maxTasksPerStage`)
 - The project rules file path
 - The PRD path if present (read-only)
 
@@ -182,7 +182,7 @@ Use the same checklist row format as the existing stages in the file. Do NOT alt
    - Stage every new `docs/plans/stage_<n>_*.md` file plus the modified `docs/plans/00_master_checklist.md`
    - Conventional commit: `chore: add stages <lo>-<hi> (<feature names>)` with a body listing each new stage and its `type:` / `mvp:` flag
    - Working tree should be clean on the branch after this commit
-2. **Do NOT push or open a PR from this skill.** That's `/stagecoach:ship-pr`'s responsibility — keeping the same separation as `/deliver-stage`.
+2. **Do NOT push or open a PR from this skill.** That's `/bytheslice:ship-pr`'s responsibility — keeping the same separation as `/deliver-stage`.
 3. Print the handoff message:
 
 > Stage(s) added to `docs/plans/00_master_checklist.md` and committed on branch `chore/add-stages-<lo>-<hi>`:
@@ -191,39 +191,39 @@ Use the same checklist row format as the existing stages in the file. Do NOT alt
 > - `stage_30_admin-csv-export.md` (backend, mvp)
 >
 > **Next steps (pick one):**
-> - **Ship the plan changes as a chore PR first** (recommended for clean separation): run `/stagecoach:ship-pr`. The plan-only PR opens, CI runs (lint / link-check on the new files), you approve merge, the chore branch is cleaned up. Then start a fresh chat and run `/stagecoach:deliver-stage` to ship the first new stage.
-> - **Skip the chore PR — start delivery immediately**: switch back to `main` (`git checkout main`), then run `/stagecoach:deliver-stage`. The first slice's PR will mix the new plan files with the implementation.
-> - **Multi-stage autonomous delivery (experimental)**: `/stagecoach:run-pipeline` drives every new stage end-to-end with per-stage approval pauses. Best for batches you want shipped without per-stage babysitting.
+> - **Ship the plan changes as a chore PR first** (recommended for clean separation): run `/bytheslice:ship-pr`. The plan-only PR opens, CI runs (lint / link-check on the new files), you approve merge, the chore branch is cleaned up. Then start a fresh chat and run `/bytheslice:deliver-stage` to ship the first new stage.
+> - **Skip the chore PR — start delivery immediately**: switch back to `main` (`git checkout main`), then run `/bytheslice:deliver-stage`. The first slice's PR will mix the new plan files with the implementation.
+> - **Multi-stage autonomous delivery (experimental)**: `/bytheslice:run-pipeline` drives every new stage end-to-end with per-stage approval pauses. Best for batches you want shipped without per-stage babysitting.
 >
-> All new stages will go through the full CI gate (`@feature` + `@regression-core` + `@visual` + design-system-compliance + db-schema-drift if applicable). Visual + design-system-compliance gates require the project to have already run `/stagecoach:scaffold-ci-cd` — if absent, the orchestrator will surface that and ask whether to scaffold first.
+> All new stages will go through the full CI gate (`@feature` + `@regression-core` + `@visual` + design-system-compliance + db-schema-drift if applicable). Visual + design-system-compliance gates require the project to have already run `/bytheslice:scaffold-ci-cd` — if absent, the orchestrator will surface that and ask whether to scaffold first.
 
 Return.
 
 ---
 
-## Path B — Existing app, not Stagecoach-built
+## Path B — Existing app, not ByTheSlice-built
 
 **Detection:** `package.json` exists, `docs/plans/` does NOT exist.
 
 Print to the user:
 
-> This project has a `package.json` but no `docs/plans/` — it wasn't built with Stagecoach.
+> This project has a `package.json` but no `docs/plans/` — it wasn't built with ByTheSlice.
 >
-> Before adding features through Stagecoach, run `/stagecoach:setup` first. It will:
-> 1. Drop in a per-project `stagecoach.config.json` (Step 2 of Setup)
-> 2. Check for CI/CD baseline and offer to scaffold it via `/stagecoach:scaffold-ci-cd` if missing (Step 3 of Setup, new in v2.2)
+> Before adding features through ByTheSlice, run `/bytheslice:setup` first. It will:
+> 1. Drop in a per-project `bytheslice.config.json` (Step 2 of Setup)
+> 2. Check for CI/CD baseline and offer to scaffold it via `/bytheslice:scaffold-ci-cd` if missing (Step 3 of Setup, new in v2.2)
 >
-> After setup completes, re-invoke `/stagecoach:add-feature` and I'll detect the new state and proceed with Path A — but note: without an existing `docs/plans/` and a master checklist of completed work, I'll be working with a much narrower context. You may want to first run `/stagecoach:write-prd` against the EXISTING app's known surface area to give the complexity assessor better grounding.
+> After setup completes, re-invoke `/bytheslice:add-feature` and I'll detect the new state and proceed with Path A — but note: without an existing `docs/plans/` and a master checklist of completed work, I'll be working with a much narrower context. You may want to first run `/bytheslice:write-prd` against the EXISTING app's known surface area to give the complexity assessor better grounding.
 
 Bubble HITL:
 
 ```yaml
 status: needs_human
-summary: Existing project detected (has package.json) but not Stagecoach-built (no docs/plans/). Redirecting to /stagecoach:setup before feature addition can proceed.
+summary: Existing project detected (has package.json) but not ByTheSlice-built (no docs/plans/). Redirecting to /bytheslice:setup before feature addition can proceed.
 artifacts: []
 needs_human: true
 hitl_category: prd_ambiguity
-hitl_question: "Run /stagecoach:setup first to add the config + CI/CD baseline, then re-invoke /stagecoach:add-feature?"
+hitl_question: "Run /bytheslice:setup first to add the config + CI/CD baseline, then re-invoke /bytheslice:add-feature?"
 hitl_context: "No docs/plans/00_master_checklist.md found in working directory; package.json present at <path>."
 ```
 
@@ -237,17 +237,17 @@ Then return.
 
 Print:
 
-> No project detected in this directory. Run `/stagecoach:setup` first — it will scaffold a fresh Next.js single-app or Turborepo monorepo (Flow B) and drop in the per-project config. Once a project exists, run `/stagecoach:write-prd` for new builds, or `/stagecoach:add-feature` once you have a master checklist to extend.
+> No project detected in this directory. Run `/bytheslice:setup` first — it will scaffold a fresh Next.js single-app or Turborepo monorepo (Flow B) and drop in the per-project config. Once a project exists, run `/bytheslice:write-prd` for new builds, or `/bytheslice:add-feature` once you have a master checklist to extend.
 
 Bubble HITL:
 
 ```yaml
 status: needs_human
-summary: No project on disk. Redirecting to /stagecoach:setup for project bootstrap.
+summary: No project on disk. Redirecting to /bytheslice:setup for project bootstrap.
 artifacts: []
 needs_human: true
 hitl_category: prd_ambiguity
-hitl_question: "Run /stagecoach:setup to scaffold a new project, then run /stagecoach:write-prd to start the full PRD-to-app flow?"
+hitl_question: "Run /bytheslice:setup to scaffold a new project, then run /bytheslice:write-prd to start the full PRD-to-app flow?"
 hitl_context: "Working directory has no package.json and no docs/plans/."
 ```
 
@@ -260,7 +260,7 @@ Then return.
 - **Never invent a master checklist.** Only Path A operates on existing `docs/plans/`. Paths B and C ALWAYS redirect to setup.
 - **Never alter completed stage rows.** add-feature only APPENDS new stages. Existing stages are read-only context.
 - **One slice per PR is still the rule.** Pass `pr_style` from Q-pr-style to phased-plan-writer; default is one PR per stage.
-- **Honor `stages.maxTasksPerStage`** from `stagecoach.config.json` (default 6). The complexity-assessor uses this when proposing breakdowns.
+- **Honor `stages.maxTasksPerStage`** from `bytheslice.config.json` (default 6). The complexity-assessor uses this when proposing breakdowns.
 - **Auth-tagged stages must inject the dev-mode user switcher task.** This is mandatory per [`auth-dev-mode-switcher-task.md`](../plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md). The phased-plan-writer handles this in incremental mode the same way it does in plan-phases mode.
 - **Out-of-scope guard.** If the user proposes features that contradict the original PRD's "Out of Scope" section (Section 7), surface as HITL `prd_ambiguity` BEFORE writing any stage files.
 
@@ -275,10 +275,10 @@ Then return.
 [ ] (Path A only) Assessment surfaced to user; user authorization received
 [ ] (Path A only) phased-plan-writer dispatched once per new stage (incremental mode)
 [ ] (Path A only) Master checklist updated with new stage rows (existing rows untouched)
-[ ] (Path A only) New plan files + master-checklist update committed on a `chore/add-stages-<lo>-<hi>` branch (no push, no PR — handed off to `/stagecoach:ship-pr`)
+[ ] (Path A only) New plan files + master-checklist update committed on a `chore/add-stages-<lo>-<hi>` branch (no push, no PR — handed off to `/bytheslice:ship-pr`)
 [ ] (Path A only) Handoff message printed with the three next-step options (`/ship-pr` for plan-only chore PR / direct `/deliver-stage` / `/run-pipeline` for batch)
-[ ] (Path B only) HITL bubble surfaced; user redirected to /stagecoach:setup
-[ ] (Path C only) HITL bubble surfaced; user redirected to /stagecoach:setup for bootstrap
+[ ] (Path B only) HITL bubble surfaced; user redirected to /bytheslice:setup
+[ ] (Path C only) HITL bubble surfaced; user redirected to /bytheslice:setup for bootstrap
 
 ---
 

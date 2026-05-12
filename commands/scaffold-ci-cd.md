@@ -2,14 +2,14 @@
 <!-- Slash command that loads the scaffold-ci-cd skill. Sub-skill of /deliver-stage; auto-dispatched on type:ci-cd stages. -->
 
 ---
-description: Sub-skill of /stagecoach:deliver-stage. Wires the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore/scaffold-ci-cd branch. Auto-dispatched by /deliver-stage on type:ci-cd stages; invoke directly to re-scaffold or repair CI when the baseline drifts. Use when the user says "scaffold ci/cd", "set up CI", "bootstrap quality gates", or runs /scaffold-ci-cd.
+description: Sub-skill of /bytheslice:deliver-stage. Wires the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore/scaffold-ci-cd branch. Auto-dispatched by /deliver-stage on type:ci-cd stages; invoke directly to re-scaffold or repair CI when the baseline drifts. Use when the user says "scaffold ci/cd", "set up CI", "bootstrap quality gates", or runs /scaffold-ci-cd.
 ---
 
 # /scaffold-ci-cd
 
 Load and follow the [`scaffold-ci-cd`](../skills/sub-disciplines/scaffold-ci-cd/SKILL.md) skill.
 
-**Sub-skill of `/stagecoach:deliver-stage`.** This skill is normally dispatched automatically when `deliver-stage` encounters a `type: ci-cd` stage. Run it directly only when you need to re-scaffold or repair the CI/CD baseline outside the normal stage loop.
+**Sub-skill of `/bytheslice:deliver-stage`.** This skill is normally dispatched automatically when `deliver-stage` encounters a `type: ci-cd` stage. Run it directly only when you need to re-scaffold or repair the CI/CD baseline outside the normal stage loop.
 
 The skill bootstraps the CI/CD and E2E baseline that every later feature slice depends on:
 
@@ -29,4 +29,4 @@ The skill bootstraps the CI/CD and E2E baseline that every later feature slice d
 
 ## When to use this command
 
-Use `/scaffold-ci-cd` directly as an escape hatch — for example, when CI has drifted and you want to re-establish the baseline outside the normal phased flow. The everyday entry point is `/stagecoach:deliver-stage`, which runs this sub-skill automatically when the next pending stage has `type: ci-cd`. This skill writes infrastructure, not product code.
+Use `/scaffold-ci-cd` directly as an escape hatch — for example, when CI has drifted and you want to re-establish the baseline outside the normal phased flow. The everyday entry point is `/bytheslice:deliver-stage`, which runs this sub-skill automatically when the next pending stage has `type: ci-cd`. This skill writes infrastructure, not product code.

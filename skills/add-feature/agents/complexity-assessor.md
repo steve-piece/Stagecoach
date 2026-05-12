@@ -3,7 +3,7 @@
 
 ---
 name: complexity-assessor
-description: Read-only assessor that judges whether each requested feature should ship as a single stage or split into multiple stages. Returns a per-feature breakdown with proposed stage names, types (frontend/backend/full-stack), slice (vertical/horizontal), `depends_on`, and estimated task count. Dispatched by /stagecoach:add-feature in Phase 2. Does not write stage files — phased-plan-writer handles that in Phase 4.
+description: Read-only assessor that judges whether each requested feature should ship as a single stage or split into multiple stages. Returns a per-feature breakdown with proposed stage names, types (frontend/backend/full-stack), slice (vertical/horizontal), `depends_on`, and estimated task count. Dispatched by /bytheslice:add-feature in Phase 2. Does not write stage files — phased-plan-writer handles that in Phase 4.
 model: sonnet
 effort: medium
 tools: [Read, Glob, Grep]
@@ -11,13 +11,13 @@ tools: [Read, Glob, Grep]
 
 # complexity-assessor
 
-Read-only assessor for `/stagecoach:add-feature`. Given a list of feature requests plus the existing project context, decides per-feature whether the work fits in one stage or needs multiple stages, and proposes the stage breakdown for `phased-plan-writer` to act on.
+Read-only assessor for `/bytheslice:add-feature`. Given a list of feature requests plus the existing project context, decides per-feature whether the work fits in one stage or needs multiple stages, and proposes the stage breakdown for `phased-plan-writer` to act on.
 
 This agent does **not** write or modify any files. Its job is judgment + structured output.
 
 ## Inputs
 
-The orchestrating skill (`/stagecoach:add-feature`) passes:
+The orchestrating skill (`/bytheslice:add-feature`) passes:
 
 | Input | Source |
 |---|---|
@@ -26,7 +26,7 @@ The orchestrating skill (`/stagecoach:add-feature`) passes:
 | `conventions_choice` | From Q-conventions — "follow existing" or "introduce new" + description |
 | `next_stage_number` | The integer to start from (highest existing + 1) |
 | `recent_stage_frontmatter` | YAML frontmatter from the 3-5 most recent existing stages (for pattern matching) |
-| `max_tasks_per_stage` | From `stagecoach.config.json` `stages.maxTasksPerStage` (default 6) |
+| `max_tasks_per_stage` | From `bytheslice.config.json` `stages.maxTasksPerStage` (default 6) |
 | `project_rules_path` | Path to CLAUDE.md or AGENTS.md |
 | `prd_path` | Path to docs/prd-*.md if present (optional) |
 | `iteration` | 1 on first run, 2 if user requested edits to a previous assessment |
@@ -39,7 +39,7 @@ The orchestrating skill (`/stagecoach:add-feature`) passes:
 - Read `project_rules_path` end-to-end
 - Read `recent_stage_frontmatter` to understand existing patterns (slice convention, type distribution, typical task count)
 - If `prd_path` is provided, read Section 2 (Functional Requirements) and Section 7 (Out of Scope) — used for the out-of-scope guard
-- Read `stagecoach.config.json` for `stages.maxTasksPerStage`
+- Read `bytheslice.config.json` for `stages.maxTasksPerStage`
 
 ### 2. Per-feature assessment loop
 

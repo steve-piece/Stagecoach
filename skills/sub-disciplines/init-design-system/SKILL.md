@@ -2,7 +2,7 @@
 name: init-design-system
 description: Bootstrap your design system: tokens, Tailwind config, and design rules. Auto-dispatched by deliver-stage on design-system stages.
 user-invocable: true
-triggers: ["/stagecoach:init-design-system", "/init-design-system", "scaffold design system", "design-system stage"]
+triggers: ["/bytheslice:init-design-system", "/init-design-system", "scaffold design system", "design-system stage"]
 ---
 
 # init-design-system (sub-skill of `/deliver-stage`)
@@ -38,7 +38,7 @@ Read all of these before beginning:
 
 ## Project Config (optional)
 
-Honor these `stagecoach.config.json` keys when present (see [`skills/setup/references/stagecoach-config-schema.md`](../../setup/references/stagecoach-config-schema.md)):
+Honor these `bytheslice.config.json` keys when present (see [`skills/setup/references/bytheslice-config-schema.md`](../../setup/references/bytheslice-config-schema.md)):
 
 - `mcps.shadcn`, `mcps.figma`, `mcps.magic` — declarative MCP availability for the bundle-validator and token-expander agents
 - `modelTiers.tokenExpander`, `modelTiers.bundleValidator`, `modelTiers.compliancePreCheck` — override agent model tiers for THIS run

@@ -1,5 +1,5 @@
 // scripts/install/manifests.js
-// Reads Stagecoach plugin metadata and resolves installable skill paths.
+// Reads ByTheSlice plugin metadata and resolves installable skill paths.
 
 const fs = require("fs");
 const path = require("path");

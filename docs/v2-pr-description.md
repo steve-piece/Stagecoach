@@ -1,6 +1,6 @@
-# Stagecoach v2 — Refactor PR
+# ByTheSlice v2 — Refactor PR
 
-**Suggested PR title:** `[v2] Stagecoach: design-system gate, env-setup gate, frontend-design skill, HITL gates, model alias system`
+**Suggested PR title:** `[v2] ByTheSlice: design-system gate, env-setup gate, frontend-design skill, HITL gates, model alias system`
 
 **Branch:** `refactor/v2-design-system-frontend-quality` → `main`
 
@@ -8,7 +8,7 @@
 
 ## 1. Summary
 
-This PR delivers the full v2 refactor of the phased-dev-workflow plugin, now officially renamed **Stagecoach** (plugin name: `stagecoach`, version `2.0.0`). The refactor reorganizes the four foundation stages so that design-system validation comes first (before CI/CD), adds two entirely new foundation gates (env-setup and the conditional db-schema-foundation), introduces a dedicated frontend-design skill with a six-agent visual pipeline, hardens the human-in-the-loop architecture so that only the orchestrator ever prompts the user (all subagents bubble HITL triggers up via structured return fields), and migrates every model reference from hardcoded version strings to tier aliases (`haiku`, `sonnet`, `opus`). Nine skills now ship with `sc-`-prefixed slash commands; completion checklists are embedded directly inside skill files rather than living in separate reference documents; and a new `references/model-tier-guide.md` documents the three-tier model philosophy and all override paths for project-level customization.
+This PR delivers the full v2 refactor of the phased-dev-workflow plugin, now officially renamed **ByTheSlice** (plugin name: `bytheslice`, version `2.0.0`). The refactor reorganizes the four foundation stages so that design-system validation comes first (before CI/CD), adds two entirely new foundation gates (env-setup and the conditional db-schema-foundation), introduces a dedicated frontend-design skill with a six-agent visual pipeline, hardens the human-in-the-loop architecture so that only the orchestrator ever prompts the user (all subagents bubble HITL triggers up via structured return fields), and migrates every model reference from hardcoded version strings to tier aliases (`haiku`, `sonnet`, `opus`). Nine skills now ship with `sc-`-prefixed slash commands; completion checklists are embedded directly inside skill files rather than living in separate reference documents; and a new `references/model-tier-guide.md` documents the three-tier model philosophy and all override paths for project-level customization.
 
 ---
 
@@ -134,7 +134,7 @@ This PR delivers the full v2 refactor of the phased-dev-workflow plugin, now off
 
 5. **Update saved slash command shortcuts.** The `sc-` prefix is now applied to all nine commands. Update any keyboard shortcuts, aliases, or documentation that references the old command names.
 
-6. **Update the install command after the repo rename.** The GitHub repository will be renamed from `phased-dev-workflow` to `stagecoach` post-merge. At that point, update the `/add-plugin` install command in your team's setup docs from `/add-plugin phased-dev-workflow` to `/add-plugin stagecoach`. Do not update before the rename propagates in the marketplace.
+6. **Update the install command after the repo rename.** The GitHub repository will be renamed from `phased-dev-workflow` to `bytheslice` post-merge. At that point, update the `/add-plugin` install command in your team's setup docs from `/add-plugin phased-dev-workflow` to `/add-plugin bytheslice`. Do not update before the rename propagates in the marketplace.
 
 ---
 
@@ -184,9 +184,9 @@ Additional testing (to be filled in during final PR creation):
 
 ## 8. Naming + UX changes
 
-### Plugin rename: phased-dev-workflow → Stagecoach
+### Plugin rename: phased-dev-workflow → ByTheSlice
 
-The plugin is now officially named **Stagecoach**. The lowercase plugin name used in manifest files and the marketplace is `stagecoach`. The GitHub repository (`steve-piece/phased-dev-workflow`) will be renamed to `stagecoach` after this PR merges. The install command will update from `/add-plugin phased-dev-workflow` to `/add-plugin stagecoach` once the marketplace rename propagates.
+The plugin is now officially named **ByTheSlice**. The lowercase plugin name used in manifest files and the marketplace is `bytheslice`. The GitHub repository (`steve-piece/phased-dev-workflow`) will be renamed to `bytheslice` after this PR merges. The install command will update from `/add-plugin phased-dev-workflow` to `/add-plugin bytheslice` once the marketplace rename propagates.
 
 ### Slash command prefix: `sc-`
 
@@ -231,7 +231,7 @@ All other agents use the default tier assignments documented in `references/mode
 These items were identified during the Wave 5.2 cross-skill audit (`docs/v2-qa-report.md`, Human Attention Required section) and are explicitly deferred — none block this PR from merging.
 
 **HA-1: README install command update (post-repo-rename)**
-The install command in `README.md` currently reads `/add-plugin phased-dev-workflow`. After the GitHub repository is renamed to `stagecoach` and the marketplace rename propagates, this must be updated to `/add-plugin stagecoach`. Do not update before the rename is live — the old name remains the correct install path until then.
+The install command in `README.md` currently reads `/add-plugin phased-dev-workflow`. After the GitHub repository is renamed to `bytheslice` and the marketplace rename propagates, this must be updated to `/add-plugin bytheslice`. Do not update before the rename is live — the old name remains the correct install path until then.
 
 **HA-2: Version strings in model-tier-guide.md override examples**
 The env var override documentation in `references/model-tier-guide.md` contains explicit version strings (e.g., `ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-7`) as illustrative examples of how to pin to a specific version. These are intentional — they demonstrate the override mechanism, not the recommended practice — but they will become stale as new model versions are released. Consider adding a note directing users to check the Anthropic documentation for current model IDs. This is a documentation quality item, not a correctness bug.
@@ -246,16 +246,16 @@ Two frontmatter patterns coexist in the plugin. Agents written in Waves 2.1 and 
 
 ## 10. Files of note
 
-- `/Users/stevenlight/phased-dev-workflow/README.md` — Stagecoach branding, updated Mermaid workflow diagram, `sc-` prefix command table, Migration from v1 section
+- `/Users/stevenlight/phased-dev-workflow/README.md` — ByTheSlice branding, updated Mermaid workflow diagram, `sc-` prefix command table, Migration from v1 section
 - `/Users/stevenlight/phased-dev-workflow/references/model-tier-guide.md` — NEW; documents the plugin's three-tier model philosophy, full agent tier table, and all override paths
 - `/Users/stevenlight/phased-dev-workflow/skills/phased-dev-retrospective/` — NEW (experimental); cross-stage friction detection skill
 - `/Users/stevenlight/phased-dev-workflow/skills/sp-design-system-gate/` — NEW; design system validation/generation skill (Stage 1)
 - `/Users/stevenlight/phased-dev-workflow/skills/sp-environment-setup-gate/` — NEW; env setup and verification skill (Stage 3)
 - `/Users/stevenlight/phased-dev-workflow/skills/sp-frontend-design/` — NEW; six-agent frontend delivery pipeline
 - `/Users/stevenlight/phased-dev-workflow/docs/v2-qa-report.md` — full Wave 5.2 audit log: 57 files audited, 8 fixed, 4 items flagged for human attention
-- `/Users/stevenlight/phased-dev-workflow/.claude-plugin/plugin.json` — version bumped to 2.0.0, name updated to `stagecoach`
+- `/Users/stevenlight/phased-dev-workflow/.claude-plugin/plugin.json` — version bumped to 2.0.0, name updated to `bytheslice`
 - `/Users/stevenlight/phased-dev-workflow/.cursor-plugin/plugin.json` — aligned to match `.claude-plugin/plugin.json`
 
 ---
 
-Generated by Stagecoach v2 refactor session.
+Generated by ByTheSlice v2 refactor session.

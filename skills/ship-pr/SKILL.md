@@ -2,7 +2,7 @@
 name: ship-pr
 description: Ship a feature branch: push, open PR, watch CI (auto-fix on red), merge on approval, and cleanup.
 user-invocable: true
-triggers: ["/stagecoach:ship-pr", "/ship-pr", "ship the pr", "submit the pr", "open and merge the pr", "ship this branch", "ship this slice"]
+triggers: ["/bytheslice:ship-pr", "/ship-pr", "ship the pr", "submit the pr", "open and merge the pr", "ship this branch", "ship this slice"]
 ---
 <!-- skills/ship-pr/SKILL.md -->
 <!-- Standalone skill that takes a feature branch with locally-committed work and ships it through PR open → CI watch (with auto-fix loop on red) → user-authorized merge → main sync + branch and worktree cleanup. Decoupled from /deliver-stage and /add-feature so the operator can review / UAT the slice locally before deciding to ship. -->
@@ -11,7 +11,7 @@ triggers: ["/stagecoach:ship-pr", "/ship-pr", "ship the pr", "submit the pr", "o
 
 `/deliver-stage` and `/add-feature` stop at "slice committed locally, ready for review". `/ship-pr` is the next step in the chain — it takes a branch with locally-committed work and shepherds it through PR open → CI watch (with an auto-fix loop on red) → user-authorized merge → main sync + branch / worktree cleanup.
 
-It is intentionally a **separate** skill so you can review the slice locally, run a manual visual UAT, or rebase against fresh main before deciding to ship. The skill is also safe to run on hand-rolled branches that never touched the Stagecoach delivery loop — pre-flight checks and the closeout pattern are universal.
+It is intentionally a **separate** skill so you can review the slice locally, run a manual visual UAT, or rebase against fresh main before deciding to ship. The skill is also safe to run on hand-rolled branches that never touched the ByTheSlice delivery loop — pre-flight checks and the closeout pattern are universal.
 
 ---
 

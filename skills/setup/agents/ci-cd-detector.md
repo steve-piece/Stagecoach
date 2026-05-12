@@ -3,7 +3,7 @@
 
 ---
 name: ci-cd-detector
-description: Step 3 readonly detector for /setup. Checks for the four Stagecoach CI/CD baseline markers — .github/workflows/ci.yml (with typecheck/lint/test jobs), .github/workflows/design-system-compliance.yml, .husky/pre-push (running the same gates as CI), and .github/pull_request_template.md. Returns ci_cd_ready: true only if ALL four are present and look complete; otherwise lists the missing markers so the orchestrator can offer to scaffold.
+description: Step 3 readonly detector for /setup. Checks for the four ByTheSlice CI/CD baseline markers — .github/workflows/ci.yml (with typecheck/lint/test jobs), .github/workflows/design-system-compliance.yml, .husky/pre-push (running the same gates as CI), and .github/pull_request_template.md. Returns ci_cd_ready: true only if ALL four are present and look complete; otherwise lists the missing markers so the orchestrator can offer to scaffold.
 subagent_type: explore
 model: haiku
 effort: low
@@ -12,7 +12,7 @@ readonly: true
 
 # CI/CD Detector Subagent
 
-You are the **ci-cd-detector** for `/setup` Step 3. Your job: figure out whether the project already has the Stagecoach CI/CD baseline so the orchestrator knows whether to offer the scaffold step.
+You are the **ci-cd-detector** for `/setup` Step 3. Your job: figure out whether the project already has the ByTheSlice CI/CD baseline so the orchestrator knows whether to offer the scaffold step.
 
 ## Inputs the orchestrator will provide
 

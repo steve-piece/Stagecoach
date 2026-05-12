@@ -1,11 +1,11 @@
-# Stagecoach Config Schema
+# ByTheSlice Config Schema
 
-`stagecoach.config.json` is an **optional** per-project file at the root of the user's project (NOT inside the plugin). It declaratively overrides plugin defaults so users don't have to fork the plugin to personalize behavior.
+`bytheslice.config.json` is an **optional** per-project file at the root of the user's project (NOT inside the plugin). It declaratively overrides plugin defaults so users don't have to fork the plugin to personalize behavior.
 
 ## File location
 
 ```
-<user-project-root>/stagecoach.config.json
+<user-project-root>/bytheslice.config.json
 ```
 
 If the file is absent, the plugin uses its built-in defaults (see [`skills/setup/references/model-tier-guide.md`](./model-tier-guide.md) for model defaults). All keys are optional — a config file with `{}` is valid and equivalent to no config.
@@ -19,7 +19,7 @@ JSON-with-comments (JSONC dialect — same as `tsconfig.json`). The plugin parse
 1. **Environment variables** — machine-level
    - `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`
    - `CLAUDE_CODE_SUBAGENT_MODEL` (force-override of all subagent models)
-2. **`stagecoach.config.json`** — per-project, version-controlled with the project
+2. **`bytheslice.config.json`** — per-project, version-controlled with the project
 3. **Project rules file** (`CLAUDE.md` or `AGENTS.md`) — per-project conventions captured during elicitation
 4. **Plugin spec defaults** — fallback when nothing else is set
 
@@ -106,7 +106,7 @@ When two sources disagree, the higher-precedence source wins. The orchestrator l
     ]
   },
 
-  // Bootstrap defaults — used by /stagecoach:setup when present.
+  // Bootstrap defaults — used by /bytheslice:setup when present.
   // If absent, bootstrap asks via plan-mode questions.
   "bootstrap": {
     "variant": "single-app",          // "single-app" | "monorepo"
@@ -150,11 +150,11 @@ URLs to external rule files (the same shape as elicitation Q9). When this array 
 
 ### `bootstrap`
 
-Defaults for `/stagecoach:setup`. When present, bootstrap skips its plan-mode question gate and uses these values directly. Useful for repeatable scaffolding (CI / templates).
+Defaults for `/bytheslice:setup`. When present, bootstrap skips its plan-mode question gate and uses these values directly. Useful for repeatable scaffolding (CI / templates).
 
 ## How the plugin reads this file
 
-At session start, every Stagecoach skill checks for `stagecoach.config.json` at the project root, parses it as JSONC, and merges it with the precedence above. The orchestrator (`/stagecoach:run-pipeline`) logs the resolved settings in its first message so the user sees what's in effect.
+At session start, every ByTheSlice skill checks for `bytheslice.config.json` at the project root, parses it as JSONC, and merges it with the precedence above. The orchestrator (`/bytheslice:run-pipeline`) logs the resolved settings in its first message so the user sees what's in effect.
 
 If the file is malformed JSON, the plugin halts with an HITL prompt asking the user to fix it (HITL category: `prd_ambiguity` — closest fit). It does NOT fall through to defaults silently — silent fallthrough on a config error would surprise users.
 

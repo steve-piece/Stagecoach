@@ -3,14 +3,14 @@ name: run-pipeline
 description: EXPERIMENTAL. Drive your entire phased plan to completion in one session (supervised by default).
 experimental: true
 user-invocable: true
-triggers: ["/stagecoach:run-pipeline", "/run-pipeline", "run the pipeline", "run pipeline", "autonomous delivery", "run all stages"]
+triggers: ["/bytheslice:run-pipeline", "/run-pipeline", "run the pipeline", "run pipeline", "autonomous delivery", "run all stages"]
 ---
 <!-- skills/run-pipeline/SKILL.md -->
 <!-- EXPERIMENTAL multi-stage orchestrator. Drives a phased plan to completion in one chat session by dispatching /deliver-stage per stage. The everyday tool is /deliver-stage (run once per slice, fresh chat each time); run-pipeline is a sidecar for users who want autonomous multi-stage delivery and accept the reliability tradeoff. -->
 
 # The Orchestrator (EXPERIMENTAL)
 
-> **EXPERIMENTAL.** This skill is the autonomous multi-stage variant. It tries to drive every stage in one chat session, which is unreliable for full 20–30-stage plans today. The everyday tool is **`/stagecoach:deliver-stage`** — run it once per slice, in a fresh chat. Use `/run-pipeline` only when you explicitly want a single-session multi-stage run and accept the reliability tradeoff.
+> **EXPERIMENTAL.** This skill is the autonomous multi-stage variant. It tries to drive every stage in one chat session, which is unreliable for full 20–30-stage plans today. The everyday tool is **`/bytheslice:deliver-stage`** — run it once per slice, in a fresh chat. Use `/run-pipeline` only when you explicitly want a single-session multi-stage run and accept the reliability tradeoff.
 
 The orchestrator is a **conductor**, not an autopilot. It reads the master checklist, dispatches **one `/deliver-stage` invocation per stage**, and returns to the human between stages — unless a mode flag removes that pause.
 
@@ -49,19 +49,19 @@ If any precondition fails, stop and surface the gap to the user before doing any
 
 ## Stage Routing
 
-The orchestrator does not route per stage type — that's `deliver-stage`'s job. Every stage, regardless of `type:`, is dispatched the same way: invoke `/stagecoach:deliver-stage` for the active stage. `deliver-stage` reads the frontmatter and routes internally to the right sub-skill or pipeline (see [deliver-stage SKILL.md](../deliver-stage/SKILL.md) Phase 4 — Stage-Type Routing).
+The orchestrator does not route per stage type — that's `deliver-stage`'s job. Every stage, regardless of `type:`, is dispatched the same way: invoke `/bytheslice:deliver-stage` for the active stage. `deliver-stage` reads the frontmatter and routes internally to the right sub-skill or pipeline (see [deliver-stage SKILL.md](../deliver-stage/SKILL.md) Phase 4 — Stage-Type Routing).
 
 ## Project Config (optional)
 
-Before Phase 0, check for `stagecoach.config.json` at the project root. If present:
+Before Phase 0, check for `bytheslice.config.json` at the project root. If present:
 
 1. Read the file as JSONC (comments + trailing commas allowed).
-2. Apply the precedence rules from [`skills/setup/references/stagecoach-config-schema.md`](../setup/references/stagecoach-config-schema.md): env vars > config file > project rules file > plugin defaults.
+2. Apply the precedence rules from [`skills/setup/references/bytheslice-config-schema.md`](../setup/references/bytheslice-config-schema.md): env vars > config file > project rules file > plugin defaults.
 3. Compute the resolved values for `modelTiers`, `stages`, `mcps`, `visualReview`, `hitl.additionalCategories`, and `rules.imports`.
 4. Log a one-line summary of any non-default resolutions in the orchestrator's first message so the user knows what's in effect (e.g., `Config overrides: implementer→opus, maxTasksPerStage→8, vizzly disabled`).
 5. Pass the resolved config to each `/deliver-stage` invocation so the inner `rules-loader` agent can re-read it (deliver-stage handles per-agent thread-through internally).
 
-If the file exists but parses as malformed JSON, stop and surface an HITL prompt to the user (`hitl_category: "prd_ambiguity"`, `hitl_question: "stagecoach.config.json failed to parse — please fix the syntax error at line N before continuing"`). Never silently fall through to defaults — surprising defaults are worse than an explicit halt.
+If the file exists but parses as malformed JSON, stop and surface an HITL prompt to the user (`hitl_category: "prd_ambiguity"`, `hitl_question: "bytheslice.config.json failed to parse — please fix the syntax error at line N before continuing"`). Never silently fall through to defaults — surprising defaults are worse than an explicit halt.
 
 If the file is absent, proceed with plugin defaults (no warning).
 
@@ -82,7 +82,7 @@ For each stage from the active starting point, in order:
 
 1. **Pre-stage state check.** Verify `git status` clean, on `main`, latest pulled.
 2. **Read stage frontmatter.** Determine `mvp` (for pause decisions) and `hitl_required`.
-3. **Dispatch `stage-runner`.** The stage-runner is a thin wrapper that invokes `/stagecoach:deliver-stage` for the active stage and returns its structured result. Wait for the return.
+3. **Dispatch `stage-runner`.** The stage-runner is a thin wrapper that invokes `/bytheslice:deliver-stage` for the active stage and returns its structured result. Wait for the return.
 4. **Handle HITL if returned.** If `deliver-stage` (via the stage-runner) returns `needs_human: true`, see HITL Handling below before advancing.
 5. **Dispatch `pr-reviewer`** (read-only) against the merged PR. Wait for verdict.
 6. **Walk the Per-Stage Gate Checklist** (see below). Stop the loop if any item fails.
@@ -169,7 +169,7 @@ Walk this checklist after each stage before advancing. Stop and surface any fail
 | `{STAGE_FILE_PATH}` | Workspace-relative path to `docs/plans/stage_<n>_*.md` |
 | `{STAGE_GOAL}` | The goal sentence from the stage file's `**Goal:**` line |
 
-Fill these into the stage-runner prompt (see `agents/stage-runner.md` for the expected format). The stage-runner uses these to invoke `/stagecoach:deliver-stage` for the right stage.
+Fill these into the stage-runner prompt (see `agents/stage-runner.md` for the expected format). The stage-runner uses these to invoke `/bytheslice:deliver-stage` for the right stage.
 
 ## Progress Report Format (per stage)
 

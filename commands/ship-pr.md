@@ -26,8 +26,8 @@ Load and follow the [`ship-pr`](../skills/ship-pr/SKILL.md) skill.
 
 ## When to use this command
 
-- After `/stagecoach:deliver-stage` finishes a slice and you've reviewed it locally.
-- After `/stagecoach:add-feature` writes new plan files and you want to ship them as a chore PR before starting delivery.
-- For any hand-rolled feature branch that didn't go through the Stagecoach delivery loop — the pre-flight checks and closeout pattern are universal.
+- After `/bytheslice:deliver-stage` finishes a slice and you've reviewed it locally.
+- After `/bytheslice:add-feature` writes new plan files and you want to ship them as a chore PR before starting delivery.
+- For any hand-rolled feature branch that didn't go through the ByTheSlice delivery loop — the pre-flight checks and closeout pattern are universal.
 
 If you want to open the PR but pause before merging for an external code review, pick the **Hold** option at the merge-authorization gate. The skill will exit with the PR open; merge it via the GitHub UI when ready, then re-invoke `/ship-pr` to do cleanup.

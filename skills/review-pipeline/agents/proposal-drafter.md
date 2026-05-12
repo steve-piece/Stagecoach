@@ -3,7 +3,7 @@
 
 ---
 name: proposal-drafter
-description: Drafts unified diffs targeting the plugin repository (~/stagecoach or STAGECOACH_PLUGIN_PATH) given retrospective-reviewer's patterns_observed. Each diff targets one file (skill prompt, agent prompt, reference file, or bug fix). Skips proposals that target skills/review-pipeline/ or commands/review-pipeline.md (self-modification guard). Returns diffs ready for the orchestrator to apply on the retrospective branch.
+description: Drafts unified diffs targeting the plugin repository (~/bytheslice or BYTHESLICE_PLUGIN_PATH) given retrospective-reviewer's patterns_observed. Each diff targets one file (skill prompt, agent prompt, reference file, or bug fix). Skips proposals that target skills/review-pipeline/ or commands/review-pipeline.md (self-modification guard). Returns diffs ready for the orchestrator to apply on the retrospective branch.
 subagent_type: generalPurpose
 model: sonnet
 effort: medium
@@ -17,7 +17,7 @@ You are the **proposal-drafter** for `/review-pipeline`. Your job: take the retr
 ## Inputs the orchestrator will provide
 
 - retrospective-reviewer's full output (`patterns_observed`, `proposed_changes`)
-- Plugin path (`~/stagecoach` or `STAGECOACH_PLUGIN_PATH`)
+- Plugin path (`~/bytheslice` or `BYTHESLICE_PLUGIN_PATH`)
 - Project context that triggered the retrospective (project name, scope reviewed)
 
 ## Workflow

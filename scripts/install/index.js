@@ -84,7 +84,7 @@ function installSkillsMode({ repoRoot, args, targets }) {
 
 function printPluginSummary(targetReports, dryRun) {
   const mode = dryRun ? "DRY RUN" : "APPLIED";
-  console.log(`[stagecoach] Plugin install ${mode}`);
+  console.log(`[bytheslice] Plugin install ${mode}`);
   for (const targetReport of targetReports) {
     console.log(
       `  - ${targetReport.host}: ${targetReport.name}@${targetReport.version} -> ${targetReport.installDir}`,
@@ -95,7 +95,7 @@ function printPluginSummary(targetReports, dryRun) {
 
 function printSkillsSummary({ destination, selectedSkills, commandPaths, report, dryRun }) {
   const mode = dryRun ? "DRY RUN" : "APPLIED";
-  console.log(`[stagecoach] Skills install ${mode}`);
+  console.log(`[bytheslice] Skills install ${mode}`);
   console.log(`  - destination: ${destination}`);
   console.log(`  - skills: ${selectedSkills.map((skill) => skill.replace(/^skills\//, "")).join(", ")}`);
   console.log(`  - command shims: ${commandPaths.length}`);

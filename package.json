@@ -1,14 +1,14 @@
 {
-  "name": "stage-coach",
+  "name": "bytheslice",
   "version": "3.0.0",
   "private": false,
-  "description": "PRD generation, phased implementation planning, and CI/CD infrastructure hardening for project workflows.",
+  "description": "Ship production apps one vertical slice at a time with PRD generation, phased planning, and CI/CD quality gates.",
   "bin": {
-    "stagecoach": "./bin/stagecoach.js"
+    "bytheslice": "./bin/bytheslice.js"
   },
   "scripts": {
-    "install:dry-run": "node ./bin/stagecoach.js install --target both --dry-run",
-    "install:skills:dry-run": "node ./bin/stagecoach.js install --mode skills --skill setup --skill deliver-stage --dry-run"
+    "install:dry-run": "node ./bin/bytheslice.js install --target both --dry-run",
+    "install:skills:dry-run": "node ./bin/bytheslice.js install --mode skills --skill setup --skill deliver-stage --dry-run"
   },
   "files": [
     "bin",
@@ -24,13 +24,15 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/steve-piece/stagecoach"
+    "url": "git+https://github.com/steve-piece/bytheslice.git"
   },
   "keywords": [
     "cursor-plugin",
     "skills",
     "prd",
     "ci-cd",
-    "development-workflow"
+    "development-workflow",
+    "vertical-slices",
+    "agent-workflow"
   ]
 }

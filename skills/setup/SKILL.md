@@ -1,18 +1,18 @@
 ---
 name: setup
-description: Bootstrap a new project or configure Stagecoach in an existing one. Auto-detects your setup context and scaffolds the right foundation.
+description: Bootstrap a new project or configure ByTheSlice in an existing one. Auto-detects your setup context and scaffolds the right foundation.
 model: opus
 effort: high
 user-invocable: true
-triggers: ["/stagecoach:setup", "/setup", "set up stagecoach", "configure stagecoach", "scaffold a new project", "first time using stagecoach", "create a new monorepo", "create a next.js app for stagecoach"]
+triggers: ["/bytheslice:setup", "/setup", "set up bytheslice", "configure bytheslice", "scaffold a new project", "first time using bytheslice", "create a new monorepo", "create a next.js app for bytheslice"]
 ---
 
 <!-- skills/setup/SKILL.md -->
-<!-- Three-flow setup orchestrator: first-time-install (system-wide), new-project (bootstrap + per-project config), existing-project (per-project config only). All Stagecoach personalization flows through this skill. -->
+<!-- Three-flow setup orchestrator: first-time-install (system-wide), new-project (bootstrap + per-project config), existing-project (per-project config only). All ByTheSlice personalization flows through this skill. -->
 
 # Setup
 
-Stagecoach setup orchestrator. Drives every first-touch interaction with the plugin: system-wide install, new-project scaffold, and per-project config customization.
+ByTheSlice setup orchestrator. Drives every first-touch interaction with the plugin: system-wide install, new-project scaffold, and per-project config customization.
 
 ## Reference Files
 
@@ -20,8 +20,8 @@ Read all of these before beginning:
 
 | File | Purpose |
 | --- | --- |
-| [references/stagecoach-config-schema.md](references/stagecoach-config-schema.md) | Full config schema, precedence rules, per-key documentation |
-| [references/stagecoach.config.example.json](references/stagecoach.config.example.json) | Copy-pasteable JSONC starter — every block commented out |
+| [references/bytheslice-config-schema.md](references/bytheslice-config-schema.md) | Full config schema, precedence rules, per-key documentation |
+| [references/bytheslice.config.example.json](references/bytheslice.config.example.json) | Copy-pasteable JSONC starter — every block commented out |
 | [references/model-tier-guide.md](references/model-tier-guide.md) | Per-agent model tier defaults; cross-link from `modelTiers` config block |
 | [references/bootstrap-templates-catalog.md](references/bootstrap-templates-catalog.md) | Documents which scaffolders Step 1 wraps (`create-next-app`, `create-turbo`) and why |
 
@@ -30,7 +30,7 @@ Read all of these before beginning:
 Detect which flow applies before doing anything else:
 
 ```
-1. Does ~/.stagecoach/defaults.json exist?
+1. Does ~/.bytheslice/defaults.json exist?
    No  → consider Flow A (offer first-time install) before continuing
    Yes → skip to step 2
 
@@ -39,31 +39,31 @@ Detect which flow applies before doing anything else:
    Yes → Flow C (existing project: per-project config only)
 ```
 
-If the user explicitly asks for first-time install (e.g. "configure my Stagecoach defaults", "system-wide setup"), run **Flow A** regardless of detection.
+If the user explicitly asks for first-time install (e.g. "configure my ByTheSlice defaults", "system-wide setup"), run **Flow A** regardless of detection.
 
 ---
 
 ## Flow A — First-time install (system-wide setup)
 
-**Goal:** create `~/.stagecoach/defaults.json` so future projects can opt in to your preferred defaults via Group 1.
+**Goal:** create `~/.bytheslice/defaults.json` so future projects can opt in to your preferred defaults via Group 1.
 
 **When this fires:**
-- `~/.stagecoach/defaults.json` does NOT exist, AND
+- `~/.bytheslice/defaults.json` does NOT exist, AND
 - The user is willing to set up defaults now (ask first; many users prefer per-project answers).
 
 **Procedure:**
 
-1. Ask: *"Stagecoach can store system-wide defaults at `~/.stagecoach/defaults.json` so you don't have to answer the same setup questions on every project. Want to set those up now?"*
+1. Ask: *"ByTheSlice can store system-wide defaults at `~/.bytheslice/defaults.json` so you don't have to answer the same setup questions on every project. Want to set those up now?"*
    - `single_select: ["Yes — set up system-wide defaults", "No — skip; ask per project"]`
-2. If yes: run the **Group 2** questions below, but write the answers to `~/.stagecoach/defaults.json` instead of a per-project file.
-3. Print: *"Defaults saved at `~/.stagecoach/defaults.json`. Future runs of `/stagecoach:setup` will offer these as one-click defaults via the 'use defaults?' question."*
+2. If yes: run the **Group 2** questions below, but write the answers to `~/.bytheslice/defaults.json` instead of a per-project file.
+3. Print: *"Defaults saved at `~/.bytheslice/defaults.json`. Future runs of `/bytheslice:setup` will offer these as one-click defaults via the 'use defaults?' question."*
 4. After Flow A completes, fall through to Flow B or C based on the working-directory detection.
 
 ---
 
 ## Flow B — New project (Bootstrap + Config + CI/CD baseline)
 
-**Goal:** scaffold a fresh project on disk, drop in a per-project `stagecoach.config.json`, gitignored `ROADMAP.local.md`, and offer to scaffold the CI/CD baseline.
+**Goal:** scaffold a fresh project on disk, drop in a per-project `bytheslice.config.json`, gitignored `ROADMAP.local.md`, and offer to scaffold the CI/CD baseline.
 
 **When this fires:** working directory contains no `package.json` (parent folder of a new project).
 
@@ -71,13 +71,13 @@ If the user explicitly asks for first-time install (e.g. "configure my Stagecoac
 
 **Step 2 — Per-project Config Customization (REQUIRED)** — see [Step 2](#step-2--per-project-config-customization) below.
 
-**Step 3 — CI/CD Baseline Check (REQUIRED — but the SCAFFOLD action is optional)** — see [Step 3](#step-3--cicd-baseline-check-flow-b-and-flow-c-only--skipped-in-flow-a) below. Detects whether the baseline exists; offers to scaffold via `/stagecoach:scaffold-ci-cd` if not.
+**Step 3 — CI/CD Baseline Check (REQUIRED — but the SCAFFOLD action is optional)** — see [Step 3](#step-3--cicd-baseline-check-flow-b-and-flow-c-only--skipped-in-flow-a) below. Detects whether the baseline exists; offers to scaffold via `/bytheslice:scaffold-ci-cd` if not.
 
 ---
 
 ## Flow C — Existing project (Config + CI/CD baseline)
 
-**Goal:** drop a per-project `stagecoach.config.json` into a project that already exists, then check CI/CD readiness.
+**Goal:** drop a per-project `bytheslice.config.json` into a project that already exists, then check CI/CD readiness.
 
 **When this fires:** working directory contains a `package.json`.
 
@@ -91,7 +91,7 @@ Skip Step 1 entirely. Run **Step 2** then **Step 3**. Step 3 is what makes this 
 
 ### Phase 1 — Plan-Mode Question Gate
 
-Enter plan mode and ask the user with `ask_user_input_v0`, one question at a time. If `bootstrap.{variant,stack,roadmapFile}` are all set in `~/.stagecoach/defaults.json` (and the user opted into defaults in Step 2 Group 1), skip this gate and use those values directly.
+Enter plan mode and ask the user with `ask_user_input_v0`, one question at a time. If `bootstrap.{variant,stack,roadmapFile}` are all set in `~/.bytheslice/defaults.json` (and the user opted into defaults in Step 2 Group 1), skip this gate and use those values directly.
 
 **Q-bootstrap-variant**
 > "Single application or Turborepo monorepo?"
@@ -121,7 +121,7 @@ After scaffolding, `cd <project-name>` for the remaining steps.
 
 ```bash
 git add -A
-git commit -m "chore: scaffold project via /stagecoach:setup
+git commit -m "chore: scaffold project via /bytheslice:setup
 
 Stack: <stack>
 Variant: <variant>"
@@ -154,15 +154,15 @@ Write `ROADMAP.local.md` at the new project root:
 
 Personal scratchpad for future versions and next dev stages. Not committed to the remote.
 
-## Next Stagecoach run
+## Next ByTheSlice run
 [ ] Brief idea
 [ ] Brand notes / design references
-[ ] Open questions to resolve before /stagecoach:write-prd
+[ ] Open questions to resolve before /bytheslice:write-prd
 
 ## Future versions / Phase 2+
 [ ] ...
 
-## Friction notes (for future /stagecoach:review-pipeline)
+## Friction notes (for future /bytheslice:review-pipeline)
 [ ] ...
 ```
 
@@ -171,7 +171,7 @@ Then proceed to **Step 2**.
 ### Hard constraints — Step 1
 
 - **One bootstrap per project root.** If working directory contains a `package.json`, refuse Step 1 and switch to Flow C (Config only). Surface: *"Detected an existing project at <path>. Skipping bootstrap; running per-project config setup only."*
-- **Non-Next.js stacks are out of scope for v2.2.** When the user asks for Astro / Vite / Remix / plain Node API, surface that and stop. Track interest via `/stagecoach:review-pipeline`.
+- **Non-Next.js stacks are out of scope for v2.2.** When the user asks for Astro / Vite / Remix / plain Node API, surface that and stop. Track interest via `/bytheslice:review-pipeline`.
 - **Never modify files outside the new project directory** during bootstrap.
 - **Never delete anything.** Step 1 is purely additive.
 
@@ -179,17 +179,17 @@ Then proceed to **Step 2**.
 
 ## Step 2 — Per-project Config Customization
 
-Generate a `stagecoach.config.json` at the project root (or `~/.stagecoach/defaults.json` for Flow A). All keys are optional; the plugin uses built-in defaults for anything you omit.
+Generate a `bytheslice.config.json` at the project root (or `~/.bytheslice/defaults.json` for Flow A). All keys are optional; the plugin uses built-in defaults for anything you omit.
 
 ### Group 1 — Use system-wide defaults?
 
-**Skip Group 1 entirely if `~/.stagecoach/defaults.json` does NOT exist** (no defaults to opt into yet — go straight to Group 2). Skip Group 1 in Flow A (we're CREATING the defaults file in this flow).
+**Skip Group 1 entirely if `~/.bytheslice/defaults.json` does NOT exist** (no defaults to opt into yet — go straight to Group 2). Skip Group 1 in Flow A (we're CREATING the defaults file in this flow).
 
 **Q-defaults**
-> "You have system-wide defaults at `~/.stagecoach/defaults.json`. Want to use them as the starting point for this project?"
+> "You have system-wide defaults at `~/.bytheslice/defaults.json`. Want to use them as the starting point for this project?"
 > single_select: ["Yes — copy my system-wide defaults into this project", "No — answer the per-section questions below"]
 
-If yes: copy `~/.stagecoach/defaults.json` content into the project's `stagecoach.config.json` and skip Group 2. Print the resolved values for the user to review.
+If yes: copy `~/.bytheslice/defaults.json` content into the project's `bytheslice.config.json` and skip Group 2. Print the resolved values for the user to review.
 
 If no: continue to Group 2.
 
@@ -236,23 +236,23 @@ If "No": text input for an ordered list (one tool per line, top = highest priori
 If "Yes": text input. Parse one category per line in the form `<name>: <prompt-hint>` and convert into the `additionalCategories` array.
 
 **Q-rules**
-> "Import external rule files now (skips the Q9 elicitation in `/stagecoach:plan-phases` for this project)? Useful if you have a stable set of agentic rules across projects."
+> "Import external rule files now (skips the Q9 elicitation in `/bytheslice:plan-phases` for this project)? Useful if you have a stable set of agentic rules across projects."
 > single_select: ["No — answer Q9 per project", "Yes — paste URLs to your rule files (text input)"]
 
 If "Yes": text input. One URL per line.
 
 **Q-bootstrap-defaults**
-> "Set bootstrap defaults so future `/stagecoach:setup` runs in fresh project folders skip the bootstrap question gate? Useful if you always start projects the same way."
+> "Set bootstrap defaults so future `/bytheslice:setup` runs in fresh project folders skip the bootstrap question gate? Useful if you always start projects the same way."
 > single_select: ["No — ask the bootstrap questions every time", "Yes — set variant / stack / roadmap-file defaults (text input)"]
 
 If "Yes": three text inputs (`variant`, `stack`, `roadmapFile` — note `null` is allowed for `roadmapFile` to skip creating it).
 
 ### Phase — Write the config file
 
-Generate the JSONC file. Use [`references/stagecoach.config.example.json`](references/stagecoach.config.example.json) as the structural template. Fill in only the sections the user customized; leave the rest commented out.
+Generate the JSONC file. Use [`references/bytheslice.config.example.json`](references/bytheslice.config.example.json) as the structural template. Fill in only the sections the user customized; leave the rest commented out.
 
-- Flow A target: `~/.stagecoach/defaults.json` (create the directory if missing: `mkdir -p ~/.stagecoach`)
-- Flow B / C target: `<project-root>/stagecoach.config.json`
+- Flow A target: `~/.bytheslice/defaults.json` (create the directory if missing: `mkdir -p ~/.bytheslice`)
+- Flow B / C target: `<project-root>/bytheslice.config.json`
 
 Print the resolved values back to the user before continuing to Step 3.
 
@@ -260,7 +260,7 @@ Print the resolved values back to the user before continuing to Step 3.
 
 ## Step 3 — CI/CD Baseline Check (Flow B and Flow C only — skipped in Flow A)
 
-Apps that haven't run `/stagecoach:scaffold-ci-cd` lack the gates that `/stagecoach:deliver-stage` expects (typecheck, lint, design-system-compliance, `@feature` E2E, `@regression-core` E2E, `@visual` E2E, optional `db-schema-drift`). This step detects whether the baseline exists and offers to scaffold it for projects that aren't going through the full PRD-to-phased-dev workflow.
+Apps that haven't run `/bytheslice:scaffold-ci-cd` lack the gates that `/bytheslice:deliver-stage` expects (typecheck, lint, design-system-compliance, `@feature` E2E, `@regression-core` E2E, `@visual` E2E, optional `db-schema-drift`). This step detects whether the baseline exists and offers to scaffold it for projects that aren't going through the full PRD-to-phased-dev workflow.
 
 ### Detection
 
@@ -279,44 +279,44 @@ If any marker is missing, set `ci_cd_ready: false` and ask the user.
 
 ### Q-ci-cd-baseline (only if `ci_cd_ready: false`)
 
-> "This project doesn't have the Stagecoach CI/CD baseline (one or more of: ci.yml, design-system-compliance.yml, husky pre-push hook, PR template). The `deliver-stage` and `add-feature` skills depend on these gates being green before opening a PR. Want to scaffold the baseline now?"
+> "This project doesn't have the ByTheSlice CI/CD baseline (one or more of: ci.yml, design-system-compliance.yml, husky pre-push hook, PR template). The `deliver-stage` and `add-feature` skills depend on these gates being green before opening a PR. Want to scaffold the baseline now?"
 > single_select: ["Yes — scaffold CI/CD baseline now (recommended)", "No — skip; I'll handle CI my own way"]
 
-If "Yes": print *"Run `/stagecoach:scaffold-ci-cd` next — it will run on a dedicated `chore/scaffold-ci-cd` branch and open a PR. Once that PR merges, return here and run `/stagecoach:add-feature` (or `/stagecoach:write-prd` for a full PRD-to-app run)."*
+If "Yes": print *"Run `/bytheslice:scaffold-ci-cd` next — it will run on a dedicated `chore/scaffold-ci-cd` branch and open a PR. Once that PR merges, return here and run `/bytheslice:add-feature` (or `/bytheslice:write-prd` for a full PRD-to-app run)."*
 
 If "No": warn the user and continue:
-> ⚠️ **Without the CI/CD baseline:** `/stagecoach:deliver-stage`'s Phase 8 (CI/CD guardrails) will likely fail because the `ci-cd-guardrails` agent expects the baseline workflows to exist. You can still run `/stagecoach:deliver-stage`, but you'll need to manually wire equivalent gates in your own CI for the per-stage `@visual` and `design-system-compliance` checks. To re-enable the offer later, delete `.stagecoach/.skip-ci-cd` and re-run `/stagecoach:setup`.
+> ⚠️ **Without the CI/CD baseline:** `/bytheslice:deliver-stage`'s Phase 8 (CI/CD guardrails) will likely fail because the `ci-cd-guardrails` agent expects the baseline workflows to exist. You can still run `/bytheslice:deliver-stage`, but you'll need to manually wire equivalent gates in your own CI for the per-stage `@visual` and `design-system-compliance` checks. To re-enable the offer later, delete `.bytheslice/.skip-ci-cd` and re-run `/bytheslice:setup`.
 
-If the user chose "No": create a sentinel file `.stagecoach/.skip-ci-cd` so future `/stagecoach:setup` runs skip Q-ci-cd-baseline.
+If the user chose "No": create a sentinel file `.bytheslice/.skip-ci-cd` so future `/bytheslice:setup` runs skip Q-ci-cd-baseline.
 
 ### Phase — Print next-step pointer
 
 For Flow A:
-> Defaults saved at `~/.stagecoach/defaults.json`. To use them on a project, run `/stagecoach:setup` from the project's parent folder (Flow B) or inside the project (Flow C) and answer "Yes" to the Group 1 "use defaults?" question.
+> Defaults saved at `~/.bytheslice/defaults.json`. To use them on a project, run `/bytheslice:setup` from the project's parent folder (Flow B) or inside the project (Flow C) and answer "Yes" to the Group 1 "use defaults?" question.
 
 For Flow B:
-> Project scaffolded at `<absolute-path>` with `stagecoach.config.json` and `ROADMAP.local.md`.
+> Project scaffolded at `<absolute-path>` with `bytheslice.config.json` and `ROADMAP.local.md`.
 >
-> **CI/CD baseline:** <"present" | "scaffold pending — run /stagecoach:scaffold-ci-cd next" | "skipped per user choice">
+> **CI/CD baseline:** <"present" | "scaffold pending — run /bytheslice:scaffold-ci-cd next" | "skipped per user choice">
 >
 > **Next steps:**
 > 1. `cd <project-name>`
-> 2. (Optional) Edit `stagecoach.config.json` to refine any defaults
+> 2. (Optional) Edit `bytheslice.config.json` to refine any defaults
 > 3. (Optional) Add brief notes to `ROADMAP.local.md`
-> 4. Run `/stagecoach:scaffold-ci-cd` (if Step 3 said scaffold pending)
-> 5. Run `/stagecoach:write-prd` to write the PRD (full PRD-to-app flow), OR run `/stagecoach:add-feature` later if you only want to bolt features onto an existing master checklist
+> 4. Run `/bytheslice:scaffold-ci-cd` (if Step 3 said scaffold pending)
+> 5. Run `/bytheslice:write-prd` to write the PRD (full PRD-to-app flow), OR run `/bytheslice:add-feature` later if you only want to bolt features onto an existing master checklist
 >
-> The Stagecoach pipeline from here is: PRD → phased plans → design system gate → CI/CD scaffold → env setup → optional DB schema → 20-30 vertical-slice feature stages.
+> The ByTheSlice pipeline from here is: PRD → phased plans → design system gate → CI/CD scaffold → env setup → optional DB schema → 20-30 vertical-slice feature stages.
 
 For Flow C:
-> Config written to `<project-root>/stagecoach.config.json`. Future Stagecoach skill runs in this project will honor these settings.
+> Config written to `<project-root>/bytheslice.config.json`. Future ByTheSlice skill runs in this project will honor these settings.
 >
-> **CI/CD baseline:** <"present" | "scaffold pending — run /stagecoach:scaffold-ci-cd next" | "skipped per user choice">
+> **CI/CD baseline:** <"present" | "scaffold pending — run /bytheslice:scaffold-ci-cd next" | "skipped per user choice">
 >
 > **Next steps:**
-> - **Have a PRD already?** Run `/stagecoach:plan-phases` to generate phased plans.
-> - **No PRD yet?** Run `/stagecoach:write-prd` to write one against this existing app's surface area.
-> - **Just want to add a feature or two?** Run `/stagecoach:add-feature` directly. Note: without a master checklist (no `docs/plans/`), add-feature will redirect you back here. To go from existing-app → add-feature flow, run `/stagecoach:write-prd` first to give the complexity assessor grounding context.
+> - **Have a PRD already?** Run `/bytheslice:plan-phases` to generate phased plans.
+> - **No PRD yet?** Run `/bytheslice:write-prd` to write one against this existing app's surface area.
+> - **Just want to add a feature or two?** Run `/bytheslice:add-feature` directly. Note: without a master checklist (no `docs/plans/`), add-feature will redirect you back here. To go from existing-app → add-feature flow, run `/bytheslice:write-prd` first to give the complexity assessor grounding context.
 
 ---
 
@@ -341,8 +341,8 @@ hitl_context: "Detected existing package.json at the working directory; user exp
 ## Hard Constraints — overall
 
 - **One umbrella for setup.** Don't fork the Bootstrap-only or Config-only behavior into separate skills; flow detection picks the right path.
-- **Never write `~/.stagecoach/defaults.json` without explicit consent** (Flow A's Q-Flow-A question gates this).
-- **Never overwrite an existing `stagecoach.config.json`** in a project root without surfacing it to the user first. If detected, ask: *"This project already has stagecoach.config.json. Overwrite, merge, or cancel?"*
+- **Never write `~/.bytheslice/defaults.json` without explicit consent** (Flow A's Q-Flow-A question gates this).
+- **Never overwrite an existing `bytheslice.config.json`** in a project root without surfacing it to the user first. If detected, ask: *"This project already has bytheslice.config.json. Overwrite, merge, or cancel?"*
 - **Never delete anything.** Setup is additive.
 
 ---
@@ -352,15 +352,15 @@ hitl_context: "Detected existing package.json at the working directory; user exp
 [ ] Flow detected correctly (A / B / C) and announced to the user
 [ ] Step 1 ran ONLY in Flow B (skipped in Flow A and Flow C)
 [ ] Step 2 ran in every flow (always required)
-[ ] Group 1 ran ONLY when `~/.stagecoach/defaults.json` exists (skipped on first run + during Flow A)
+[ ] Group 1 ran ONLY when `~/.bytheslice/defaults.json` exists (skipped on first run + during Flow A)
 [ ] Group 2 ran when needed (no defaults, OR Group 1 = "No", OR Flow A)
 [ ] Generated config file is valid JSONC (parses cleanly, no syntax errors)
-[ ] Generated config file is at the correct path (Flow A: `~/.stagecoach/defaults.json`; Flow B/C: project root)
+[ ] Generated config file is at the correct path (Flow A: `~/.bytheslice/defaults.json`; Flow B/C: project root)
 [ ] (Flow B only) `.gitignore` includes the personal-scratchpad and AI-tooling-workspace entries
 [ ] (Flow B only) Initial git commit created on `main`
 [ ] Step 3 (CI/CD baseline check) ran in Flow B and Flow C (skipped in Flow A)
 [ ] Step 3 detected ci_cd_ready accurately based on the four markers
-[ ] (Step 3 + ci_cd_ready false + user said no) `.stagecoach/.skip-ci-cd` sentinel file written
+[ ] (Step 3 + ci_cd_ready false + user said no) `.bytheslice/.skip-ci-cd` sentinel file written
 [ ] Next-step pointer printed to the user, including CI/CD baseline status line
 
 ---

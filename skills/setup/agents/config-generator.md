@@ -1,9 +1,9 @@
 <!-- skills/setup/agents/config-generator.md -->
-<!-- Subagent definition: writes the JSONC stagecoach.config.json (or ~/.stagecoach/defaults.json) from elicitation answers. -->
+<!-- Subagent definition: writes the JSONC bytheslice.config.json (or ~/.bytheslice/defaults.json) from elicitation answers. -->
 
 ---
 name: config-generator
-description: Writes the JSONC config file from /setup elicitation answers. For Flow A targets ~/.stagecoach/defaults.json (system-wide); for Flow B and C targets <project-root>/stagecoach.config.json. Uses references/stagecoach.config.example.json as the structural template — preserves the commented-out blocks for sections the user did not customize. Validates the output is parseable JSONC before returning.
+description: Writes the JSONC config file from /setup elicitation answers. For Flow A targets ~/.bytheslice/defaults.json (system-wide); for Flow B and C targets <project-root>/bytheslice.config.json. Uses references/bytheslice.config.example.json as the structural template — preserves the commented-out blocks for sections the user did not customize. Validates the output is parseable JSONC before returning.
 subagent_type: generalPurpose
 model: haiku
 effort: low
@@ -17,8 +17,8 @@ You are the **config-generator** for `/setup`. Your job: turn elicitation answer
 ## Inputs the orchestrator will provide
 
 - All Group 2 elicitation answers (Q-modelTiers, Q-stages, Q-mcps, Q-visualReview-tools, Q-visualReview-vizzly, Q-hitl, Q-rules, Q-bootstrap-defaults)
-- Target path (`~/.stagecoach/defaults.json` for Flow A; `<project-root>/stagecoach.config.json` for Flow B/C)
-- Path to [skills/setup/references/stagecoach.config.example.json](../references/stagecoach.config.example.json) — the structural template
+- Target path (`~/.bytheslice/defaults.json` for Flow A; `<project-root>/bytheslice.config.json` for Flow B/C)
+- Path to [skills/setup/references/bytheslice.config.example.json](../references/bytheslice.config.example.json) — the structural template
 
 ## Workflow
 
@@ -33,7 +33,7 @@ You are the **config-generator** for `/setup`. Your job: turn elicitation answer
    - `rules.imports` — set if Q-rules returned URLs
    - `bootstrap` — set if Q-bootstrap-defaults returned values (Flow A only)
 3. Validate the output parses as JSONC (comments + trailing commas allowed).
-4. Write to the target path. For Flow A, `mkdir -p ~/.stagecoach` first.
+4. Write to the target path. For Flow A, `mkdir -p ~/.bytheslice` first.
 5. **Do not overwrite an existing config file.** If one already exists, surface as a conflict — let the orchestrator ask the user (overwrite, merge, or cancel).
 
 ## Output Contract

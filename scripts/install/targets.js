@@ -10,7 +10,7 @@ function resolveTargets(args) {
   const cursorDir = path.resolve(args.cursorDir || path.join(home, ".cursor", "plugins"));
   const claudeDir = path.resolve(args.claudeDir || path.join(home, ".claude", "plugins"));
   const skillsDir = path.resolve(
-    args.skillsDir || path.join(process.cwd(), ".stagecoach-installs", "skills"),
+    args.skillsDir || path.join(process.cwd(), ".bytheslice-installs", "skills"),
   );
 
   const pluginTargets = [];
@@ -18,7 +18,7 @@ function resolveTargets(args) {
     pluginTargets.push({
       host: "cursor",
       rootDir: cursorDir,
-      installDir: path.join(cursorDir, "local", "stagecoach"),
+      installDir: path.join(cursorDir, "local", "bytheslice"),
       manifestDir: ".cursor-plugin",
     });
   }
@@ -27,7 +27,7 @@ function resolveTargets(args) {
     pluginTargets.push({
       host: "claude",
       rootDir: claudeDir,
-      installDir: path.join(claudeDir, "stagecoach"),
+      installDir: path.join(claudeDir, "bytheslice"),
       manifestDir: ".claude-plugin",
     });
   }

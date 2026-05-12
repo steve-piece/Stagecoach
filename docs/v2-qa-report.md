@@ -104,13 +104,13 @@ Full read-through of every plugin file against 17 audit categories. Fixes applie
 **Issues found:**
 - `name`: "phased-dev-workflow" (stale, pre-rename)
 - `version`: "1.0.0" (stale)
-- `description`: old description omitting Stagecoach branding and v2 capabilities
+- `description`: old description omitting ByTheSlice branding and v2 capabilities
 - `keywords`: included "linear" (should not be a top-level keyword; Linear is optional integration)
 - `skills` and `commands` paths used bare names without `./` prefix (inconsistent with `.claude-plugin/plugin.json`)
 - Included stale `agents` field
 
 **Fixes applied:**
-- Updated to match `.claude-plugin/plugin.json` exactly: name "stagecoach", version "2.0.0", updated description, aligned keywords, `"skills": "./skills"`, `"commands": "./commands"`, removed stale `agents` field
+- Updated to match `.claude-plugin/plugin.json` exactly: name "bytheslice", version "2.0.0", updated description, aligned keywords, `"skills": "./skills"`, `"commands": "./commands"`, removed stale `agents` field
 
 ---
 
@@ -132,7 +132,7 @@ Full read-through of every plugin file against 17 audit categories. Fixes applie
 | 12 | Visual reviewer screenshot instructions | PASS | `sp-frontend-design/agents/visual-reviewer.md` contains the required full-page multi-viewport screenshot instructions exactly. |
 | 13 | Platform-specific reference guard | PASS | No "cursor rules" or "windsurf rules" language in generated-file instructions; files use "project rules file" consistently. |
 | 14 | Frontmatter shape consistency | NOTE | Wave 2.1/2.2 agents use YAML-only frontmatter; Wave 2.3/3 agents use HTML comment header + YAML frontmatter. Both patterns are functionally valid. Not mass-rewritten — see Human Attention Required. |
-| 15 | Plugin manifest accuracy | FIXED | `.cursor-plugin/plugin.json` updated to v2 Stagecoach identity. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` already correct. |
+| 15 | Plugin manifest accuracy | FIXED | `.cursor-plugin/plugin.json` updated to v2 ByTheSlice identity. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` already correct. |
 | 16 | README accuracy | PASS (with note) | README content is accurate. Installation section uses `/add-plugin phased-dev-workflow` — needs update post-rename. See Human Attention Required. |
 | 17 | Hard constraint completeness | PASS | All orchestrator/skill files include Hard Constraints sections. No missing constraint blocks found. |
 
@@ -144,7 +144,7 @@ Full read-through of every plugin file against 17 audit categories. Fixes applie
 
 **File:** `/Users/stevenlight/phased-dev-workflow/README.md` line 14
 
-**Issue:** Installation command reads `/add-plugin phased-dev-workflow`. After the plugin is published/renamed to "stagecoach" in the marketplace, this should become `/add-plugin stagecoach`.
+**Issue:** Installation command reads `/add-plugin phased-dev-workflow`. After the plugin is published/renamed to "bytheslice" in the marketplace, this should become `/add-plugin bytheslice`.
 
 **Action:** Update after the marketplace rename is live. Do not update before publish — the old name is still the correct install path until the rename propagates.
 

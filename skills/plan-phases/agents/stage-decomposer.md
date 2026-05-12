@@ -18,7 +18,7 @@ You are the **stage-decomposer** for `/plan-phases`. Your job: take the PRD plus
 
 - PRD file path
 - All Q1–Q12 elicitation answers
-- `stagecoach.config.json` slices (esp. `stages.maxTasksPerStage`, `stages.targetFeatureStages`)
+- `bytheslice.config.json` slices (esp. `stages.maxTasksPerStage`, `stages.targetFeatureStages`)
 - Path to [skills/plan-phases/references/stage-frontmatter-contract.md](../references/stage-frontmatter-contract.md) — the frontmatter shape every stage must use
 
 ## Workflow

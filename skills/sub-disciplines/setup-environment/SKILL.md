@@ -2,10 +2,10 @@
 name: setup-environment
 description: Scan environment requirements and verify all external service credentials are populated. Auto-dispatched on env-setup stages.
 user-invocable: true
-triggers: ["/stagecoach:setup-environment", "/setup-environment", "env setup", "env-setup stage"]
+triggers: ["/bytheslice:setup-environment", "/setup-environment", "env setup", "env-setup stage"]
 ---
 <!-- skills/sub-disciplines/setup-environment/SKILL.md -->
-<!-- Sub-skill of /stagecoach:deliver-stage. Orchestrator-only: dispatches env-scanner, github-secrets-scanner, checklist-generator, and env-verifier to gate the project on a fully populated environment before feature work or CI runs. -->
+<!-- Sub-skill of /bytheslice:deliver-stage. Orchestrator-only: dispatches env-scanner, github-secrets-scanner, checklist-generator, and env-verifier to gate the project on a fully populated environment before feature work or CI runs. -->
 
 # Environment Setup Gate (sub-skill of `/deliver-stage`)
 

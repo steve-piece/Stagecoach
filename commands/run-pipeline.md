@@ -2,20 +2,20 @@
 <!-- EXPERIMENTAL slash command that loads the run-pipeline skill — autonomous multi-stage variant of /deliver-stage. -->
 
 ---
-description: EXPERIMENTAL. Drive an entire phased plan end-to-end in one chat session by dispatching /stagecoach:deliver-stage per stage in strict sequence. Reads docs/plans/00_master_checklist.md, invokes deliver-stage on the next Not-Started stage, waits for the structured result, sanity-checks the merged PR, ensures clean return to main, then advances. The everyday tool is /stagecoach:deliver-stage (run once per slice, fresh chat each time); use /run-pipeline only when you want autonomous multi-stage delivery and accept that long sessions can drift.
+description: EXPERIMENTAL. Drive an entire phased plan end-to-end in one chat session by dispatching /bytheslice:deliver-stage per stage in strict sequence. Reads docs/plans/00_master_checklist.md, invokes deliver-stage on the next Not-Started stage, waits for the structured result, sanity-checks the merged PR, ensures clean return to main, then advances. The everyday tool is /bytheslice:deliver-stage (run once per slice, fresh chat each time); use /run-pipeline only when you want autonomous multi-stage delivery and accept that long sessions can drift.
 ---
 
 # /run-pipeline (EXPERIMENTAL)
 
-> **EXPERIMENTAL.** This command tries to deliver every remaining stage in one chat session, which is unreliable for full 20–30-stage plans today. The everyday entry point is **`/stagecoach:deliver-stage`** — run it once per slice in a fresh chat. Use `/run-pipeline` only when you want a single-session autonomous multi-stage run and accept the reliability tradeoff.
+> **EXPERIMENTAL.** This command tries to deliver every remaining stage in one chat session, which is unreliable for full 20–30-stage plans today. The everyday entry point is **`/bytheslice:deliver-stage`** — run it once per slice in a fresh chat. Use `/run-pipeline` only when you want a single-session autonomous multi-stage run and accept the reliability tradeoff.
 
 Load and follow the [`run-pipeline`](../skills/run-pipeline/SKILL.md) skill.
 
-The skill drives an entire phased plan end-to-end by **dispatching `/stagecoach:deliver-stage` per stage**:
+The skill drives an entire phased plan end-to-end by **dispatching `/bytheslice:deliver-stage` per stage**:
 
 1. Reads `docs/plans/00_master_checklist.md` and identifies the first stage that is not `Completed`.
 2. For each remaining stage (sequentially, never parallel):
-   - Dispatches an opus-tier [`stage-runner`](../skills/run-pipeline/agents/stage-runner.md) subagent that invokes `/stagecoach:deliver-stage` for the active stage and returns its structured result.
+   - Dispatches an opus-tier [`stage-runner`](../skills/run-pipeline/agents/stage-runner.md) subagent that invokes `/bytheslice:deliver-stage` for the active stage and returns its structured result.
    - Dispatches a sonnet-tier [`pr-reviewer`](../skills/run-pipeline/agents/pr-reviewer.md) subagent to sanity-check the merged PR.
    - Walks the Per-Stage Gate Checklist (embedded in `skills/run-pipeline/SKILL.md`) before advancing.
    - Verifies clean `main` (no leftover branches, no leftover worktrees) between every stage.
@@ -41,4 +41,4 @@ If any precondition fails, the skill stops and reports the gap before doing anyt
 
 ## When to use this command
 
-Use `/run-pipeline` only when you explicitly want autonomous multi-stage delivery in one chat session. For everyday use, run `/stagecoach:deliver-stage` once per slice in a fresh chat — that's the supported, reliable path.
+Use `/run-pipeline` only when you explicitly want autonomous multi-stage delivery in one chat session. For everyday use, run `/bytheslice:deliver-stage` once per slice in a fresh chat — that's the supported, reliable path.

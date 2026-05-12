@@ -1,5 +1,5 @@
 // scripts/install/args.js
-// Argument parser and validator for the Stagecoach installer CLI.
+// Argument parser and validator for the ByTheSlice installer CLI.
 
 const DEFAULTS = {
   command: "install",
@@ -121,7 +121,7 @@ function mergeWithConfig(args, config) {
 function renderHelp() {
   return [
     "Usage:",
-    "  stagecoach install [options]",
+    "  bytheslice install [options]",
     "",
     "Options:",
     "  --mode plugin|skills      Install full plugin wiring or selected skills (default: plugin)",
@@ -136,9 +136,9 @@ function renderHelp() {
     "  --help                    Show this help output",
     "",
     "Examples:",
-    "  npx stage-coach install --target both",
-    "  npx stage-coach install --mode skills --skill setup --skill deliver-stage",
-    "  npx stage-coach install --mode skills --config ./skills.sh.config.json",
+    "  npx bytheslice install --target both",
+    "  npx bytheslice install --mode skills --skill setup --skill deliver-stage",
+    "  npx bytheslice install --mode skills --config ./skills.sh.config.json",
   ].join("\n");
 }
 

@@ -1,6 +1,6 @@
-// stagecoach.config.json — copy this file to your project root and edit.
+// bytheslice.config.json — copy this file to your project root and edit.
 // All keys are optional; the plugin uses defaults for anything you omit.
-// See references/stagecoach-config-schema.md in the Stagecoach plugin
+// See references/bytheslice-config-schema.md in the ByTheSlice plugin
 // for the full schema and precedence rules.
 {
   // Override per-agent model tier. Omit any agent to use the plugin default.
@@ -48,7 +48,7 @@
     ]
   },
 
-  // Bootstrap defaults — used by /stagecoach:setup.
+  // Bootstrap defaults — used by /bytheslice:setup.
   "bootstrap": {
     // "variant": "single-app",
     // "stack": "nextjs",

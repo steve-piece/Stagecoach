@@ -3,7 +3,7 @@
 
 ---
 name: rules-assembler
-description: Assembles the project rules file (CLAUDE.md or AGENTS.md per Q12) for /plan-phases. Layers content in the canonical precedence order — Stagecoach baseline (highest), project-specific imports from Q9, design-system rules block (added later by /init-design-system), external rule files (lowest). Reads architecture-conventions.md to inject the matching Variant A or B section, and the Supabase security baseline if Q4 = Supabase + Q5 = Yes. Writes the file with a clear precedence header and section markers.
+description: Assembles the project rules file (CLAUDE.md or AGENTS.md per Q12) for /plan-phases. Layers content in the canonical precedence order — ByTheSlice baseline (highest), project-specific imports from Q9, design-system rules block (added later by /init-design-system), external rule files (lowest). Reads architecture-conventions.md to inject the matching Variant A or B section, and the Supabase security baseline if Q4 = Supabase + Q5 = Yes. Writes the file with a clear precedence header and section markers.
 subagent_type: generalPurpose
 model: sonnet
 effort: medium
@@ -25,14 +25,14 @@ You are the **rules-assembler** for `/plan-phases`. Your job: produce a clean, l
 ## Workflow
 
 1. Read architecture-conventions.md. Pick the correct Variant section (A: single-app; B: monorepo).
-2. Open the target rules file (`CLAUDE.md` or `AGENTS.md`). If it doesn't exist, create it. If it exists, preserve all existing content — append a clearly delimited Stagecoach section.
+2. Open the target rules file (`CLAUDE.md` or `AGENTS.md`). If it doesn't exist, create it. If it exists, preserve all existing content — append a clearly delimited ByTheSlice section.
 3. Assemble in order:
 
    **Header — Precedence Block**
    ```
    # Project Rules
    Layer precedence (highest first):
-   1. Stagecoach baseline (web standards, security, framework facts)
+   1. ByTheSlice baseline (web standards, security, framework facts)
    2. Project-specific rules (imports below)
    3. External rule files
    ```
@@ -41,7 +41,7 @@ You are the **rules-assembler** for `/plan-phases`. Your job: produce a clean, l
    - Inject the Variant A or B content from architecture-conventions.md.
    - Inject the Supabase security baseline if Q4 = Supabase AND Q5 = Yes.
 
-   **Section: Stagecoach Workflow Notes**
+   **Section: ByTheSlice Workflow Notes**
    - DB tooling (from Q4)
    - Auth provider (from Q10)
    - Deployment target (from Q11)
@@ -68,7 +68,7 @@ sections_written:
   - precedence_header
   - architecture_baseline_variant_<a|b>
   - supabase_security_baseline   # only if applicable
-  - stagecoach_workflow_notes
+  - bytheslice_workflow_notes
   - project_specific_imports     # one entry per Q9 URL
   - design_system_placeholder
   - ci_cd_operational_placeholder
@@ -94,7 +94,7 @@ hitl_context: null | "<what triggered this>"
 ## Hard Constraints
 
 - **Always preserve existing content.** Append-only when the file exists.
-- **Use clear section markers** so re-runs know where to append vs replace (e.g. `<!-- stagecoach: architecture-baseline-start -->`).
+- **Use clear section markers** so re-runs know where to append vs replace (e.g. `<!-- bytheslice: architecture-baseline-start -->`).
 - **Never inline platform-specific terminology.** Use "project rules file (cursor or claude rules file)" if the distinction matters; otherwise "project rules file".
 - **If a Q9 import URL fails to fetch**, surface it in `imports_failed` rather than silently skipping. Don't bubble HITL — let the orchestrator decide whether to retry or proceed.
 - **Don't write design-system rules content** — leave the placeholder section empty for `init-design-system` to fill.

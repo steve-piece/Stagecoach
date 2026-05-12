@@ -2,7 +2,7 @@
 name: deliver-stage
 description: Execute one stage from your master checklist: spec review, implementation, testing, and PR open.
 user-invocable: true
-triggers: ["/stagecoach:deliver-stage", "/deliver-stage", "deliver the next stage", "ship the next slice", "work the checklist"]
+triggers: ["/bytheslice:deliver-stage", "/deliver-stage", "deliver the next stage", "ship the next slice", "work the checklist"]
 ---
 <!-- skills/deliver-stage/SKILL.md -->
 <!-- The everyday delivery loop. Reads the master checklist, picks the next Not-Started stage, dispatches the right sub-skill or internal pipeline by stage type, runs basic checks + type-aware aggregating test review, and opens the PR. Replaces v2 ship-feature + ship-frontend in v3. -->
@@ -71,14 +71,14 @@ If `docs/plans/` is missing, instruct the user to run `/plan-phases` first and s
 
 ## Project Config
 
-If `stagecoach.config.json` exists at the project root, the `rules-loader` agent (Phase 1) reads it and returns resolved values. Honor:
+If `bytheslice.config.json` exists at the project root, the `rules-loader` agent (Phase 1) reads it and returns resolved values. Honor:
 
 - `modelTiers.<agent>` — overrides the agent file's `model:` for THIS run
 - `stages.maxTasksPerStage` — overrides the default cap of 6 (warn if user sets > 8)
 - `mcps.*` — declarative MCP availability
 - `visualReview.tools` / `visualReview.vizzly` — passed to `aggregating-test-reviewer`
 
-See [`skills/setup/references/stagecoach-config-schema.md`](../setup/references/stagecoach-config-schema.md) for the full schema.
+See [`skills/setup/references/bytheslice-config-schema.md`](../setup/references/bytheslice-config-schema.md) for the full schema.
 
 ---
 
@@ -116,7 +116,7 @@ Dispatch all three subagents in a **single tool batch**:
 
 1. `discovery` — codebase recon
 2. `checklist-curator` — slice scoping + checklist diff proposal
-3. `rules-loader` — project rules file + `stagecoach.config.json` resolution
+3. `rules-loader` — project rules file + `bytheslice.config.json` resolution
 
 Merge their reports into the Build Plan in Phase 2.
 
@@ -238,7 +238,7 @@ When every in-scope item is `[x]`:
 3. Walk the **Completion Checklist** (below). The slice is not "ready to ship" until every box up through §4 is `[x]`.
 4. Report to the user using the **Progress Report Format**, ending with the **Handoff to `/ship-pr`** message.
 
-**This skill stops here — at "slice committed locally, ready for review."** It does NOT push, open a PR, watch CI, merge, or clean up. That's `/stagecoach:ship-pr`'s job, intentionally separated so you can run a manual visual UAT, do a local code review, or rebase against fresh main before deciding to ship.
+**This skill stops here — at "slice committed locally, ready for review."** It does NOT push, open a PR, watch CI, merge, or clean up. That's `/bytheslice:ship-pr`'s job, intentionally separated so you can run a manual visual UAT, do a local code review, or rebase against fresh main before deciding to ship.
 
 #### Handoff to `/ship-pr`
 
@@ -246,7 +246,7 @@ End your final message with:
 
 > Slice complete on branch `<branch>` — every gate passed locally, master checklist updated, slice committed.
 >
-> **Next:** Review the diff at your pace (visual UAT, manual code review, anything else). When you're ready to ship, run `/stagecoach:ship-pr`. It will run pre-flight safety checks, push, open the PR, watch CI (with an auto-fix loop on red), pause for your merge approval, and on approval merge + sync main + delete local and remote branch + remove the worktree.
+> **Next:** Review the diff at your pace (visual UAT, manual code review, anything else). When you're ready to ship, run `/bytheslice:ship-pr`. It will run pre-flight safety checks, push, open the PR, watch CI (with an auto-fix loop on red), pause for your merge approval, and on approval merge + sync main + delete local and remote branch + remove the worktree.
 >
 > If CI fails on the PR, `/ship-pr`'s `ci-fix-attempter` agent applies targeted fixes for up to 3 attempts before bubbling to you — so this hand-off is genuinely "review and walk away" if you want it to be.
 
@@ -289,7 +289,7 @@ After each task and at stage closeout:
 
 ## Completion Checklist
 
-Run at the end of every slice. Do not report the slice "ready to ship" until every box up through §4 is `[x]`. Sections §5 (PR + CI) and §6 (cleanup) belong to `/stagecoach:ship-pr` and are not this skill's responsibility.
+Run at the end of every slice. Do not report the slice "ready to ship" until every box up through §4 is `[x]`. Sections §5 (PR + CI) and §6 (cleanup) belong to `/bytheslice:ship-pr` and are not this skill's responsibility.
 
 ### 1. Plan Tasks Complete
 
@@ -336,9 +336,9 @@ Skip only if the slice is documentation-only or has zero observable behavior cha
 
 ---
 
-### Handed off to `/stagecoach:ship-pr` — NOT this skill's responsibility
+### Handed off to `/bytheslice:ship-pr` — NOT this skill's responsibility
 
-The following sections live in [`/stagecoach:ship-pr`](../ship-pr/SKILL.md)'s Completion Checklist. They are listed here for cross-reference only; this skill does not run them.
+The following sections live in [`/bytheslice:ship-pr`](../ship-pr/SKILL.md)'s Completion Checklist. They are listed here for cross-reference only; this skill does not run them.
 
 #### 5. PR open + CI green (handled by `/ship-pr` Phase 1–3)
 - Branch pushed to `origin`; PR open against `main`; PR URL surfaced.

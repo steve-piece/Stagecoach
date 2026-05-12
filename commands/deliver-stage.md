@@ -9,7 +9,7 @@ description: The everyday stage-delivery loop. Reads the master checklist, picks
 
 Load and follow the [`deliver-stage`](../skills/deliver-stage/SKILL.md) skill.
 
-`deliver-stage` is the everyday delivery loop in Stagecoach v3. It replaces both `ship-feature` and `ship-frontend` from v2 — one command, one stage at a time, automatic routing by stage `type:`.
+`deliver-stage` is the everyday delivery loop in ByTheSlice v3. It replaces both `ship-feature` and `ship-frontend` from v2 — one command, one stage at a time, automatic routing by stage `type:`.
 
 The skill drives a single stage end-to-end:
 

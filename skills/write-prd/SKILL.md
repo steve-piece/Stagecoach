@@ -4,7 +4,7 @@ description: Turn a project brief into a structured 8-section PRD with phased im
 model: opus
 effort: high
 user-invocable: true
-triggers: ["/stagecoach:write-prd", "/write-prd", "write a prd", "generate a prd", "create a prd", "write prd", "build a prd"]
+triggers: ["/bytheslice:write-prd", "/write-prd", "write a prd", "generate a prd", "create a prd", "write prd", "build a prd"]
 ---
 
 # PRD Generator

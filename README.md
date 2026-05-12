@@ -1,128 +1,196 @@
-# Stagecoach
+<!-- README.md -->
+<!-- ByTheSlice — npm + GitHub README. Pizza-themed, structured for marketplace + GitHub readers. -->
 
-> A Claude Code plugin that takes a project from a free-form brief to a shipping production web app through a phased, subagent-driven workflow.
+<div align="center">
 
-Stagecoach v3 collapses everyday delivery into a single command — `/stagecoach:deliver-stage` — that reads the master checklist, picks the next stage, routes by stage type, runs the right pipeline, and opens a PR after a real verification gate (lint/type/build + a type-aware aggregating test review including dev-server boot and Claude-in-Chrome browser UAT for frontend slices).
+# 🍕 ByTheSlice
 
-Every heavy workflow step is a subagent. Skill files are orchestrator-only — context, scenarios, user-input gates, references, and a roster of specialized agents. The agents do the actual work.
+**Ship production apps the way you eat a pizza: one slice at a time.**
+
+*One slice, one PR, one bite of confidence.*
+
+[![npm version](https://img.shields.io/npm/v/bytheslice?color=ef4444&label=npm&logo=npm)](https://www.npmjs.com/package/bytheslice)
+[![License: MIT](https://img.shields.io/badge/license-MIT-22c55e.svg)](LICENSE)
+[![Node](https://img.shields.io/node/v/bytheslice?color=3b82f6&logo=node.js&logoColor=white)](https://nodejs.org)
+[![Made for Claude Code](https://img.shields.io/badge/Claude_Code-plugin-orange?logo=anthropic)](https://www.anthropic.com/claude-code)
+[![Made for Cursor](https://img.shields.io/badge/Cursor-plugin-blue?logo=cursor)](https://cursor.com)
+[![GitHub stars](https://img.shields.io/github/stars/steve-piece/bytheslice?style=social)](https://github.com/steve-piece/bytheslice/stargazers)
+
+</div>
+
+---
+
+ByTheSlice is a Claude Code + Cursor plugin that takes a project from a free-form brief to a shipping production web app — one **vertical slice** at a time. No monolithic "go build this" prompts. No 200-file PRs nobody reads. Cut the product into slices, fire one out of the oven at a time, and don't ship anything you wouldn't taste-test yourself.
+
+> [!TIP]
+> **Pizza shop rules:** every slice goes through the same line — order ticket (PRD), recipe (plan), kitchen (subagents), quality station (lint / type / build + UAT), then box. If a slice doesn't pass quality, it doesn't leave the kitchen.
+
+---
+
+## Table of Contents
+
+- [Why ByTheSlice](#why-bytheslice)
+- [Quick Start](#quick-start)
+- [Install](#install)
+- [The Menu](#the-menu) — skills + slash commands
+- [The Kitchen](#the-kitchen) — workflow diagram
+- [Personalize](#personalize)
+- [Conventions worth knowing](#conventions-worth-knowing)
+- [Experimental skills](#experimental-skills)
+- [FAQ](#faq)
+- [Contributing](#contributing)
+- [Repository](#repository)
+- [License](#license)
+
+---
+
+## Why ByTheSlice
+
+Most "build me an app with AI" workflows hit the same wall: too much scope per prompt, no real verification, no review surface, no way to roll back a bad slice without nuking the pie. ByTheSlice fixes that with three rules:
+
+1. **Slice the pie before you cook.** A finalized PRD is decomposed into 20–30 vertical-slice stages plus 3–4 foundation stages (design system, CI/CD, env, optional DB schema). Each slice is **≤ 6 tasks, ~10–15 files**, completable in one fresh agent session.
+2. **Every slice passes the quality station.** Lint / type / build are non-negotiable. Frontend slices also boot a dev server and run a Claude-in-Chrome browser UAT against design tokens. No "stage complete" report until the gates are green.
+3. **Delivery is decoupled from shipping.** `/deliver-stage` stops at *slice committed locally, ready for review*. You taste-test (visual UAT, code review). Then `/ship-pr` boxes it: push, PR, CI watch with auto-fix loop, authorized merge, cleanup.
+
+> [!IMPORTANT]
+> ByTheSlice doesn't replace your judgment — it forces it. Every slice gives you a deliberate review window between commit and ship. **One slice, everybody knows the rules.**
+
+---
+
+## Quick Start
+
+The fastest path from cold start to your first slice in production:
+
+```bash
+# 1. Install for both Claude Code + Cursor
+npx bytheslice install --target both
+
+# 2. (One-time) configure a system-wide default tier — optional
+/bytheslice:setup     # in your IDE; pick your stack + preferences
+
+# 3. New project → write the order ticket (PRD)
+/bytheslice:write-prd
+
+# 4. Slice the pie → master checklist + 20–30 stages
+/bytheslice:plan-phases
+
+# 5. Pull the next slice off the rack (run once per slice, fresh chat)
+/bytheslice:deliver-stage
+
+# 6. When the slice is taste-tested locally, box it up
+/bytheslice:ship-pr
+```
+
+Repeat steps 5–6 until the master checklist is green. That's the whole motion.
+
+> [!NOTE]
+> Every command is also available without the `/bytheslice:` prefix in Claude Code if no other plugin claims it (e.g. `/deliver-stage`).
 
 ---
 
 ## Install
 
+### Option 1 — Claude Code plugin (recommended)
+
 ```text
-/add-plugin stagecoach
+/add-plugin bytheslice
 ```
 
-Or clone manually: `git clone https://github.com/steve-piece/stagecoach.git` and add it as a plugin via your project rules file.
+### Option 2 — npm CLI (scriptable, idempotent)
 
-### CLI install pattern (NPX)
-
-For automation or repeatable setup, use the package CLI:
+For automation, CI bootstraps, or devcontainers:
 
 ```bash
-npx stage-coach install --target both
+npx bytheslice install --target both
 ```
 
-Or run straight from GitHub without an npm install:
+Default install paths:
+
+- **Cursor:** `~/.cursor/plugins/local/bytheslice`
+- **Claude Code:** `~/.claude/plugins/bytheslice`
+
+Use `--target cursor` or `--target claude` to scope a single host. Override paths with `--cursor-dir <path>` / `--claude-dir <path>`.
+
+### Option 3 — Run straight from GitHub (no npm install)
 
 ```bash
-npx github:steve-piece/stagecoach install --target both
+npx github:steve-piece/bytheslice install --target both
 ```
 
-That command installs Stagecoach plugin assets for both hosts by default:
+### Option 4 — Pick & choose individual skills
 
-- Cursor: `~/.cursor/plugins/local/stagecoach`
-- Claude Code: `~/.claude/plugins/stagecoach`
-
-Use `--target cursor` or `--target claude` to scope installs.
-
-### Individual skills install options (`skills.sh` style)
-
-Install only selected skills + matching command shims:
+Install only selected skills + matching command shims (`skills.sh` style):
 
 ```bash
-npx stage-coach install --mode skills --skill setup --skill deliver-stage
+npx bytheslice install --mode skills --skill setup --skill deliver-stage
 ```
 
-By default, selected skills are copied into:
+Selected skills land in:
 
-- `./.stagecoach-installs/skills/skills/*`
-- `./.stagecoach-installs/skills/commands/*`
+- `./.bytheslice-installs/skills/skills/*`
+- `./.bytheslice-installs/skills/commands/*`
 
-Override destination with `--skills-dir <path>`.
-
-Optional JSONC config (example at `scripts/install/skills-config.example.json`):
-
-```bash
-npx stage-coach install --mode skills --config ./scripts/install/skills-config.example.json
-```
-
-`/add-plugin stagecoach` remains the shortest interactive path; the CLI path is better when you want scriptable, idempotent setup.
+Override the destination with `--skills-dir <path>`. For declarative installs, point `--config <path>` at a JSONC file (see [`scripts/install/skills-config.example.json`](scripts/install/skills-config.example.json)).
 
 ---
 
-## Workflow
+## The Menu
 
-| Step | What it does |
-|---|---|
-| `setup` | Bootstrap a project (or drop config into an existing one). Detects CI/CD baseline. |
-| `write-prd` | Free-form brief → structured PRD. |
-| `plan-phases` | PRD → master checklist + foundation stages + 20–30 feature stages. |
-| `deliver-stage` | Everyday delivery loop. One slice per fresh chat. Routes by stage `type:`; dispatches the right sub-skill (`init-design-system` / `scaffold-ci-cd` / `setup-environment`) or internal pipeline (frontend / backend / full-stack / db-schema). Frontend slices clear the **Library Preview Gate** — new components and consumer-side surface changes stage into `/library` for explicit approval. Gates on lint / type / build + a type-aware test review. Stops at *slice committed locally, ready for review*. |
-| `add-feature` | Bolt new stages onto a shipped project. Commits plan files on `chore/add-stages-…`. |
-| `ship-pr` | Pre-flight → push → PR → CI watch (auto-fix loop, capped at 3 attempts) → authorized merge → cleanup. |
+Each skill is invokable via slash command in Claude Code or Cursor. The full reference, sub-agents, and completion checklist for any skill live at `skills/<name>/SKILL.md`.
+
+| Skill | Slash command | What it does |
+|---|---|---|
+| `setup` | `/bytheslice:setup` | Bootstraps a new project (single-app or Turborepo monorepo) or drops ByTheSlice config into an existing one. Auto-detects which flow you're in and checks for the CI/CD baseline. |
+| `write-prd` | `/bytheslice:write-prd` | Turns a free-form project brief into a structured 8-section PRD (the **order ticket**). |
+| `plan-phases` | `/bytheslice:plan-phases` | Decomposes a finalized PRD into a master checklist + foundation stages + 20–30 vertical-slice feature stages (the **recipe**). |
+| `deliver-stage` | `/bytheslice:deliver-stage` | The everyday delivery loop. Routes by stage type, dispatches the right sub-skill or pipeline, runs spec/quality review + lint/type/build + a type-aware aggregating test review. **Stops at "slice committed locally, ready for review."** |
+| `add-feature` | `/bytheslice:add-feature` | Bolts new features onto a project that already shipped. Assesses complexity, writes fresh stage files into the existing master checklist, commits the new plan files on a `chore/add-stages-...` branch, then hands off to `/ship-pr` or `/deliver-stage`. |
+| `ship-pr` | `/bytheslice:ship-pr` | Pre-flight safety checks → push → open PR → watch CI (with `ci-fix-attempter` auto-fix loop on red, capped at 3 attempts) → user-authorized merge → main sync + branch + worktree cleanup. Universal closeout — works for slices from `deliver-stage`, plan-only chore PRs, or hand-rolled feature branches. |
+| `init-design-system` | `/bytheslice:init-design-system` | **Sub-skill of `deliver-stage`.** Validates or generates the design system. Auto-dispatched on `type: design-system` stages. |
+| `scaffold-ci-cd` | `/bytheslice:scaffold-ci-cd` | **Sub-skill of `deliver-stage`.** Wires the CI/CD baseline. Auto-dispatched on `type: ci-cd` stages; invoke directly to repair CI. |
+| `setup-environment` | `/bytheslice:setup-environment` | **Sub-skill of `deliver-stage`.** Walks external service setup and verifies `.env.local`. Auto-dispatched on `type: env-setup` stages. |
+
+Two more skills (`run-pipeline`, `review-pipeline`) are documented under [Experimental skills](#experimental-skills).
+
+---
+
+## The Kitchen
 
 ```mermaid
 flowchart TD
-    Setup["setup"] --> PRD["write-prd"]
-    PRD --> Phased["plan-phases"]
-    Phased --> Deliver["deliver-stage<br/>(slice ready for review)"]
-    Add["add-feature<br/>(post-launch)"] --> Deliver
-    Deliver --> Ship["ship-pr<br/>(push → CI → merge)"]
+    Setup["🍕 setup<br/><i>fire up the kitchen</i>"] --> PRD["📋 write-prd<br/><i>order ticket</i>"]
+    PRD --> Phased["🔪 plan-phases<br/><i>slice the pie</i>"]
+    Phased --> Deliver["👨‍🍳 deliver-stage<br/><i>cook one slice</i><br/>(committed, ready for review)"]
+    Add["➕ add-feature<br/><i>add a topping post-launch</i>"] --> Deliver
+    Deliver --> Ship["📦 ship-pr<br/><i>box it up</i><br/>(push → CI → merge)"]
     Ship --> Q{"Master checklist<br/>complete?"}
-    Q -->|No| NewChat["New chat / worktree"]
+    Q -->|No| NewChat["Fresh chat / worktree"]
     NewChat --> Deliver
-    Q -->|Yes| Done(["✅ Complete"])
+    Q -->|Yes| Done(["✅ Pie complete"])
 ```
 
-`deliver-stage` is the daily surface. Finish a slice, start a fresh chat, run it again — until the checklist is green.
+`deliver-stage` is the daily surface. **Finish a slice, start a fresh chat, run it again** — until the checklist is green.
 
-**Foundation stages** (run before any feature stage; Stage 4 only when the PRD has a backend) are dispatched automatically by `deliver-stage` based on each stage's `type:` frontmatter:
+### Foundation stages (auto-dispatched by `deliver-stage`)
 
-| # | Stage | Sub-skill dispatched by `deliver-stage` |
+These run before any feature stage. Stage 4 only when the PRD has a backend.
+
+| # | Stage | Sub-skill |
 |---|---|---|
 | 1 | Design system gate | `init-design-system` |
 | 2 | CI/CD scaffold | `scaffold-ci-cd` |
 | 3 | Environment setup gate | `setup-environment` |
-| 4 | DB schema foundation (conditional) | `deliver-stage` internal implementer (DB context) |
-| 5..N | Feature stages (vertical slices, 20–30 typical) | `deliver-stage` internal pipeline (frontend / backend / full-stack) |
+| 4 | DB schema foundation *(conditional)* | `deliver-stage` internal implementer (DB context) |
+| 5..N | Feature stages — vertical slices, 20–30 typical | `deliver-stage` internal pipeline (frontend / backend / full-stack) |
 
-Hard caps per stage: **6 tasks**, ~10–15 files changed, completable in one fresh agent session. Override `stages.maxTasksPerStage` in `stagecoach.config.json`.
-
----
-
-## Skills
-
-| Skill | Slash command | Description |
-|---|---|---|
-| `setup` | `/stagecoach:setup` | Bootstraps a new project or drops Stagecoach config into an existing one. Auto-detects which flow you're in and checks for the CI/CD baseline. |
-| `write-prd` | `/stagecoach:write-prd` | Turns a free-form project brief into a structured 8-section PRD. |
-| `plan-phases` | `/stagecoach:plan-phases` | Decomposes a finalized PRD into a master checklist, foundation stages, and 20–30 vertical-slice feature stages. |
-| `deliver-stage` | `/stagecoach:deliver-stage` | The everyday delivery loop. Routes by stage type, dispatches the right sub-skill or internal pipeline, runs spec/quality review + basic checks (lint/type/build) + a type-aware aggregating test review. **Stops at "slice committed locally, ready for review"** — hands off to `/ship-pr` for push / PR / merge / cleanup. |
-| `add-feature` | `/stagecoach:add-feature` | Bolts new features onto a project that already shipped, assessing complexity and writing fresh stage files into the existing master checklist. Commits the new plan files on a `chore/add-stages-...` branch, then hands off to `/ship-pr` or `/deliver-stage`. |
-| `ship-pr` | `/stagecoach:ship-pr` | Pre-flight safety checks → push → open PR → watch CI (with `ci-fix-attempter` auto-fix loop on red, capped at 3 attempts) → user-authorized merge → main sync + local and remote branch deletion + worktree removal. Universal closeout — works for slices from `deliver-stage`, plan-only chore PRs from `add-feature`, or hand-rolled feature branches. |
-| `init-design-system` | `/stagecoach:init-design-system` | **Sub-skill of `deliver-stage`.** Validates or generates the design system. Auto-dispatched on `type: design-system` stages; invoke directly only as an escape hatch. |
-| `scaffold-ci-cd` | `/stagecoach:scaffold-ci-cd` | **Sub-skill of `deliver-stage`.** Wires the CI/CD baseline. Auto-dispatched on `type: ci-cd` stages; invoke directly to repair CI manually. |
-| `setup-environment` | `/stagecoach:setup-environment` | **Sub-skill of `deliver-stage`.** Walks external service setup and verifies `.env.local`. Auto-dispatched on `type: env-setup` stages; invoke directly to re-verify env state. |
-
-Each skill's full reference, sub-agents, and completion checklist live in `skills/<name>/SKILL.md`. Two more — `run-pipeline` and `review-pipeline` — are documented separately under [Experimental skills](#experimental-skills).
+> [!NOTE]
+> **Hard caps per stage:** 6 tasks, ~10–15 files changed, completable in one fresh agent session. Override `stages.maxTasksPerStage` in `bytheslice.config.json` if you really need a bigger slice — but the cap exists for a reason.
 
 ---
 
 ## Personalize
 
-Drop a `stagecoach.config.json` at your project root to override defaults:
+Drop a `bytheslice.config.json` at your project root to override defaults:
 
 ```jsonc
 {
@@ -135,45 +203,144 @@ Drop a `stagecoach.config.json` at your project root to override defaults:
 }
 ```
 
-Full schema + precedence rules at [`skills/setup/references/stagecoach-config-schema.md`](skills/setup/references/stagecoach-config-schema.md). System-wide defaults via `~/.stagecoach/defaults.json` (created during first-time install).
+Full schema and precedence rules: [`skills/setup/references/bytheslice-config-schema.md`](skills/setup/references/bytheslice-config-schema.md). System-wide defaults live at `~/.bytheslice/defaults.json` (created during first-time install).
 
-**Precedence (top wins):** env vars → `stagecoach.config.json` → project rules file (CLAUDE.md / AGENTS.md) → plugin defaults.
+**Precedence (top wins):**
+
+```
+env vars  >  bytheslice.config.json  >  project rules file (CLAUDE.md / AGENTS.md)  >  plugin defaults
+```
 
 ---
 
 ## Conventions worth knowing
 
+> [!IMPORTANT]
+> These aren't suggestions — they're the rules of the kitchen. The plugin enforces them.
+
 - **Subagent-driven everything.** Skill files are orchestrators — context, scenarios, gates, agent rosters. Heavy work lives in `skills/*/agents/*.md`. The orchestrator dispatches, reviews structured outputs, and loops to green; it does not write production code itself.
-- **Per-stage verification is non-negotiable.** Phase 6 (basic-checks-runner) and Phase 7 (aggregating-test-reviewer) gate the output summary in `deliver-stage`. No "stage complete" report until both pass (or are intentionally skipped per stage type).
-- **Library-first frontend delivery.** The design-system stage scaffolds an operator-only `/library` preview route at `app/(dashboard)/library/` (excluded from every nav surface, sitemap, and robots). Every frontend stage passes through Phase 4.5's Library Preview Gate — non-skippable for new components AND for consumer-side edits that change a user-visible surface (props, copy, content, variants, states, styles) of an existing library component. Pure internal refactors with no rendered-output delta are exempt.
-- **Delivery and shipping are decoupled.** `deliver-stage` stops at "slice committed locally, ready for review" — push, PR, CI watch, merge, and cleanup belong to `ship-pr`. The split exists so you can run a manual visual UAT or local code review between commit and PR. `ship-pr` is also safe for hand-rolled feature branches that never went through Stagecoach delivery.
+- **Per-stage verification is non-negotiable.** Phase 6 (`basic-checks-runner`) and Phase 7 (`aggregating-test-reviewer`) gate the per-stage output summary. No "stage complete" report until both pass — or are intentionally skipped per stage type.
+- **Library-first frontend delivery.** The design-system stage scaffolds an operator-only `/library` preview route at `app/(dashboard)/library/` (excluded from every nav surface, sitemap, and robots). Every frontend stage passes through Phase 4.5's **Library Preview Gate** — non-skippable for new components AND for consumer-side edits that change a user-visible surface (props, copy, content, variants, states, styles) of an existing library component. Pure internal refactors with no rendered-output delta are exempt.
+- **Delivery and shipping are decoupled.** `deliver-stage` stops at *slice committed locally, ready for review* — push, PR, CI watch, merge, and cleanup belong to `ship-pr`. The split exists so you can run a manual visual UAT or local code review between commit and PR. `ship-pr` is also safe for hand-rolled feature branches that never went through ByTheSlice delivery.
 - **Type-aware test review depth.** Frontend / full-stack stages get the FULL Phase 7 (dev-server boot, CI gates, Claude-in-Chrome UAT, visual diff). Backend / db-schema get a REDUCED review (CI gates only). Foundation stages skip Phase 7.
 - **Always recommend a default in elicitation.** Every clarifying-questions phase across the plugin includes a recommended option in each choice set.
-- **HITL bubbling.** Sub-agents never prompt the user directly — they return `needs_human: true` with one of four categories: `prd_ambiguity`, `external_credentials`, `destructive_operation`, `creative_direction`. Only top-level orchestrators call `ask_user_input_v0`.
+- **HITL bubbling.** Sub-agents never prompt the user directly — they return `needs_human: true` with one of four categories: `prd_ambiguity`, `external_credentials`, `destructive_operation`, `creative_direction`. Only top-level orchestrators surface the prompt.
 - **Model tiers.** Three aliases (`haiku`, `sonnet`, `opus`); heavier tiers go to producing/verifying agents (`implementer` = `opus, xhigh`; `quality-reviewer` = `opus, high`). Full per-agent table at [`skills/setup/references/model-tier-guide.md`](skills/setup/references/model-tier-guide.md).
-- **Visual review tooling priority** (hardcoded, no discovery): Claude in Chrome > Chrome DevTools MCP > Playwright > Vizzly. Full-page screenshots only at 375 / 768 / 1280 / 1920 viewports.
+- **Visual review tooling priority** *(hardcoded, no discovery)*: Claude in Chrome > Chrome DevTools MCP > Playwright > Vizzly. Full-page screenshots only at 375 / 768 / 1280 / 1920 viewports.
 - **One slice per PR.** Default branch naming: `feat/stage-<n>-<scope>`.
 
 ---
 
 ## Experimental skills
 
+> [!WARNING]
 > Not currently reliable in Claude Code or Cursor — agent attention drifts on long-running multi-stage tasks. Untested elsewhere; curious how they hold up in systems with stronger long-horizon multi-agent orchestration.
 
 The intent: once `setup`, `write-prd`, `plan-phases`, and the design-system foundation are locked in — a coherent UI/UX language committed via `/library` — `/run-pipeline` lets the coding agent take over and dispatch `/deliver-stage` per slice fully autonomously until the master checklist is green. `/review-pipeline` follows shipping with a retrospective that drafts plugin improvements back to disk.
 
-| Skill | Slash command | Description |
+| Skill | Slash command | What it does |
 |---|---|---|
-| `run-pipeline` | `/stagecoach:run-pipeline` | Autonomous multi-stage variant of `deliver-stage`. Drives every remaining stage in one chat session. |
-| `review-pipeline` | `/stagecoach:review-pipeline` | After a plan completes, surfaces friction patterns across recent stages and drafts improvements back to the plugin. |
+| `run-pipeline` | `/bytheslice:run-pipeline` | Autonomous multi-stage variant of `deliver-stage`. Drives every remaining stage in one chat session. |
+| `review-pipeline` | `/bytheslice:review-pipeline` | After a plan completes, surfaces friction patterns across recent stages and drafts improvements back to the plugin. |
+
+---
+
+## FAQ
+
+<details>
+<summary><b>Do I need both Claude Code and Cursor?</b></summary>
+
+No. ByTheSlice works in either host on its own. `--target both` is just a convenience for people who jump between IDEs.
+
+</details>
+
+<details>
+<summary><b>What's the smallest possible slice?</b></summary>
+
+A slice has to be a real *user-facing* delta — UI + route + data + tests for one thing. The hard floor is roughly "one button that actually does something end-to-end." If you can't draw a user-visible bite out of it, it belongs as part of a foundation stage instead.
+
+</details>
+
+<details>
+<summary><b>Can I skip the verification gates?</b></summary>
+
+Technically yes (the orchestrator will accept a HITL override with `destructive_operation` category), but every story we've seen of "I'll just skip the gates this once" ends with a slice that breaks main. The whole point is that the kitchen doesn't ship slices it didn't taste.
+
+</details>
+
+<details>
+<summary><b>What happens if a slice is too big?</b></summary>
+
+`deliver-stage` will stop at the 6-task / ~15-file cap and return `needs_human: true` with category `prd_ambiguity` asking you to split the stage. Then re-run `plan-phases` against the same PRD with that stage flagged for further decomposition.
+
+</details>
+
+<details>
+<summary><b>Does this work with non-Next.js stacks?</b></summary>
+
+Today the bootstrap templates target Next.js (single-app or Turborepo monorepo). The verification gates and skill orchestration are stack-agnostic — point the implementer at any TypeScript repo and it'll route through the same Phase 6/7 gates. Bootstrap support for Vite, Remix, SvelteKit, and Expo is on the roadmap.
+
+</details>
+
+<details>
+<summary><b>How do I uninstall?</b></summary>
+
+```bash
+rm -rf ~/.cursor/plugins/local/bytheslice ~/.claude/plugins/bytheslice
+```
+
+That's it. The plugin doesn't write anywhere else outside your project's `bytheslice.config.json`.
+
+</details>
+
+---
+
+## Contributing
+
+Contributions are welcome — especially if you've got real-world friction reports from running long plans.
+
+```bash
+# 1. Fork + clone
+git clone https://github.com/<your-username>/bytheslice.git
+cd bytheslice
+
+# 2. Validate the package builds cleanly
+npm pack --dry-run
+
+# 3. Install your fork locally for live testing
+node ./bin/bytheslice.js install --target both
+
+# 4. Make your slice; commit on a branch
+git checkout -b feat/<scope>
+git commit -m "feat: <what changed>"
+
+# 5. Push and open a PR
+git push -u origin HEAD
+```
+
+The plugin eats its own cooking — internal changes go through the same `deliver-stage` → `ship-pr` motion. Run `/bytheslice:review-pipeline` after a release to surface friction and draft improvements back to the repo.
 
 ---
 
 ## Repository
 
-- GitHub: [steve-piece/stagecoach](https://github.com/steve-piece/stagecoach)
-- Changelog: [CHANGELOG.md](CHANGELOG.md)
+- **GitHub:** [steve-piece/bytheslice](https://github.com/steve-piece/bytheslice)
+- **npm:** [bytheslice](https://www.npmjs.com/package/bytheslice)
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+- **Issues:** [GitHub Issues](https://github.com/steve-piece/bytheslice/issues)
+
+---
 
 ## License
 
-MIT
+[MIT](LICENSE) © Steven Light
+
+<div align="center">
+
+—
+
+*Cut the pie. Cook one slice. Taste-test before it leaves the kitchen.*
+
+🍕
+
+</div>
