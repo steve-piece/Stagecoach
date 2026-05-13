@@ -53,5 +53,13 @@
     // "variant": "single-app",
     // "stack": "nextjs",
     // "roadmapFile": "ROADMAP.local.md"
+  },
+
+  // Run-pipeline checkpoints — dispatch /walk-platform every N stages
+  // during autonomous multi-stage runs. Read by /bytheslice:run-pipeline.
+  "runPipeline": {
+    // "platformWalkEvery": 5,           // 0 = disabled
+    // "haltOn": "broken",               // "broken" | "drifted" | "never"
+    // "checkpointMode": "foreground"    // "foreground" | "background"
   }
 }

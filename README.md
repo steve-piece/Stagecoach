@@ -241,7 +241,7 @@ The intent: once `setup`, `write-prd`, `plan-phases`, and the design-system foun
 
 | Skill | Slash command | What it does |
 |---|---|---|
-| `run-pipeline` | `/bytheslice:run-pipeline` | Autonomous multi-stage variant of `deliver-stage`. Drives every remaining stage in one chat session. |
+| `run-pipeline` | `/bytheslice:run-pipeline` | Autonomous multi-stage variant of `deliver-stage`. Drives every remaining stage in one chat session. Supports periodic platform-walk checkpoints — set `runPipeline.platformWalkEvery: 5` in `bytheslice.config.json` to dispatch `/walk-platform` every 5 stages and catch cross-cutting regressions before they compound. |
 | `review-pipeline` | `/bytheslice:review-pipeline` | After a plan completes, surfaces friction patterns across recent stages and drafts improvements back to the plugin. |
 
 ---

@@ -112,6 +112,14 @@ When two sources disagree, the higher-precedence source wins. The orchestrator l
     "variant": "single-app",          // "single-app" | "monorepo"
     "stack": "nextjs",                // "nextjs" only in v2.1; more later
     "roadmapFile": "ROADMAP.local.md" // pass null to skip creating the roadmap file
+  },
+
+  // Run-pipeline behavior — periodic platform-walk checkpoints during
+  // autonomous multi-stage runs. Read by /bytheslice:run-pipeline only.
+  "runPipeline": {
+    "platformWalkEvery": 5,    // 0 = disabled; positive int = dispatch /walk-platform every N completed stages
+    "haltOn": "broken",        // "broken" (default) | "drifted" | "never" — when to pause for human review
+    "checkpointMode": "foreground" // "foreground" (default — visible in progress report) | "background" (logged only)
   }
 }
 ```
@@ -151,6 +159,21 @@ URLs to external rule files (the same shape as elicitation Q9). When this array 
 ### `bootstrap`
 
 Defaults for `/bytheslice:setup`. When present, bootstrap skips its plan-mode question gate and uses these values directly. Useful for repeatable scaffolding (CI / templates).
+
+### `runPipeline`
+
+Controls periodic platform-walk checkpoints during autonomous multi-stage runs (`/bytheslice:run-pipeline`). Each key is independent — set only what you want to override.
+
+- **`platformWalkEvery`** *(int, default `0` = disabled)* — dispatch `/bytheslice:walk-platform` every N completed stages. The walk runs **after** the per-stage gate checklist passes for stage N — so a failing gate halts the run before the walk would have run. Recommended values: `5` for 20-stage plans, `10` for plans where individual stages already include heavy per-slice review.
+- **`haltOn`** *(string, default `"broken"`)* — when the walk's `verdict` should pause the autonomous run:
+  - `"broken"` *(default)* — pause only when the walk reports `verdict: broken` (conversion flow or auth broken, or >25% of public routes 404/500). The orchestrator prompts the user with `hitl_category: prd_ambiguity` and the walk's top gaps.
+  - `"drifted"` — pause on `verdict: drifted` OR `broken`. Stricter; useful when shipping toward a UAT date.
+  - `"never"` — log the walk's findings in the progress report but never pause. Truly autonomous.
+- **`checkpointMode`** *(string, default `"foreground"`)* — `"foreground"` includes the walk's verdict + top 3 gaps in the per-stage Progress Report. `"background"` logs the report path silently and omits gap detail from the report unless `haltOn` fires.
+
+The walk is read-only by construction (it never edits code or pushes commits), so the run-pipeline gate state is unaffected by checkpoint dispatch on its own. Only the `haltOn` rule influences whether the run advances.
+
+If `platformWalkEvery: 0` (the default), the entire checkpoint flow is a no-op — run-pipeline behaves exactly as it did before this config existed.
 
 ## How the plugin reads this file
 
