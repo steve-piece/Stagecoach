@@ -7,6 +7,19 @@ All notable changes to **🍕 ByTheSlice** are tracked here, slice by slice. The
 
 ---
 
+## [3.1.0] — 2026-05-13
+
+### Added
+- **`/bytheslice:walk-platform`** — cross-cutting visual walkthrough skill. Discovers every route in a running app, drives a live browser through each one, captures screenshots + console output, and surfaces a ranked report of what's broken, mocked, or empty across the **whole product** — not just the last slice. Read-only. Run before UAT, before a demo, or after a batch of `/ship-pr` runs. Complements (does not replace) `deliver-stage`'s per-slice `visual-reviewer`.
+- **`run-pipeline` periodic platform-walk checkpoints** — autonomous multi-stage runs now pause every N stages (configurable via `runPipeline.walkPlatformCheckpointInterval` in `bytheslice.config.json`, default 5) to dispatch `/walk-platform` and surface any cross-cutting regressions before they pile up. HITL gate: operator reviews the walk report before the pipeline resumes.
+- **Dev-mode auth bypass helpers** (`/bytheslice:plan-phases`) — opt-in localhost auth shortcuts for the design-system foundation stage so the `/library` route is reachable in fresh setups without a real session.
+
+### Changed
+- **GitHub repo + npm package + default local path are all `bytheslice`** — the rename from `stagecoach` (and the brief intermediate `stage-coach` / `@steve-piece/stagecoach` npm names) is now fully consistent across the repo URL, the published npm package, and the recommended local clone path. GitHub redirects the old `steve-piece/Stagecoach` URL.
+- **README refresh** — pizza-themed Kitchen narrative, simplified FAQ, `walk-platform` row added to the skills table.
+
+---
+
 ## [3.0.0] — 2026-05-07
 
 Major restructure: subagent-driven everything, single delivery loop, real per-stage verification.

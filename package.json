@@ -1,6 +1,6 @@
 {
   "name": "bytheslice",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": false,
   "description": "Ship production apps one vertical slice at a time with PRD generation, phased planning, and CI/CD quality gates.",
   "bin": {
