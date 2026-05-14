@@ -17,6 +17,10 @@ ByTheSlice skill that reviews how recent stages and skills executed, identifies 
 
 ---
 
+## Mode detection
+
+`/close-shop` is **always sequential** — it reviews recent execution history (commits, PRs, stage rows) and drafts plugin-improvement PRs. Requires either a recent ByTheSlice run (master checklist with Completed stages) or an explicit pointer to an existing project. Standalone invocation against a fresh repo is a no-op — there's nothing to debrief.
+
 ## A. Purpose
 
 - Analyze execution logs, git history, PR records, and HITL escalation data to detect patterns where the plugin is causing repeated friction

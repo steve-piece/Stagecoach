@@ -11,6 +11,15 @@ triggers: ["/bytheslice:final-quality-check", "/final-quality-check", "install t
 
 This skill is the orchestrator for the CI/CD baseline. It does not write workflows itself — it **dispatches eight specialized agents** that each own one slice of the scaffold work. The orchestrator's job is detection, sequencing, user-input gating, and walking the completion checklist.
 
+## Mode detection
+
+This skill runs in one of two modes, auto-detected at startup:
+
+- **Standalone** — no `docs/plans/00_master_checklist.md` at the project root. Adds CI/CD + E2E + design-system-compliance + visual-regression baseline to any project. Runs end-to-end, exits. No checklist coordination.
+- **Sequential** — master checklist exists with a `## Prep` section. On completion, flip the `[ ] Quality line installed` row to `[x]` and surface: *"Quality line ready. Next prep step: `/open-the-shop`."*
+
+Honor an explicit `--standalone` or `--sequential` flag if passed; otherwise auto-detect from disk state.
+
 ## Reference Files
 
 | File | Purpose |

@@ -14,6 +14,12 @@ triggers: ["/bytheslice:create-menu", "/create-menu", "create the menu", "plan t
 
 Generate a complete, canonical PRD from a free-form project brief. This skill uses plan mode to resolve ambiguity before writing, and invokes `prd-reviewer` as its final step.
 
+## Mode detection
+
+`/create-menu` is **always standalone**. It produces a single output artifact (`docs/prd-<slug>.md`) regardless of whether a master checklist already exists. No checklist coordination, no Prep-section interaction.
+
+The PRD it produces feeds the next step (`/cook-pizzas`), but that handoff is a user action, not a skill-to-skill coordination.
+
 ## Inputs
 
 Collect before generating:

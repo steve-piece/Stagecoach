@@ -14,6 +14,10 @@ triggers: ["/bytheslice:setup-shop", "/setup-shop", "set up the shop", "open the
 
 ByTheSlice setup orchestrator. Drives every first-touch interaction with the plugin: system-wide install, new-project scaffold, and per-project config customization.
 
+## Mode detection
+
+`/setup-shop` is **always standalone** by nature — it's the entry point. There is no parent checklist to coordinate with. Mode detection is a no-op here; the skill simply runs its three-flow logic (first-time install / new-project / existing-project) and exits.
+
 ## Reference Files
 
 Read all of these before beginning:

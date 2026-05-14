@@ -16,6 +16,15 @@ This is a **daily-prep skill** — part of the run-once foundation phase that ru
 
 ---
 
+## Mode detection
+
+This skill runs in one of two modes, auto-detected at startup:
+
+- **Standalone** — no `docs/plans/00_master_checklist.md` at the project root. Bolts a design system onto any project. Runs end-to-end, produces token files + Tailwind config + `/library` route, exits. No checklist coordination, no Prep-checkbox flip.
+- **Sequential** — master checklist exists with a `## Prep` section. On completion, flip the `[ ] Display case built` row to `[x]` and surface: *"Display case ready. Next prep step: `/final-quality-check`."*
+
+Honor an explicit `--standalone` or `--sequential` flag if passed; otherwise auto-detect from disk state.
+
 ## Reference Files
 
 Read all of these before beginning:

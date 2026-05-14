@@ -17,6 +17,12 @@ Run `/sell-slice` → finish a slice → start a fresh chat → run again. Repea
 
 ---
 
+## Mode detection
+
+`/sell-slice` is **sequential-only** — it requires a master checklist to know which stage to serve next. If `docs/plans/00_master_checklist.md` is missing, the skill stops and points the user at `/cook-pizzas` (to generate one) or `/special-order` (to add a stage to an existing project).
+
+The Phase 0 Prep-section precondition (added in v4) further requires every `## Prep` checkbox to be `[x]` before any feature stage can run. See Phase 0 for the helpful-error message.
+
 ## Subagent Roster
 
 Each subagent lives in its own file under `./agents/`. **Read the file before dispatching.**

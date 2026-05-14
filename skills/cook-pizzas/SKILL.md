@@ -12,6 +12,12 @@ triggers: ["/bytheslice:cook-pizzas", "/cook-pizzas", "cook the pizzas", "make t
 
 Transform a finalized PRD into a complete, ordered set of implementation stages plus a project rules file.
 
+## Mode detection
+
+`/cook-pizzas` is **always the source of the master checklist**. It writes `docs/plans/00_master_checklist.md` (with the new Prep section) and the feature stage plan files. There is no upstream checklist for it to coordinate with — this skill produces the checklist.
+
+If a master checklist already exists, `/cook-pizzas` refuses to overwrite it and points the user at `/special-order` (for adding features mid-flight) instead.
+
 ## Scope
 
 **Input:** a finalized PRD file (output of `/create-menu` or equivalent). Not specs, briefs, questionnaires, or API docs — those feed `/create-menu`.

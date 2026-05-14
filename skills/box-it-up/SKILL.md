@@ -15,6 +15,16 @@ It is intentionally a **separate** skill so you can review the slice locally, ru
 
 ---
 
+## Mode detection
+
+`/box-it-up` is **always standalone**. It operates on whatever feature branch is currently checked out — it doesn't care whether a master checklist exists. The skill is safe to run on:
+
+- ByTheSlice slices committed by `/sell-slice` or `/special-order`
+- Plan-only chore branches from `/special-order`
+- Hand-rolled feature branches that never touched ByTheSlice
+
+If a master checklist DOES exist and the branch name matches a stage row, `/box-it-up` will flip that stage's status from `In Progress` to `Completed` after a successful merge. That's the only sequential-flavored behavior — and it's a best-effort enhancement, not a precondition.
+
 ## Subagent Roster
 
 | Phase | Agent file | Model | Effort | Mode |

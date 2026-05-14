@@ -16,6 +16,16 @@ Bolt new features onto an existing project without restarting from a fresh PRD. 
 
 The flow auto-detects which state the project is in and either runs the addition flow directly or redirects you to the right entry point first.
 
+## Mode detection
+
+`/special-order` is **always sequential** — its entire purpose is to extend an existing master checklist with new feature stages. The skill auto-detects:
+
+- **Path A** — `docs/plans/00_master_checklist.md` exists. Append new feature stages to the existing checklist.
+- **Path B** — `package.json` exists but no master checklist. Redirect the user to `/setup-shop` → `/create-menu` → `/cook-pizzas` first.
+- **Path C** — no project on disk. Redirect to `/setup-shop` for bootstrap.
+
+There is no standalone "produce a feature spec without a checklist" mode — that would just be `/create-menu` for a new project.
+
 ## Reference Files
 
 | File | Purpose |

@@ -11,6 +11,15 @@ triggers: ["/bytheslice:open-the-shop", "/open-the-shop", "stock the line", "ope
 
 Ensures all external services are provisioned and every `.env.local` file is fully populated before feature stages or CI gates begin. Running feature work with missing or placeholder keys causes cascading failures that are hard to diagnose; this gate catches them early.
 
+## Mode detection
+
+This skill runs in one of two modes, auto-detected at startup:
+
+- **Standalone** — no `docs/plans/00_master_checklist.md` at the project root. Walks env-var setup on any project. Runs end-to-end, exits. No checklist coordination.
+- **Sequential** — master checklist exists with a `## Prep` section. On completion, flip the `[ ] Shop open` row to `[x]` and surface: *"Shop is open. Foundation prep complete. Run `/sell-slice` to start serving customers."*
+
+Honor an explicit `--standalone` or `--sequential` flag if passed; otherwise auto-detect from disk state.
+
 ## Subagent Roster
 
 Each agent lives in its own file under `./agents/`. Read the file before dispatching.

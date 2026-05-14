@@ -16,6 +16,12 @@ The orchestrator is a **conductor**, not an autopilot. It reads the master check
 
 `run-the-day` does not duplicate `sell-slice`'s logic. The `stage-runner` agent is a thin wrapper that loads the active stage's context and invokes `/sell-slice` for that specific stage; this guarantees `run-the-day` and direct `sell-slice` runs produce the same artifacts and gate the PR on the same Phase 6/7 verifications.
 
+## Mode detection
+
+`/run-the-day` is **always sequential** — it drives an entire master checklist to completion in one session. Requires `docs/plans/00_master_checklist.md` and at least one Not-Started stage. Stops cleanly if no checklist exists, pointing the user at `/cook-pizzas` first.
+
+In v4, the Phase 0.5 session-goal-setting integrates with `/goal` to keep the orchestrator driving without per-turn user re-prompting. See Phase 0.5 for the goal-condition strings per mode (`--auto-mvp` vs `--auto-all`).
+
 ## Modes
 
 | Invocation | Behavior |

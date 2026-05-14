@@ -18,6 +18,12 @@ triggers: ["/bytheslice:inspect-display", "/inspect-display", "walk the display"
 
 ---
 
+## Mode detection
+
+`/inspect-display` is **always standalone**. It walks every route of a running web app and produces a read-only report. Whether or not a master checklist exists is irrelevant — the skill never edits code, never opens PRs, never modifies any checklist row.
+
+If the running app has a `docs/plans/00_master_checklist.md`, the skill will include a "checklist drift" section in the report (e.g. *"Stage 12 is marked Completed but `/host/dashboard` shows mock data"*) — but the checklist itself stays untouched.
+
 ## When this is the right tool
 
 - **Before UAT** — verify the platform is actually ready, not just claimed ready.
