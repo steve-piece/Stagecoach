@@ -54,7 +54,7 @@ The skill refuses to proceed past Phase 0 if any check fails. The whole point is
 1. `git status --short` — if there are uncommitted changes, surface them to the user and ask:
    - "Stage and commit these changes with a generated conventional message? (yes / let me write the message / cancel)"
    - **Always provide a recommended answer in available options.** Default recommendation: yes if changes look like the in-scope slice; "let me write" if the diff includes unexpected files.
-   - On `yes`: stage all changes, derive a conventional commit type from the diff (`feat:` for new functionality, `fix:` for bug fix, `chore:` for infra/config-only, `docs:` for doc-only). Use a one-line subject summarizing the slice plus a short body listing the touched files grouped by package/app.
+   - On `yes`: stage all changes, derive a conventional commit type from the diff (`feat:` for new functionality, `fix:` for bug fix, `chore:` for infra/config-only, `docs:` for doc-only). Use a one-line subject summarizing the slice plus a short body listing the touched files grouped by package/app. **If the slice touched UI** and `/deliver-stage` produced a closing-narrative paragraph (one paragraph: what was built · why this shape · what was left out · what reviewers should pay attention to), include it verbatim in the commit body before the file list. `gh pr create --fill` lifts the commit body into the PR description, so this paragraph carries the design story into the PR without a separate step.
    - On `let me write`: prompt for the message.
    - On `cancel`: stop here. Working tree unchanged.
 2. `git push origin "$BRANCH"` — push to remote. If the remote rejects (non-fast-forward, etc.), STOP and surface as `destructive_operation` HITL — never auto force-push.
