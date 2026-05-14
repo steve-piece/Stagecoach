@@ -1,14 +1,14 @@
 {
   "name": "bytheslice",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "private": false,
-  "description": "Ship production apps one vertical slice at a time with PRD generation, phased planning, and CI/CD quality gates.",
+  "description": "A grab-and-go pizza shop for shipping software. Daily prep, slice-by-slice service, /goal-driven autonomous mode.",
   "bin": {
     "bytheslice": "./bin/bytheslice.js"
   },
   "scripts": {
     "install:dry-run": "node ./bin/bytheslice.js install --target both --dry-run",
-    "install:skills:dry-run": "node ./bin/bytheslice.js install --mode skills --skill setup --skill deliver-stage --dry-run"
+    "install:skills:dry-run": "node ./bin/bytheslice.js install --mode skills --skill setup-shop --skill sell-slice --dry-run"
   },
   "files": [
     "bin",
@@ -28,11 +28,13 @@
   },
   "keywords": [
     "cursor-plugin",
+    "claude-code-plugin",
     "skills",
     "prd",
     "ci-cd",
     "development-workflow",
     "vertical-slices",
-    "agent-workflow"
+    "agent-workflow",
+    "pizza-shop"
   ]
 }

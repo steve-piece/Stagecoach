@@ -7,6 +7,57 @@ All notable changes to **🍕 ByTheSlice** are tracked here, slice by slice. The
 
 ---
 
+## [4.0.0] — 2026-05-14
+
+**The Pizza Shop release.** Every command is renamed to a kitchen action. Foundation skills get promoted out of being canned plan stages into being standalone, run-once-before-service prep commands. The master checklist gains a top "Prep" section. Every skill is independently invocable (auto-detected standalone vs sequential mode). `/goal` integration lands in `/run-the-day`'s auto modes and in `/sell-slice`'s Phase 2.5.
+
+### Renamed
+
+| v3 command | v4 command | What changed |
+|---|---|---|
+| `/setup` | **`/setup-shop`** | Renamed only. Same three-flow logic. |
+| `/write-prd` | **`/create-menu`** | Renamed only. Same PRD generator. |
+| `/plan-phases` | **`/cook-pizzas`** | Renamed AND reshaped — no longer emits stage 1–3 plan files; emits the master checklist's new Prep section instead. |
+| `/init-design-system` | **`/set-display-case`** | Renamed AND promoted out of `skills/sub-disciplines/` to top-level. No longer auto-dispatched from `/sell-slice` in new projects; run it directly. Standalone-invocable on any project. |
+| `/scaffold-ci-cd` | **`/final-quality-check`** | Same as above — promoted out of sub-disciplines, standalone-invocable. |
+| `/setup-environment` | **`/open-the-shop`** | Same as above. The most HITL-heavy prep step. |
+| `/deliver-stage` | **`/sell-slice`** | Renamed AND gains a Phase 0 precondition (every Prep checkbox must be `[x]` before any feature stage runs). Legacy v3 routing for `design-system`/`ci-cd`/`env-setup` stage types preserved for old projects. NEW Phase 2.5 sets a slice-completion `/goal` lifted from the stage file's Exit criteria block. |
+| `/ship-pr` | **`/box-it-up`** | Renamed only. Same closeout flow (push → CI watch → merge → cleanup). |
+| `/add-feature` | **`/special-order`** | Renamed only. Same mid-flight feature addition. New: Phase 4 verifies Exit-criteria contract on writer output. |
+| `/run-pipeline` | **`/run-the-day`** | Renamed AND gains NEW Phase 0.5 — `--auto-*` modes set a session-scoped `/goal` whose condition encodes the pipeline's end state. |
+| `/walk-platform` | **`/inspect-display`** | Renamed only. Same read-only cross-cutting audit. |
+| `/review-pipeline` | **`/close-shop`** | Renamed only. Same post-execution retro. Bookends `/setup-shop`. |
+
+### Changed
+
+- **Foundation split.** `init-design-system`, `scaffold-ci-cd`, `setup-environment` moved from `skills/sub-disciplines/` to top-level under their new names. The `sub-disciplines/` directory is removed. These three skills are now invoked directly during daily prep, not as auto-dispatched sub-skills inside `/sell-slice`.
+- **Master checklist gains a Prep section.** `cook-pizzas` now writes a top `## Prep` section above the feature stages. Each foundation skill flips its own checkbox when invoked in sequential mode (master checklist present). `sell-slice` Phase 0 refuses to start any feature stage until every Prep box is `[x]`. Existing v3 projects with `stage_1_*`/`stage_2_*`/`stage_3_*` plan files keep working via a documented legacy routing path.
+- **Mode detection.** Every SKILL.md now has a `## Mode detection` section documenting whether the skill is standalone-only, sequential-only, or true dual-mode. Auto-detection is based on whether `docs/plans/00_master_checklist.md` exists. Standalone mode never assumes a parent orchestrator; sequential mode flips the corresponding Prep/Stage checkbox on completion.
+- **`/goal` integration.** `/run-the-day` Phase 0.5 sets a session-scoped goal in `--auto-mvp` and `--auto-all` modes. `/sell-slice` Phase 2.5 sets a slice-completion goal lifted from the active stage file's Exit criteria block (after pre-checking for an active parent goal). Both honor a graceful fallback when `/goal` is unavailable.
+- **Exit-criteria contract.** New section in `cook-pizzas/references/templates.md` codifying the rules every stage file's `**Exit criteria:**` block must follow — transcript-verifiable, binary, slice-specific — with concrete good/bad examples. `phased-plan-writer` agent enforces the contract; `special-order` re-dispatches writers on weak criteria.
+
+### Added
+
+- **`pizza-shop`** keyword in npm + plugin manifests.
+- **Standalone invocability** as a property of every skill, not an accident. You can drop `/set-display-case` onto any project to bolt on a design system, or `/box-it-up` onto any feature branch.
+
+### Backward compatibility (kept in v4.x.x, removed in v5.0.0)
+
+- Every old slash command (`/bytheslice:deliver-stage`, `/deliver-stage`, etc.) remains in the new skill's `triggers:` array.
+- Every old natural-language trigger phrase ("deliver the next stage", "ship the next slice", etc.) remains.
+- Legacy `stage_1_design_system_gate.md` / `stage_2_ci_cd_scaffold.md` / `stage_3_env_setup_gate.md` plan files still route correctly through `/sell-slice`'s Phase 4 (now labeled "legacy v3 sub-skill dispatch").
+- `bytheslice.config.json` keys keep their v3 names — `runPipeline.platformWalkEvery` is unchanged. A future v5 may rename them with deprecation aliases.
+
+### Migration guide
+
+**Existing v3 projects (master checklist already has `stage_1_*`/`stage_2_*`/`stage_3_*`):** no action required. Old slash commands still fire. Old plan files route through `/sell-slice`'s legacy path. Optionally migrate to v4 by deleting stages 1–3, adding a Prep section to the master checklist by hand, and running the three foundation skills directly.
+
+**New v4 projects:** follow the Quick Start in the README. The sequence is `/setup-shop` → `/create-menu` → `/cook-pizzas` → `/set-display-case` → `/final-quality-check` → `/open-the-shop` → `/sell-slice` (loop with `/box-it-up`).
+
+**Migration manifest:** [`MIGRATION-v4.md`](MIGRATION-v4.md) at the repo root has the full file-by-file rename inventory. Deleted after this PR merges.
+
+---
+
 ## [3.1.0] — 2026-05-13
 
 ### Added
