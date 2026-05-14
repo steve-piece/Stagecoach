@@ -96,7 +96,7 @@ Structural-only rules:
 
 ## How elicitation injects this into the project rules file
 
-The `plan-phases` elicitation phase reads:
+The `cook-pizzas` elicitation phase reads:
 - "Single-app or monorepo?" → picks Variant A or B
 - "Database in scope? Which?" → conditionally appends Supabase security baseline
 - "Framework version?" → conditionally appends syntactic facts

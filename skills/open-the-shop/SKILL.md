@@ -31,15 +31,15 @@ Each agent lives in its own file under `./agents/`. Read the file before dispatc
 
 ## When to Use
 
-- `/deliver-stage` reaches a `type: env-setup` stage in the master checklist (auto-dispatch).
-- User runs `/setup-environment` directly as an escape hatch.
+- `/sell-slice` reaches a `type: env-setup` stage in the master checklist (auto-dispatch).
+- User runs `/open-the-shop` directly as an escape hatch.
 - User says "env setup", "set up environment", "populate env vars", or "provision services".
-- After CI/CD scaffold is complete (`scaffold-ci-cd`) and before the first feature stage.
+- After CI/CD scaffold is complete (`final-quality-check`) and before the first feature stage.
 
 ## Inputs and Preconditions
 
 - Repository exists with at least one `apps/` or `packages/` directory.
-- `scaffold-ci-cd` (Stage 2) has completed: `.github/workflows/` exists.
+- `final-quality-check` (Stage 2) has completed: `.github/workflows/` exists.
 - Clean git working tree on `main`, OR explicit user OK to proceed dirty.
 
 If no `.env.example` files are found at all, stop and tell the user — this likely means the apps were not scaffolded yet. Recommend completing Stage 2 first.
@@ -105,19 +105,19 @@ Walk this checklist at the end of every run. The stage is not "done" until all i
 [ ] User confirmed all provisioning steps are complete
 [ ] `env-verifier` subagent returned `status: pass` with zero `missing_files`, zero `missing_keys_per_file`, and zero `placeholder_keys`
 [ ] User confirmed GitHub repository secrets are set (or confirmed none are required)
-[ ] If invoked as a `type: env-setup` stage by `deliver-stage`, the master-checklist row is flipped to `Completed`
+[ ] If invoked as a `type: env-setup` stage by `sell-slice`, the master-checklist row is flipped to `Completed`
 
 ## Hard Constraints
 
 - **Never read, log, or display actual secret values.** The `env-verifier` only checks existence and placeholder patterns — it never surfaces real values. This skill must not work around that constraint.
 - **Never write `.env.local` files.** Population is the user's manual action. This skill generates checklists and verifies — it does not provision.
 - **Never skip the verification loop.** Even if the user says "I've done everything", `env-verifier` must run before the stage is marked complete.
-- **Sub-skill contract.** When invoked as a `type: env-setup` stage by `deliver-stage`, this skill is the entire stage. After completion, mark the stage `Completed` in `docs/plans/00_master_checklist.md`.
+- **Sub-skill contract.** When invoked as a `type: env-setup` stage by `sell-slice`, this skill is the entire stage. After completion, mark the stage `Completed` in `docs/plans/00_master_checklist.md`.
 - **Subagent prompts live in `./agents/*.md`.** This SKILL.md is workflow only — never inline subagent prompts here.
 
 ## Sub-agent Return Contract
 
-When this skill is invoked as a sub-skill by `deliver-stage`, return:
+When this skill is invoked as a sub-skill by `sell-slice`, return:
 
 ```yaml
 status: complete | failed | needs_human

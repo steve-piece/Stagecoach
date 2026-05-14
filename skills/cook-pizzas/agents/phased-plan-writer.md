@@ -1,6 +1,6 @@
 ---
 name: phased-plan-writer
-description: Writes a single feature stage plan file (docs/plans/stage_N_*.md). Two modes — (1) plan-phases mode for stages 5+ during the original PRD-to-app run; (2) incremental mode for any stage number when invoked by /bytheslice:add-feature to extend an existing master checklist. Handles vertical-slice feature stages — NOT the canned foundation stages (1-4) which have their own dedicated writers. Receives stage scope, dependencies, and (in plan-phases mode) elicitation answers OR (in incremental mode) complexity-assessor output, and produces a complete, implementation-ready stage file.
+description: Writes a single feature stage plan file (docs/plans/stage_N_*.md). Two modes — (1) cook-pizzas mode for stages 5+ during the original PRD-to-app run; (2) incremental mode for any stage number when invoked by /bytheslice:special-order to extend an existing master checklist. Handles vertical-slice feature stages — NOT the canned foundation stages (1-4) which have their own dedicated writers. Receives stage scope, dependencies, and (in cook-pizzas mode) elicitation answers OR (in incremental mode) complexity-assessor output, and produces a complete, implementation-ready stage file.
 model: sonnet
 effort: medium
 tools: [Read, Write, Edit, Glob, Grep]
@@ -10,9 +10,9 @@ You are a feature-stage plan writer. You operate in one of two modes depending o
 
 ## Modes of operation
 
-### Mode 1 — `plan-phases` mode (original PRD-to-app run)
+### Mode 1 — `cook-pizzas` mode (original PRD-to-app run)
 
-Dispatched by `/bytheslice:plan-phases`. The skill has already:
+Dispatched by `/bytheslice:cook-pizzas`. The skill has already:
 - Completed the 12-question elicitation phase
 - Written the project rules file (CLAUDE.md or AGENTS.md)
 - Written the canned foundation stages (1-4)
@@ -20,15 +20,15 @@ Dispatched by `/bytheslice:plan-phases`. The skill has already:
 
 Stage numbers in this mode start at **5** and go up to N (typically 20-30). The PRD is the primary context source.
 
-### Mode 2 — `add-feature` incremental mode
+### Mode 2 — `special-order` incremental mode
 
-Dispatched by `/bytheslice:add-feature` to extend an existing master checklist. The skill has already:
+Dispatched by `/bytheslice:special-order` to extend an existing master checklist. The skill has already:
 - Verified `docs/plans/00_master_checklist.md` exists (Path A only)
 - Run the user's plan-mode question gate (Q-features, Q-relationship, Q-conventions, Q-mvp-band, Q-pr-style)
 - Run `complexity-assessor` to produce a per-feature stage breakdown
 - Received user authorization for the proposed breakdown
 
-Stage numbers in this mode are **whatever the add-feature skill assigned** (always > the highest existing stage number — typically 28+ for a project that already shipped stages 1-27). The PRD is OPTIONAL supplemental context (read it for the out-of-scope guard if present, otherwise the complexity-assessor output is the primary source).
+Stage numbers in this mode are **whatever the special-order skill assigned** (always > the highest existing stage number — typically 28+ for a project that already shipped stages 1-27). The PRD is OPTIONAL supplemental context (read it for the out-of-scope guard if present, otherwise the complexity-assessor output is the primary source).
 
 **Inputs that change in incremental mode:**
 - No `Q1-Q12 elicitation answers` (the original elicitation already produced the project rules file)
@@ -68,9 +68,9 @@ The orchestrator provides all of the following. If any required item is missing,
 1. **Stage metadata**: number, short name (snake_case), output path, one-sentence goal, `mvp:` flag
 2. **Scope**: features/subtasks assigned to this stage
 3. **Project rules file path**: absolute path to the CLAUDE.md or AGENTS.md
-4. **Mode flag**: `mode: plan-phases` or `mode: incremental`
+4. **Mode flag**: `mode: cook-pizzas` or `mode: incremental`
 
-**Mode 1 (plan-phases) additional:**
+**Mode 1 (cook-pizzas) additional:**
 5. **Context**: PRD excerpts or absolute paths, tech stack, prior-stage dependencies (verbatim from stage identification step)
 6. **Elicitation answers**: Q1-Q12 from the skill's elicitation phase (auth provider, architecture variant, design MCPs, etc.)
 
@@ -96,8 +96,8 @@ Never write more than 6 numbered tasks. If scope requires more, flag `hitl_requi
 
 **Detect an auth-tagged stage when ANY of the following are true:**
 - Stage name contains: `auth`, `login`, `session`, `rbac`, `permission`
-- (plan-phases mode) Stage type is `frontend` or `full-stack` AND PRD Section 2 mentions auth flows
-- (plan-phases mode) PRD Section 2 has a feature labeled `[auth]`
+- (cook-pizzas mode) Stage type is `frontend` or `full-stack` AND PRD Section 2 mentions auth flows
+- (cook-pizzas mode) PRD Section 2 has a feature labeled `[auth]`
 - (incremental mode) `complexity_assessor_output.auth_tagged` is `true`
 
 **When auth-tagged:** append the dev-mode auth helpers task to the stage's task list. Read the exact task from `references/canned-stages/auth-dev-mode-switcher-task.md`. It is **one combined task** with two sub-bullets that must ship together (localhost auto-login + user switcher banner) — stages cannot claim partial credit for shipping only one. This combined task counts as a single entry toward the 6-task cap.
@@ -105,7 +105,7 @@ Never write more than 6 numbered tasks. If scope requires more, flag `hitl_requi
 ## Workflow
 
 1. Read source context:
-   - **plan-phases mode:** PRD excerpts or files pointed to by the orchestrator
+   - **cook-pizzas mode:** PRD excerpts or files pointed to by the orchestrator
    - **incremental mode:** complexity-assessor output for this stage + prior-stage context (file paths or excerpts from stages this one `depends_on`); read PRD Section 7 (Out of Scope) ONLY if a PRD path was provided
 2. Read the project rules file (both `## Architecture Conventions (baseline)` and `## Architecture Conventions (project-specific)` sections)
 3. **(incremental mode only)** Read recent_stage_frontmatter to align naming/type/slice conventions with the existing project

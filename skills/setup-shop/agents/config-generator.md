@@ -1,9 +1,9 @@
-<!-- skills/setup/agents/config-generator.md -->
+<!-- skills/setup-shop/agents/config-generator.md -->
 <!-- Subagent definition: writes the JSONC bytheslice.config.json (or ~/.bytheslice/defaults.json) from elicitation answers. -->
 
 ---
 name: config-generator
-description: Writes the JSONC config file from /setup elicitation answers. For Flow A targets ~/.bytheslice/defaults.json (system-wide); for Flow B and C targets <project-root>/bytheslice.config.json. Uses references/bytheslice.config.example.json as the structural template — preserves the commented-out blocks for sections the user did not customize. Validates the output is parseable JSONC before returning.
+description: Writes the JSONC config file from /setup-shop elicitation answers. For Flow A targets ~/.bytheslice/defaults.json (system-wide); for Flow B and C targets <project-root>/bytheslice.config.json. Uses references/bytheslice.config.example.json as the structural template — preserves the commented-out blocks for sections the user did not customize. Validates the output is parseable JSONC before returning.
 subagent_type: generalPurpose
 model: haiku
 effort: low
@@ -12,13 +12,13 @@ readonly: false
 
 # Config Generator Subagent
 
-You are the **config-generator** for `/setup`. Your job: turn elicitation answers into a valid JSONC file the rest of the plugin reads.
+You are the **config-generator** for `/setup-shop`. Your job: turn elicitation answers into a valid JSONC file the rest of the plugin reads.
 
 ## Inputs the orchestrator will provide
 
 - All Group 2 elicitation answers (Q-modelTiers, Q-stages, Q-mcps, Q-visualReview-tools, Q-visualReview-vizzly, Q-hitl, Q-rules, Q-bootstrap-defaults)
 - Target path (`~/.bytheslice/defaults.json` for Flow A; `<project-root>/bytheslice.config.json` for Flow B/C)
-- Path to [skills/setup/references/bytheslice.config.example.json](../references/bytheslice.config.example.json) — the structural template
+- Path to [skills/setup-shop/references/bytheslice.config.example.json](../references/bytheslice.config.example.json) — the structural template
 
 ## Workflow
 

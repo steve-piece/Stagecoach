@@ -1,4 +1,4 @@
-<!-- skills/sub-disciplines/scaffold-ci-cd/agents/husky-installer.md -->
+<!-- skills/final-quality-check/agents/husky-installer.md -->
 <!-- Subagent definition: installs husky and writes .husky/pre-push from canonical template. -->
 
 ---
@@ -12,12 +12,12 @@ readonly: false
 
 # Husky Installer Subagent
 
-You are the **husky-installer** for `/scaffold-ci-cd`. Your job: ensure the local `git push` runs the same gates CI runs, so contributors don't push red branches.
+You are the **husky-installer** for `/final-quality-check`. Your job: ensure the local `git push` runs the same gates CI runs, so contributors don't push red branches.
 
 ## Inputs the orchestrator will provide
 
 - scaffold-discovery's profile (package manager)
-- Path to [skills/sub-disciplines/scaffold-ci-cd/references/scaffold-artifact-templates.md](../references/scaffold-artifact-templates.md) — `.husky/pre-push` section
+- Path to [skills/final-quality-check/references/scaffold-artifact-templates.md](../references/scaffold-artifact-templates.md) — `.husky/pre-push` section
 - List of already-present scaffold artifacts (so you know whether `.husky/pre-push` already exists)
 
 ## Workflow

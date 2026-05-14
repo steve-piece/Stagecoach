@@ -9,9 +9,9 @@ triggers: ["/bytheslice:inspect-display", "/inspect-display", "walk the display"
 
 # /inspect-display
 
-`/deliver-stage`'s frontend pipeline already runs a sophisticated **per-slice** visual reviewer (Phase 4.7) that checks the just-built slice against the design system at 4 viewports. That's the right gate when shipping a single slice.
+`/sell-slice`'s frontend pipeline already runs a sophisticated **per-slice** visual reviewer (Phase 4.7) that checks the just-built slice against the design system at 4 viewports. That's the right gate when shipping a single slice.
 
-`/walk-platform` is a **different shape**: a cross-cutting, on-demand walkthrough of the *whole running app*. It answers questions the per-slice review can't — "did this slice break an unrelated page?", "what's mock vs real across the product?", "are there 404s on footer links?", "do my dynamic routes actually validate the id?". Run it when checklist claims and runtime reality might have drifted.
+`/inspect-display` is a **different shape**: a cross-cutting, on-demand walkthrough of the *whole running app*. It answers questions the per-slice review can't — "did this slice break an unrelated page?", "what's mock vs real across the product?", "are there 404s on footer links?", "do my dynamic routes actually validate the id?". Run it when checklist claims and runtime reality might have drifted.
 
 > [!IMPORTANT]
 > **Read-only by design.** This skill never edits code, never bypasses auth, never triggers mutations. It surfaces gaps; the operator decides what to fix.
@@ -22,12 +22,12 @@ triggers: ["/bytheslice:inspect-display", "/inspect-display", "walk the display"
 
 - **Before UAT** — verify the platform is actually ready, not just claimed ready.
 - **Before a demo** — find what a clicking user would notice first.
-- **After several `/ship-pr` runs** — catch silent regressions on surfaces nobody touched.
-- **Pre-`/add-feature`** — baseline the existing state before bolting on more.
+- **After several `/box-it-up` runs** — catch silent regressions on surfaces nobody touched.
+- **Pre-`/special-order`** — baseline the existing state before bolting on more.
 - **When the master checklist disagrees with reality** — drift detection is exactly this skill's job.
 
 Not the right tool for:
-- Per-slice spec compliance — that's the existing `visual-reviewer` in `deliver-stage` Phase 4.7.
+- Per-slice spec compliance — that's the existing `visual-reviewer` in `sell-slice` Phase 4.7.
 - Static code analysis — this skill needs the app actually running.
 - Accessibility deep-dives — use the `accessibility-review` design skill.
 
@@ -80,7 +80,7 @@ Read [agents/platform-walker.md](agents/platform-walker.md) and dispatch via the
 - The list of apps + ports
 - The path to one real id for each dynamic route (probe the seed/test data; if none available, mark dynamic routes as skipped with a note)
 - The browser MCP priority order
-- The target output directory for screenshots (default `./.walk-platform/<yyyy-mm-dd-hhmm>/`)
+- The target output directory for screenshots (default `./.inspect-display/<yyyy-mm-dd-hhmm>/`)
 
 The sub-agent does the actual walk: route discovery, browser driving, screenshotting, gap detection, ranked-report assembly. It runs in its own context — the orchestrator does not see every screenshot, only the structured return contract.
 
@@ -136,12 +136,12 @@ The walker sub-agent never prompts the user directly — it returns structured f
 
 Follow this skill whenever the user:
 
-- runs `/walk-platform` (or `/bytheslice:walk-platform`)
+- runs `/inspect-display` (or `/bytheslice:inspect-display`)
 - says "walk the platform", "walk the app", "audit the app/platform", "pre-uat walk", "smoke test the whole app"
 - asks "what's actually working in <app>" / "what's mock vs real" / "what would a real user notice"
-- has just finished a batch of `/ship-pr` runs and wants a cross-cutting verification
+- has just finished a batch of `/box-it-up` runs and wants a cross-cutting verification
 
-If the user wants per-slice spec compliance (4-viewport screenshots against the design system for one slice), redirect to `/deliver-stage`'s Phase 4.7 — that's `visual-reviewer`, not this skill.
+If the user wants per-slice spec compliance (4-viewport screenshots against the design system for one slice), redirect to `/sell-slice`'s Phase 4.7 — that's `visual-reviewer`, not this skill.
 
 ---
 
@@ -182,7 +182,7 @@ Walk this at the end of every run. Do not report complete until every box is `[x
 
 ## Sub-agent return contract
 
-When `/walk-platform` is invoked as a sub-skill (e.g. by `/run-pipeline` as a periodic checkpoint — see the future roadmap in `references/integration-points.md`):
+When `/inspect-display` is invoked as a sub-skill (e.g. by `/run-the-day` as a periodic checkpoint — see the future roadmap in `references/integration-points.md`):
 
 ```yaml
 status: complete | failed | needs_human
@@ -218,10 +218,10 @@ hitl_context: null | "<what triggered this>"
 
 | Skill | Scope | Triggered by | Output |
 |---|---|---|---|
-| `walk-platform` (this) | Whole product, every route | Operator on demand | Ranked-gap report across all apps |
-| `visual-reviewer` (in `deliver-stage` Phase 4.7) | One slice, its declared states | `deliver-stage` automatically | Pass/fail verdict + causative-agent attribution for one slice |
+| `inspect-display` (this) | Whole product, every route | Operator on demand | Ranked-gap report across all apps |
+| `visual-reviewer` (in `sell-slice` Phase 4.7) | One slice, its declared states | `sell-slice` automatically | Pass/fail verdict + causative-agent attribution for one slice |
 | `accessibility-review` (design plugin) | One design or page | Operator on demand | WCAG 2.1 AA audit |
 
-These do not overlap. `visual-reviewer` answers "did this slice meet spec." `walk-platform` answers "what's the state of the whole product right now."
+These do not overlap. `visual-reviewer` answers "did this slice meet spec." `inspect-display` answers "what's the state of the whole product right now."
 
-See `references/integration-points.md` for proposed integrations with `/run-pipeline` (periodic checkpoint) and `/review-pipeline` (retrospective augmentation).
+See `references/integration-points.md` for proposed integrations with `/run-the-day` (periodic checkpoint) and `/close-shop` (retrospective augmentation).

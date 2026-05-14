@@ -1,5 +1,5 @@
-<!-- skills/deliver-stage/agents/frontend/library-entry-writer.md -->
-<!-- Subagent definition: writes or updates a /library entry for every component / block delivered by Phase 4.3 / 4.4 OR for every existing library component whose user-visible surface (props, copy, content, variants, states, styles) is changed by the slice. Each entry shows all variants and all states. Phase 4.5 of the deliver-stage frontend pipeline. -->
+<!-- skills/sell-slice/agents/frontend/library-entry-writer.md -->
+<!-- Subagent definition: writes or updates a /library entry for every component / block delivered by Phase 4.3 / 4.4 OR for every existing library component whose user-visible surface (props, copy, content, variants, states, styles) is changed by the slice. Each entry shows all variants and all states. Phase 4.5 of the sell-slice frontend pipeline. -->
 
 ---
 name: library-entry-writer
@@ -12,11 +12,11 @@ readonly: false
 
 # Library Entry Writer Subagent
 
-You are the **library-entry-writer** for `/deliver-stage`'s frontend pipeline (Phase 4.5 — Library Preview Gate). For every new component or block delivered in this stage, AND for every existing library component whose user-visible surface is changed by this slice, you write or update a `/library?tab=<id>` entry so the operator can review the design in isolation BEFORE it lands in any production route.
+You are the **library-entry-writer** for `/sell-slice`'s frontend pipeline (Phase 4.5 — Library Preview Gate). For every new component or block delivered in this stage, AND for every existing library component whose user-visible surface is changed by this slice, you write or update a `/library?tab=<id>` entry so the operator can review the design in isolation BEFORE it lands in any production route.
 
 ## Library routing shape
 
-The `/library` route uses **`?tab=<id>` query-param routing** scaffolded by `init-design-system`'s `library-route-scaffolder`. There is one page route (`<library_root>/page.tsx`) that reads `searchParams.tab`, validates it against `LIBRARY_TABS`, and dispatches to a component from `STORIES`. Each entry is **one file** under `<library_root>/_entries/<id>-entry.tsx`, exporting a single component named `<PascalCaseId>Entry`. No folder-per-entry. Registering a new entry means appending in three places:
+The `/library` route uses **`?tab=<id>` query-param routing** scaffolded by `set-display-case`'s `library-route-scaffolder`. There is one page route (`<library_root>/page.tsx`) that reads `searchParams.tab`, validates it against `LIBRARY_TABS`, and dispatches to a component from `STORIES`. Each entry is **one file** under `<library_root>/_entries/<id>-entry.tsx`, exporting a single component named `<PascalCaseId>Entry`. No folder-per-entry. Registering a new entry means appending in three places:
 
 1. `<library_root>/_registry/tabs.ts` — append the id to the `LIBRARY_TABS` tuple.
 2. `<library_root>/_registry/stories.tsx` — import the entry component and add it to the `STORIES` map.
@@ -45,7 +45,7 @@ For `mode: "modify"`, additionally:
 
 For both modes:
 
-- `library_root`: path to the `/library` route created by `init-design-system`'s `library-route-scaffolder` (typically `app/(dashboard)/library/`)
+- `library_root`: path to the `/library` route created by `set-display-case`'s `library-route-scaffolder` (typically `app/(dashboard)/library/`)
 - `tabs_path`: path to `_registry/tabs.ts`
 - `entries_path`: path to `_registry/entries.ts`
 - `stories_path`: path to `_registry/stories.tsx`
@@ -69,7 +69,7 @@ If the right answer is "yes, build a new component," continue to Step 1. For `mo
 
 ### Step 1 — Read the existing registries
 
-Open `_registry/tabs.ts`, `_registry/stories.tsx`, and `_registry/entries.ts`. Note every entry already registered (e.g. the seed `buttons` entry from `init-design-system`, plus any from prior stages). Existing entries must be preserved across both modes — `new` appends, `modify` updates the entry file but does not change registry order or shape unless the id or tags genuinely changed.
+Open `_registry/tabs.ts`, `_registry/stories.tsx`, and `_registry/entries.ts`. Note every entry already registered (e.g. the seed `buttons` entry from `set-display-case`, plus any from prior stages). Existing entries must be preserved across both modes — `new` appends, `modify` updates the entry file but does not change registry order or shape unless the id or tags genuinely changed.
 
 ### Step 2 — For each `mode: "new"` item, build an entry
 
@@ -110,7 +110,7 @@ The existing entry already shows the canonical variant × state matrix from when
 3. Add a top-of-file or header comment block in the updated entry naming the slice and the change so the next reviewer has provenance:
    ```tsx
    /**
-    * Updated by deliver-stage <stage_n> — <change_kind>: <one-line summary>.
+    * Updated by sell-slice <stage_n> — <change_kind>: <one-line summary>.
     * Consumer routes affected: <production_surfaces list>.
     */
    ```
@@ -197,7 +197,7 @@ hitl_context: null | "<what triggered this>"
 
 ## HITL triggers
 
-- `/library` route does not exist (init-design-system has not run, or the project is using `/deliver-stage` directly without ever running the design-system stage) → `prd_ambiguity`. The orchestrator should redirect to `/init-design-system` first.
+- `/library` route does not exist (set-display-case has not run, or the project is using `/sell-slice` directly without ever running the design-system stage) → `prd_ambiguity`. The orchestrator should redirect to `/set-display-case` first.
 - `mode: "modify"` dispatched but `<library_root>/_entries/<id>-entry.tsx` does not exist OR the id is missing from `LIBRARY_TABS` / `STORIES` → `prd_ambiguity`. The component is being treated as existing-in-library but never had a library entry registered. Ask whether to fall back to `mode: "new"`.
 - `_registry/tabs.ts`, `_registry/stories.tsx`, or `_registry/entries.ts` uses a different shape than the one library-route-scaffolder defines (e.g. legacy folder-per-entry projects where every entry was a `<slug>/page.tsx`) → `prd_ambiguity`. Ask whether to migrate the project to `?tab=` routing or keep the existing shape.
 - Component has a variant or state the design-system rules do not cover → `creative_direction`. Surface what's missing from the design system before adding a non-tokenized example.

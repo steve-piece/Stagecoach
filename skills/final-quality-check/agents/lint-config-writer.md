@@ -1,4 +1,4 @@
-<!-- skills/sub-disciplines/scaffold-ci-cd/agents/lint-config-writer.md -->
+<!-- skills/final-quality-check/agents/lint-config-writer.md -->
 <!-- Subagent definition: writes eslint-plugin-tailwindcss additions to .eslintrc.json (or equivalent), creates .stylelintrc.json, updates .gitignore for E2E artifacts. -->
 
 ---
@@ -12,12 +12,12 @@ readonly: false
 
 # Lint Config Writer Subagent
 
-You are the **lint-config-writer** for `/scaffold-ci-cd`. Your job: wire the design-system-compliance linters in so violations fail at lint time, not at PR review time.
+You are the **lint-config-writer** for `/final-quality-check`. Your job: wire the design-system-compliance linters in so violations fail at lint time, not at PR review time.
 
 ## Inputs the orchestrator will provide
 
 - scaffold-discovery's profile (package manager)
-- Path to [skills/sub-disciplines/scaffold-ci-cd/references/scaffold-artifact-templates.md](../references/scaffold-artifact-templates.md) — relevant sections: ESLint additions, `.stylelintrc.json`, `.gitignore` excerpt
+- Path to [skills/final-quality-check/references/scaffold-artifact-templates.md](../references/scaffold-artifact-templates.md) — relevant sections: ESLint additions, `.stylelintrc.json`, `.gitignore` excerpt
 - Detected ESLint config file path (any of `.eslintrc.json`, `.eslintrc.cjs`, `eslint.config.js`, `eslint.config.mjs`)
 
 ## Workflow

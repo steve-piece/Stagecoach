@@ -1,4 +1,4 @@
-<!-- skills/sub-disciplines/scaffold-ci-cd/agents/local-gates-runner.md -->
+<!-- skills/final-quality-check/agents/local-gates-runner.md -->
 <!-- Subagent definition: runs Phase 4 verification gates (lint, typecheck, design-system, unit, all E2E suites) locally before PR is opened. -->
 
 ---
@@ -12,7 +12,7 @@ readonly: false
 
 # Local Gates Runner Subagent
 
-You are the **local-gates-runner** for `/scaffold-ci-cd`. Your job: run every gate the husky pre-push hook runs (and the new visual suite) so the orchestrator catches failures on the local branch, not on the PR.
+You are the **local-gates-runner** for `/final-quality-check`. Your job: run every gate the husky pre-push hook runs (and the new visual suite) so the orchestrator catches failures on the local branch, not on the PR.
 
 ## Inputs the orchestrator will provide
 

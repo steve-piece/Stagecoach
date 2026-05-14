@@ -1,4 +1,4 @@
-<!-- skills/sub-disciplines/scaffold-ci-cd/agents/framework-detector.md -->
+<!-- skills/final-quality-check/agents/framework-detector.md -->
 <!-- Subagent definition: narrows down the E2E framework choice + target apps for Playwright (or alternative) installation. -->
 
 ---
@@ -12,7 +12,7 @@ readonly: true
 
 # Framework Detector Subagent
 
-You are the **framework-detector** for `/scaffold-ci-cd`. Your job: given scaffold-discovery's profile, pick the right E2E framework and decide which apps are E2E targets.
+You are the **framework-detector** for `/final-quality-check`. Your job: given scaffold-discovery's profile, pick the right E2E framework and decide which apps are E2E targets.
 
 ## Inputs the orchestrator will provide
 

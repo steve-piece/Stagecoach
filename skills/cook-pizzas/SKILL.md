@@ -14,7 +14,7 @@ Transform a finalized PRD into a complete, ordered set of implementation stages 
 
 ## Scope
 
-**Input:** a finalized PRD file (output of `/write-prd` or equivalent). Not specs, briefs, questionnaires, or API docs — those feed `/write-prd`.
+**Input:** a finalized PRD file (output of `/create-menu` or equivalent). Not specs, briefs, questionnaires, or API docs — those feed `/create-menu`.
 
 **Output:**
 - `docs/plans/00_master_checklist.md`
@@ -27,7 +27,7 @@ Transform a finalized PRD into a complete, ordered set of implementation stages 
 
 ## Project Config (optional)
 
-Before Phase 1, check for `bytheslice.config.json` at the project root. Honor these keys (see [`skills/setup/references/bytheslice-config-schema.md`](../setup/references/bytheslice-config-schema.md) for the full schema):
+Before Phase 1, check for `bytheslice.config.json` at the project root. Honor these keys (see [`skills/setup-shop/references/bytheslice-config-schema.md`](../setup-shop/references/bytheslice-config-schema.md) for the full schema):
 
 - `rules.imports` — when non-empty, **skip Q9** (external rule-file imports) and use these URLs directly
 - `stages.targetFeatureStages` — pass to phased-plan-writer to tune the splitter (default `"20-30"`; smaller band = larger slices)

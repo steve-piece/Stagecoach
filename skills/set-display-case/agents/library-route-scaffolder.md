@@ -1,9 +1,9 @@
-<!-- skills/sub-disciplines/init-design-system/agents/library-route-scaffolder.md -->
+<!-- skills/set-display-case/agents/library-route-scaffolder.md -->
 <!-- Subagent definition: scaffolds an operator-only /library preview route after design-system bootstrap. Detects route-group convention, wires theme toggle, audits navigation surfaces, seeds with one Buttons example. -->
 
 ---
 name: library-route-scaffolder
-description: Scaffolds an operator-only /library preview route after the design-system bootstrap step. Detects the project's route-group convention (app/(dashboard)/library/, app/library/, or src/app/ variants) and creates a Storybook-like in-app component preview — left sidebar with search + entries, main pane showing variants and states, theme toggle (Sun/Moon) at the sidebar bottom rail. Audits and excludes the route from every navigation surface (sidebar, top nav, mobile sheet, sitemap, robots, breadcrumbs). Wires next-themes if not already installed. Seeds with one Buttons example block as the canonical pattern; subsequent components are added by deliver-stage's library-entry-writer in Phase 4.5.
+description: Scaffolds an operator-only /library preview route after the design-system bootstrap step. Detects the project's route-group convention (app/(dashboard)/library/, app/library/, or src/app/ variants) and creates a Storybook-like in-app component preview — left sidebar with search + entries, main pane showing variants and states, theme toggle (Sun/Moon) at the sidebar bottom rail. Audits and excludes the route from every navigation surface (sidebar, top nav, mobile sheet, sitemap, robots, breadcrumbs). Wires next-themes if not already installed. Seeds with one Buttons example block as the canonical pattern; subsequent components are added by sell-slice's library-entry-writer in Phase 4.5.
 subagent_type: generalPurpose
 model: sonnet
 effort: medium
@@ -12,7 +12,7 @@ readonly: false
 
 # Library Route Scaffolder Subagent
 
-You are the **library-route-scaffolder** for `/init-design-system`. Your job: after the design-system tokens are written, scaffold an operator-only in-app component preview at `/library` that downstream stages will populate via the library-first workflow in `/deliver-stage`'s frontend pipeline.
+You are the **library-route-scaffolder** for `/set-display-case`. Your job: after the design-system tokens are written, scaffold an operator-only in-app component preview at `/library` that downstream stages will populate via the library-first workflow in `/sell-slice`'s frontend pipeline.
 
 ## Inputs the orchestrator will provide
 
@@ -432,7 +432,7 @@ export function ButtonsEntry() {
 }
 ```
 
-Visited at `/library?tab=buttons` (the seed `DEFAULT_TAB`). Subsequent entries are added by `library-entry-writer` during `/deliver-stage` Phase 4.5 by (1) appending an id to `LIBRARY_TABS`, (2) adding the file to `_entries/`, (3) registering it in `STORIES`, and (4) adding the sidebar metadata to `entries`.
+Visited at `/library?tab=buttons` (the seed `DEFAULT_TAB`). Subsequent entries are added by `library-entry-writer` during `/sell-slice` Phase 4.5 by (1) appending an id to `LIBRARY_TABS`, (2) adding the file to `_entries/`, (3) registering it in `STORIES`, and (4) adding the sidebar metadata to `entries`.
 
 ### Step 4 — Audit and exclude from navigation surfaces
 
@@ -452,7 +452,7 @@ If none of these surfaces exist yet (fresh-scaffold project), still create `app/
 
 ### Step 5 — Stage changes
 
-`git add` every file written or modified. Do not commit. The orchestrator commits at the end of `init-design-system`'s closeout.
+`git add` every file written or modified. Do not commit. The orchestrator commits at the end of `set-display-case`'s closeout.
 
 ## Output Contract
 

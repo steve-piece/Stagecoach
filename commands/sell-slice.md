@@ -9,7 +9,7 @@ description: Sell a customer their slice — the everyday delivery loop. Reads t
 
 Load and follow the [`sell-slice`](../skills/sell-slice/SKILL.md) skill.
 
-`deliver-stage` is the everyday delivery loop in ByTheSlice v3. It replaces both `ship-feature` and `ship-frontend` from v2 — one command, one stage at a time, automatic routing by stage `type:`.
+`sell-slice` is the everyday delivery loop in ByTheSlice v3. It replaces both `ship-feature` and `ship-frontend` from v2 — one command, one stage at a time, automatic routing by stage `type:`.
 
 The skill drives a single stage end-to-end:
 
@@ -18,9 +18,9 @@ The skill drives a single stage end-to-end:
 3. **Build plan + user authorization.**
 4. **Branch / worktree setup.**
 5. **Stage-type routing** — dispatches to the right sub-pipeline:
-   - `design-system` → `init-design-system` sub-skill
-   - `ci-cd` → `scaffold-ci-cd` sub-skill
-   - `env-setup` → `setup-environment` sub-skill
+   - `design-system` → `set-display-case` sub-skill
+   - `ci-cd` → `final-quality-check` sub-skill
+   - `env-setup` → `open-the-shop` sub-skill
    - `frontend` → internal frontend pipeline (UX → layout → blocks → components → states → visual review)
    - `backend` / `full-stack` / `db-schema` → internal implementer + spec/quality review
 6. **Per-item spec + quality review** (loops until pass).
@@ -36,4 +36,4 @@ The skill drives a single stage end-to-end:
 
 ## When to use this command
 
-Run `/deliver-stage` over and over until your master checklist is fully `[x]`. For multi-stage autonomous delivery (experimental), see `/run-pipeline`. To bolt new features onto an existing master checklist, see `/add-feature` (it feeds into `deliver-stage`).
+Run `/sell-slice` over and over until your master checklist is fully `[x]`. For multi-stage autonomous delivery (experimental), see `/run-the-day`. To bolt new features onto an existing master checklist, see `/special-order` (it feeds into `sell-slice`).

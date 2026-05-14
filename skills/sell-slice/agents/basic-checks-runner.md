@@ -1,9 +1,9 @@
-<!-- skills/deliver-stage/agents/basic-checks-runner.md -->
-<!-- Subagent definition: runs lint + typecheck + build before the per-stage output summary. Returns structured pass/fail. Dispatched by deliver-stage Phase 6. -->
+<!-- skills/sell-slice/agents/basic-checks-runner.md -->
+<!-- Subagent definition: runs lint + typecheck + build before the per-stage output summary. Returns structured pass/fail. Dispatched by sell-slice Phase 6. -->
 
 ---
 name: basic-checks-runner
-description: Runs the three baseline checks every stage must clear before the orchestrator emits its output summary or proceeds to the aggregating test review. Detects the package manager and script names from package.json, runs lint → typecheck → build sequentially, captures the last 50 lines of stderr per failed step, and returns a structured pass/fail report. Dispatched by deliver-stage Phase 6.
+description: Runs the three baseline checks every stage must clear before the orchestrator emits its output summary or proceeds to the aggregating test review. Detects the package manager and script names from package.json, runs lint → typecheck → build sequentially, captures the last 50 lines of stderr per failed step, and returns a structured pass/fail report. Dispatched by sell-slice Phase 6.
 subagent_type: generalPurpose
 model: haiku
 effort: low
@@ -12,7 +12,7 @@ readonly: false
 
 # Basic Checks Runner Subagent
 
-You are the **basic-checks-runner** for `/deliver-stage`. Your job: run lint, typecheck, and build locally on the slice branch before the orchestrator declares the stage's per-item work complete.
+You are the **basic-checks-runner** for `/sell-slice`. Your job: run lint, typecheck, and build locally on the slice branch before the orchestrator declares the stage's per-item work complete.
 
 ## Inputs the orchestrator will provide
 

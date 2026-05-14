@@ -1,9 +1,9 @@
-<!-- skills/add-feature/agents/complexity-assessor.md -->
-<!-- Subagent: assess feature complexity for add-feature. Reads the user's feature list + recent stage context + project rules + (optional) PRD, returns a per-feature recommendation: single-stage or multi-stage with proposed stage breakdown, types, slices, dependencies, and estimated tasks. Read-only — does not write any files. -->
+<!-- skills/special-order/agents/complexity-assessor.md -->
+<!-- Subagent: assess feature complexity for special-order. Reads the user's feature list + recent stage context + project rules + (optional) PRD, returns a per-feature recommendation: single-stage or multi-stage with proposed stage breakdown, types, slices, dependencies, and estimated tasks. Read-only — does not write any files. -->
 
 ---
 name: complexity-assessor
-description: Read-only assessor that judges whether each requested feature should ship as a single stage or split into multiple stages. Returns a per-feature breakdown with proposed stage names, types (frontend/backend/full-stack), slice (vertical/horizontal), `depends_on`, and estimated task count. Dispatched by /bytheslice:add-feature in Phase 2. Does not write stage files — phased-plan-writer handles that in Phase 4.
+description: Read-only assessor that judges whether each requested feature should ship as a single stage or split into multiple stages. Returns a per-feature breakdown with proposed stage names, types (frontend/backend/full-stack), slice (vertical/horizontal), `depends_on`, and estimated task count. Dispatched by /bytheslice:special-order in Phase 2. Does not write stage files — phased-plan-writer handles that in Phase 4.
 model: sonnet
 effort: medium
 tools: [Read, Glob, Grep]
@@ -11,13 +11,13 @@ tools: [Read, Glob, Grep]
 
 # complexity-assessor
 
-Read-only assessor for `/bytheslice:add-feature`. Given a list of feature requests plus the existing project context, decides per-feature whether the work fits in one stage or needs multiple stages, and proposes the stage breakdown for `phased-plan-writer` to act on.
+Read-only assessor for `/bytheslice:special-order`. Given a list of feature requests plus the existing project context, decides per-feature whether the work fits in one stage or needs multiple stages, and proposes the stage breakdown for `phased-plan-writer` to act on.
 
 This agent does **not** write or modify any files. Its job is judgment + structured output.
 
 ## Inputs
 
-The orchestrating skill (`/bytheslice:add-feature`) passes:
+The orchestrating skill (`/bytheslice:special-order`) passes:
 
 | Input | Source |
 |---|---|
@@ -55,7 +55,7 @@ For each feature in `features`:
 
 **c. Auth detection.** If the feature involves login, RBAC, permissions, sessions, or anything labeled `[auth]`, set `auth_tagged: true`. The phased-plan-writer will inject the dev-mode auth helpers task (localhost auto-login + user switcher banner, as one combined task).
 
-**d. Slice detection.** Default to `vertical` (UI + route + data + tests in one PR). Only choose `horizontal` if the feature is genuinely cross-cutting (e.g. "add Sentry to every error boundary" — which probably shouldn't go through add-feature anyway).
+**d. Slice detection.** Default to `vertical` (UI + route + data + tests in one PR). Only choose `horizontal` if the feature is genuinely cross-cutting (e.g. "add Sentry to every error boundary" — which probably shouldn't go through special-order anyway).
 
 **e. Complexity judgment.** Apply this rubric to decide single-stage vs multi-stage:
 

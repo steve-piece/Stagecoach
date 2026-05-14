@@ -41,7 +41,7 @@ Read all of these before beginning:
 
 ## Project Config (optional)
 
-Honor these `bytheslice.config.json` keys when present (see [`skills/setup/references/bytheslice-config-schema.md`](../../setup/references/bytheslice-config-schema.md)):
+Honor these `bytheslice.config.json` keys when present (see [`skills/setup-shop/references/bytheslice-config-schema.md`](../../setup-shop/references/bytheslice-config-schema.md)):
 
 - `mcps.shadcn`, `mcps.figma`, `mcps.magic` — declarative MCP availability for the bundle-validator and token-expander agents
 - `modelTiers.tokenExpander`, `modelTiers.bundleValidator`, `modelTiers.compliancePreCheck` — override agent model tiers for THIS run
@@ -94,7 +94,7 @@ Determine which mode applies from context. If ambiguous, ask:
 
 Collect:
 - **Bundle path** (Mode A) OR **brand brief** (Mode B) — required
-- **Project rules file path** — CLAUDE.md or AGENTS.md (from `plan-phases` Q12, or ask)
+- **Project rules file path** — CLAUDE.md or AGENTS.md (from `cook-pizzas` Q12, or ask)
 - **App structure** — `app/globals.css` or `src/app/globals.css` (detect from project, or ask)
 - **App shell?** — does the project include a sidebar/nav shell? (determines whether sidebar tokens are required)
 
@@ -192,7 +192,7 @@ The route renders:
 
 The agent also **audits and excludes the route from every navigation surface**: app-sidebar, top-nav, mobile sheet, breadcrumbs, `app/sitemap.ts` (or `sitemap.xml`), `robots.txt` (or `app/robots.ts`), and any `<Link href="/library">` references in production code.
 
-The route is seeded with one example entry — `buttons` (visited at `/library?tab=buttons`, the default tab) — rendering every variant from the design-system rules across every state, with the source-path affordance wired through. Subsequent components are added by `library-entry-writer` during `/deliver-stage` Phase 4.5 (Library Preview Gate); every new or modified entry follows the same `EntryHeader sourcePath=… / EntrySection sourcePath=… sourceLines=…` convention.
+The route is seeded with one example entry — `buttons` (visited at `/library?tab=buttons`, the default tab) — rendering every variant from the design-system rules across every state, with the source-path affordance wired through. Subsequent components are added by `library-entry-writer` during `/sell-slice` Phase 4.5 (Library Preview Gate); every new or modified entry follows the same `EntryHeader sourcePath=… / EntrySection sourcePath=… sourceLines=…` convention.
 
 If the agent surfaces an HITL bubble (existing `/library` route, multiple parallel route groups, pages-router project, or stray internal links to `/library`), bubble it up via this skill's return contract. Do not silently overwrite production routes or guess at navigation conventions.
 

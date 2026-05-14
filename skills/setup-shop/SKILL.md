@@ -56,7 +56,7 @@ If the user explicitly asks for first-time install (e.g. "configure my ByTheSlic
 1. Ask: *"ByTheSlice can store system-wide defaults at `~/.bytheslice/defaults.json` so you don't have to answer the same setup questions on every project. Want to set those up now?"*
    - `single_select: ["Yes — set up system-wide defaults", "No — skip; ask per project"]`
 2. If yes: run the **Group 2** questions below, but write the answers to `~/.bytheslice/defaults.json` instead of a per-project file.
-3. Print: *"Defaults saved at `~/.bytheslice/defaults.json`. Future runs of `/bytheslice:setup` will offer these as one-click defaults via the 'use defaults?' question."*
+3. Print: *"Defaults saved at `~/.bytheslice/defaults.json`. Future runs of `/bytheslice:setup-shop` will offer these as one-click defaults via the 'use defaults?' question."*
 4. After Flow A completes, fall through to Flow B or C based on the working-directory detection.
 
 ---
@@ -71,7 +71,7 @@ If the user explicitly asks for first-time install (e.g. "configure my ByTheSlic
 
 **Step 2 — Per-project Config Customization (REQUIRED)** — see [Step 2](#step-2--per-project-config-customization) below.
 
-**Step 3 — CI/CD Baseline Check (REQUIRED — but the SCAFFOLD action is optional)** — see [Step 3](#step-3--cicd-baseline-check-flow-b-and-flow-c-only--skipped-in-flow-a) below. Detects whether the baseline exists; offers to scaffold via `/bytheslice:scaffold-ci-cd` if not.
+**Step 3 — CI/CD Baseline Check (REQUIRED — but the SCAFFOLD action is optional)** — see [Step 3](#step-3--cicd-baseline-check-flow-b-and-flow-c-only--skipped-in-flow-a) below. Detects whether the baseline exists; offers to scaffold via `/bytheslice:final-quality-check` if not.
 
 ---
 
@@ -81,7 +81,7 @@ If the user explicitly asks for first-time install (e.g. "configure my ByTheSlic
 
 **When this fires:** working directory contains a `package.json`.
 
-Skip Step 1 entirely. Run **Step 2** then **Step 3**. Step 3 is what makes this flow viable for projects that aren't going through the full PRD-to-phased-dev workflow — `add-feature` and `deliver-stage` need the CI/CD baseline to be present.
+Skip Step 1 entirely. Run **Step 2** then **Step 3**. Step 3 is what makes this flow viable for projects that aren't going through the full PRD-to-phased-dev workflow — `special-order` and `sell-slice` need the CI/CD baseline to be present.
 
 ---
 
@@ -121,7 +121,7 @@ After scaffolding, `cd <project-name>` for the remaining steps.
 
 ```bash
 git add -A
-git commit -m "chore: scaffold project via /bytheslice:setup
+git commit -m "chore: scaffold project via /bytheslice:setup-shop
 
 Stack: <stack>
 Variant: <variant>"
@@ -157,12 +157,12 @@ Personal scratchpad for future versions and next dev stages. Not committed to th
 ## Next ByTheSlice run
 [ ] Brief idea
 [ ] Brand notes / design references
-[ ] Open questions to resolve before /bytheslice:write-prd
+[ ] Open questions to resolve before /bytheslice:create-menu
 
 ## Future versions / Phase 2+
 [ ] ...
 
-## Friction notes (for future /bytheslice:review-pipeline)
+## Friction notes (for future /bytheslice:close-shop)
 [ ] ...
 ```
 
@@ -171,7 +171,7 @@ Then proceed to **Step 2**.
 ### Hard constraints — Step 1
 
 - **One bootstrap per project root.** If working directory contains a `package.json`, refuse Step 1 and switch to Flow C (Config only). Surface: *"Detected an existing project at <path>. Skipping bootstrap; running per-project config setup only."*
-- **Non-Next.js stacks are out of scope for v2.2.** When the user asks for Astro / Vite / Remix / plain Node API, surface that and stop. Track interest via `/bytheslice:review-pipeline`.
+- **Non-Next.js stacks are out of scope for v2.2.** When the user asks for Astro / Vite / Remix / plain Node API, surface that and stop. Track interest via `/bytheslice:close-shop`.
 - **Never modify files outside the new project directory** during bootstrap.
 - **Never delete anything.** Step 1 is purely additive.
 
@@ -200,7 +200,7 @@ One question per top-level config section. Multi-select where multiple apply, si
 **Always provide a recommended answer in available options.**
 
 **Q-modelTiers**
-> "How do you want to handle per-agent model tier assignments? Each agent has a default tier per [`skills/setup/references/model-tier-guide.md`](references/model-tier-guide.md). Most projects don't need overrides."
+> "How do you want to handle per-agent model tier assignments? Each agent has a default tier per [`skills/setup-shop/references/model-tier-guide.md`](references/model-tier-guide.md). Most projects don't need overrides."
 > single_select: ["Use plugin defaults (recommended)", "I'll edit the modelTiers block manually after generation"]
 
 If "Use plugin defaults": leave `modelTiers: {}` in the generated file. If "edit manually": leave `modelTiers: {}` plus a comment block listing the most-overridden agents (`implementer`, `qualityReviewer`, `ciCdGuardrails`) for the user to fill in.
@@ -236,13 +236,13 @@ If "No": text input for an ordered list (one tool per line, top = highest priori
 If "Yes": text input. Parse one category per line in the form `<name>: <prompt-hint>` and convert into the `additionalCategories` array.
 
 **Q-rules**
-> "Import external rule files now (skips the Q9 elicitation in `/bytheslice:plan-phases` for this project)? Useful if you have a stable set of agentic rules across projects."
+> "Import external rule files now (skips the Q9 elicitation in `/bytheslice:cook-pizzas` for this project)? Useful if you have a stable set of agentic rules across projects."
 > single_select: ["No — answer Q9 per project", "Yes — paste URLs to your rule files (text input)"]
 
 If "Yes": text input. One URL per line.
 
 **Q-bootstrap-defaults**
-> "Set bootstrap defaults so future `/bytheslice:setup` runs in fresh project folders skip the bootstrap question gate? Useful if you always start projects the same way."
+> "Set bootstrap defaults so future `/bytheslice:setup-shop` runs in fresh project folders skip the bootstrap question gate? Useful if you always start projects the same way."
 > single_select: ["No — ask the bootstrap questions every time", "Yes — set variant / stack / roadmap-file defaults (text input)"]
 
 If "Yes": three text inputs (`variant`, `stack`, `roadmapFile` — note `null` is allowed for `roadmapFile` to skip creating it).
@@ -260,7 +260,7 @@ Print the resolved values back to the user before continuing to Step 3.
 
 ## Step 3 — CI/CD Baseline Check (Flow B and Flow C only — skipped in Flow A)
 
-Apps that haven't run `/bytheslice:scaffold-ci-cd` lack the gates that `/bytheslice:deliver-stage` expects (typecheck, lint, design-system-compliance, `@feature` E2E, `@regression-core` E2E, `@visual` E2E, optional `db-schema-drift`). This step detects whether the baseline exists and offers to scaffold it for projects that aren't going through the full PRD-to-phased-dev workflow.
+Apps that haven't run `/bytheslice:final-quality-check` lack the gates that `/bytheslice:sell-slice` expects (typecheck, lint, design-system-compliance, `@feature` E2E, `@regression-core` E2E, `@visual` E2E, optional `db-schema-drift`). This step detects whether the baseline exists and offers to scaffold it for projects that aren't going through the full PRD-to-phased-dev workflow.
 
 ### Detection
 
@@ -279,44 +279,44 @@ If any marker is missing, set `ci_cd_ready: false` and ask the user.
 
 ### Q-ci-cd-baseline (only if `ci_cd_ready: false`)
 
-> "This project doesn't have the ByTheSlice CI/CD baseline (one or more of: ci.yml, design-system-compliance.yml, husky pre-push hook, PR template). The `deliver-stage` and `add-feature` skills depend on these gates being green before opening a PR. Want to scaffold the baseline now?"
+> "This project doesn't have the ByTheSlice CI/CD baseline (one or more of: ci.yml, design-system-compliance.yml, husky pre-push hook, PR template). The `sell-slice` and `special-order` skills depend on these gates being green before opening a PR. Want to scaffold the baseline now?"
 > single_select: ["Yes — scaffold CI/CD baseline now (recommended)", "No — skip; I'll handle CI my own way"]
 
-If "Yes": print *"Run `/bytheslice:scaffold-ci-cd` next — it will run on a dedicated `chore/scaffold-ci-cd` branch and open a PR. Once that PR merges, return here and run `/bytheslice:add-feature` (or `/bytheslice:write-prd` for a full PRD-to-app run)."*
+If "Yes": print *"Run `/bytheslice:final-quality-check` next — it will run on a dedicated `chore/final-quality-check` branch and open a PR. Once that PR merges, return here and run `/bytheslice:special-order` (or `/bytheslice:create-menu` for a full PRD-to-app run)."*
 
 If "No": warn the user and continue:
-> ⚠️ **Without the CI/CD baseline:** `/bytheslice:deliver-stage`'s Phase 8 (CI/CD guardrails) will likely fail because the `ci-cd-guardrails` agent expects the baseline workflows to exist. You can still run `/bytheslice:deliver-stage`, but you'll need to manually wire equivalent gates in your own CI for the per-stage `@visual` and `design-system-compliance` checks. To re-enable the offer later, delete `.bytheslice/.skip-ci-cd` and re-run `/bytheslice:setup`.
+> ⚠️ **Without the CI/CD baseline:** `/bytheslice:sell-slice`'s Phase 8 (CI/CD guardrails) will likely fail because the `ci-cd-guardrails` agent expects the baseline workflows to exist. You can still run `/bytheslice:sell-slice`, but you'll need to manually wire equivalent gates in your own CI for the per-stage `@visual` and `design-system-compliance` checks. To re-enable the offer later, delete `.bytheslice/.skip-ci-cd` and re-run `/bytheslice:setup-shop`.
 
-If the user chose "No": create a sentinel file `.bytheslice/.skip-ci-cd` so future `/bytheslice:setup` runs skip Q-ci-cd-baseline.
+If the user chose "No": create a sentinel file `.bytheslice/.skip-ci-cd` so future `/bytheslice:setup-shop` runs skip Q-ci-cd-baseline.
 
 ### Phase — Print next-step pointer
 
 For Flow A:
-> Defaults saved at `~/.bytheslice/defaults.json`. To use them on a project, run `/bytheslice:setup` from the project's parent folder (Flow B) or inside the project (Flow C) and answer "Yes" to the Group 1 "use defaults?" question.
+> Defaults saved at `~/.bytheslice/defaults.json`. To use them on a project, run `/bytheslice:setup-shop` from the project's parent folder (Flow B) or inside the project (Flow C) and answer "Yes" to the Group 1 "use defaults?" question.
 
 For Flow B:
 > Project scaffolded at `<absolute-path>` with `bytheslice.config.json` and `ROADMAP.local.md`.
 >
-> **CI/CD baseline:** <"present" | "scaffold pending — run /bytheslice:scaffold-ci-cd next" | "skipped per user choice">
+> **CI/CD baseline:** <"present" | "scaffold pending — run /bytheslice:final-quality-check next" | "skipped per user choice">
 >
 > **Next steps:**
 > 1. `cd <project-name>`
 > 2. (Optional) Edit `bytheslice.config.json` to refine any defaults
 > 3. (Optional) Add brief notes to `ROADMAP.local.md`
-> 4. Run `/bytheslice:scaffold-ci-cd` (if Step 3 said scaffold pending)
-> 5. Run `/bytheslice:write-prd` to write the PRD (full PRD-to-app flow), OR run `/bytheslice:add-feature` later if you only want to bolt features onto an existing master checklist
+> 4. Run `/bytheslice:final-quality-check` (if Step 3 said scaffold pending)
+> 5. Run `/bytheslice:create-menu` to write the PRD (full PRD-to-app flow), OR run `/bytheslice:special-order` later if you only want to bolt features onto an existing master checklist
 >
 > The ByTheSlice pipeline from here is: PRD → phased plans → design system gate → CI/CD scaffold → env setup → optional DB schema → 20-30 vertical-slice feature stages.
 
 For Flow C:
 > Config written to `<project-root>/bytheslice.config.json`. Future ByTheSlice skill runs in this project will honor these settings.
 >
-> **CI/CD baseline:** <"present" | "scaffold pending — run /bytheslice:scaffold-ci-cd next" | "skipped per user choice">
+> **CI/CD baseline:** <"present" | "scaffold pending — run /bytheslice:final-quality-check next" | "skipped per user choice">
 >
 > **Next steps:**
-> - **Have a PRD already?** Run `/bytheslice:plan-phases` to generate phased plans.
-> - **No PRD yet?** Run `/bytheslice:write-prd` to write one against this existing app's surface area.
-> - **Just want to add a feature or two?** Run `/bytheslice:add-feature` directly. Note: without a master checklist (no `docs/plans/`), add-feature will redirect you back here. To go from existing-app → add-feature flow, run `/bytheslice:write-prd` first to give the complexity assessor grounding context.
+> - **Have a PRD already?** Run `/bytheslice:cook-pizzas` to generate phased plans.
+> - **No PRD yet?** Run `/bytheslice:create-menu` to write one against this existing app's surface area.
+> - **Just want to add a feature or two?** Run `/bytheslice:special-order` directly. Note: without a master checklist (no `docs/plans/`), special-order will redirect you back here. To go from existing-app → special-order flow, run `/bytheslice:create-menu` first to give the complexity assessor grounding context.
 
 ---
 

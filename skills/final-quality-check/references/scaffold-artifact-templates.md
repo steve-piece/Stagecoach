@@ -1,5 +1,5 @@
-<!-- skills/scaffold-ci-cd/references/scaffold-artifact-templates.md -->
-<!-- Canonical file templates for every artifact scaffold-ci-cd writes: husky pre-push, PR template, ci.yml, e2e.yml, e2e-coverage.yml, design-system-compliance.yml, db-schema-drift.yml, regex sweep script, eslint config additions, stylelint config, branch-protection script, and Playwright specs. Lift verbatim and adjust paths for the detected stack. -->
+<!-- skills/final-quality-check/references/scaffold-artifact-templates.md -->
+<!-- Canonical file templates for every artifact final-quality-check writes: husky pre-push, PR template, ci.yml, e2e.yml, e2e-coverage.yml, design-system-compliance.yml, db-schema-drift.yml, regex sweep script, eslint config additions, stylelint config, branch-protection script, and Playwright specs. Lift verbatim and adjust paths for the detected stack. -->
 
 # CI/CD Scaffold Artifact Templates
 

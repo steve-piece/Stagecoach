@@ -17,6 +17,6 @@ The skill auto-detects which flow applies:
 
 ## When to use this command
 
-Use `/bytheslice:setup` (or `/setup` in local dev) for any first-touch interaction with ByTheSlice. Whether you're standing up a new machine, scaffolding a fresh project, or adding ByTheSlice config to an existing repo — this is the entry point.
+Use `/bytheslice:setup-shop` (or `/setup-shop` in local dev) for any first-touch interaction with ByTheSlice. Whether you're standing up a new machine, scaffolding a fresh project, or adding ByTheSlice config to an existing repo — this is the entry point.
 
 For non-Next.js stacks (Astro, Vite, Remix, plain Node, etc.) — file an issue or fork. v2.2 supports Next.js single-app and Turborepo monorepo only for the bootstrap flow.

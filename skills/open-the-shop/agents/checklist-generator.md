@@ -1,9 +1,9 @@
-<!-- skills/sub-disciplines/setup-environment/agents/checklist-generator.md -->
+<!-- skills/open-the-shop/agents/checklist-generator.md -->
 <!-- Subagent definition: renders the user-facing manual setup checklist grouped by detected service. -->
 
 ---
 name: checklist-generator
-description: Renders the user-facing manual setup checklist for /setup-environment. Cross-references env-scanner output against references/known-services-catalog.md to map keys to services. Groups keys by service (ordered: Supabase → Stripe → Resend → Clerk → Auth0 → NextAuth → PostHog → Sentry → Vercel → GitHub → OpenAI → Anthropic → Other / Unknown). Renders direct provisioning links from the catalog. Adds the GitHub Secrets section from github-secrets-scanner.
+description: Renders the user-facing manual setup checklist for /open-the-shop. Cross-references env-scanner output against references/known-services-catalog.md to map keys to services. Groups keys by service (ordered: Supabase → Stripe → Resend → Clerk → Auth0 → NextAuth → PostHog → Sentry → Vercel → GitHub → OpenAI → Anthropic → Other / Unknown). Renders direct provisioning links from the catalog. Adds the GitHub Secrets section from github-secrets-scanner.
 subagent_type: generalPurpose
 model: haiku
 effort: low
@@ -12,14 +12,14 @@ readonly: true
 
 # Checklist Generator Subagent
 
-You are the **checklist-generator** for `/setup-environment`. Your job: turn the raw key inventory into a human-readable, console-link-rich checklist the user can work through.
+You are the **checklist-generator** for `/open-the-shop`. Your job: turn the raw key inventory into a human-readable, console-link-rich checklist the user can work through.
 
 ## Inputs the orchestrator will provide
 
 - env-scanner's output (env_examples_found + total_keys_unique + key list with docstrings)
 - github-secrets-scanner's output (github_secrets_referenced)
-- Path to [skills/sub-disciplines/setup-environment/references/known-services-catalog.md](../references/known-services-catalog.md)
-- Path to [skills/sub-disciplines/setup-environment/references/env-checklist-template.md](../references/env-checklist-template.md)
+- Path to [skills/open-the-shop/references/known-services-catalog.md](../references/known-services-catalog.md)
+- Path to [skills/open-the-shop/references/env-checklist-template.md](../references/env-checklist-template.md)
 
 ## Workflow
 

@@ -45,7 +45,7 @@ When expanding the above task into a full stage task block, include:
 - `lib/dev/auto-login.ts` — dev-only auto-login helper (throws on prod import)
 - `components/dev/user-switcher-banner.tsx` — the banner component
 - `actions/dev/dev-switch-user.ts` — dev-only Server Action (only imported conditionally)
-- Updates to the project's auth middleware / route guard (location depends on the provider chosen in plan-phases Q10)
+- Updates to the project's auth middleware / route guard (location depends on the provider chosen in cook-pizzas Q10)
 - `.env.example` additions for `DEV_AUTH_BYPASS` and `DEV_DEFAULT_USER_EMAIL`
 
 **Auth-provider integration points (adapt to Q10 selection):**

@@ -10,19 +10,19 @@ triggers: ["/bytheslice:run-the-day", "/run-the-day", "run the day", "fire the t
 
 # Run the Day — Autonomous Multi-Stage Orchestrator (EXPERIMENTAL)
 
-> **EXPERIMENTAL.** This skill is the autonomous multi-stage variant. It tries to drive every stage in one chat session, which is unreliable for full 20–30-stage plans today. The everyday tool is **`/bytheslice:deliver-stage`** — run it once per slice, in a fresh chat. Use `/run-pipeline` only when you explicitly want a single-session multi-stage run and accept the reliability tradeoff.
+> **EXPERIMENTAL.** This skill is the autonomous multi-stage variant. It tries to drive every stage in one chat session, which is unreliable for full 20–30-stage plans today. The everyday tool is **`/bytheslice:sell-slice`** — run it once per slice, in a fresh chat. Use `/run-the-day` only when you explicitly want a single-session multi-stage run and accept the reliability tradeoff.
 
-The orchestrator is a **conductor**, not an autopilot. It reads the master checklist, dispatches **one `/deliver-stage` invocation per stage**, and returns to the human between stages — unless a mode flag removes that pause.
+The orchestrator is a **conductor**, not an autopilot. It reads the master checklist, dispatches **one `/sell-slice` invocation per stage**, and returns to the human between stages — unless a mode flag removes that pause.
 
-`run-pipeline` does not duplicate `deliver-stage`'s logic. The `stage-runner` agent is a thin wrapper that loads the active stage's context and invokes `/deliver-stage` for that specific stage; this guarantees `run-pipeline` and direct `deliver-stage` runs produce the same artifacts and gate the PR on the same Phase 6/7 verifications.
+`run-the-day` does not duplicate `sell-slice`'s logic. The `stage-runner` agent is a thin wrapper that loads the active stage's context and invokes `/sell-slice` for that specific stage; this guarantees `run-the-day` and direct `sell-slice` runs produce the same artifacts and gate the PR on the same Phase 6/7 verifications.
 
 ## Modes
 
 | Invocation | Behavior |
 |---|---|
-| `/run-pipeline` (default) | Dispatch one stage → report → **pause and wait for human "continue"** |
-| `/run-pipeline --auto-mvp` | Auto-advance stages where `mvp: true` in frontmatter; pause before Phase 2 stages (`mvp: false`); pause on any HITL |
-| `/run-pipeline --auto-all` | Auto-advance all stages; pause **only** on HITL |
+| `/run-the-day` (default) | Dispatch one stage → report → **pause and wait for human "continue"** |
+| `/run-the-day --auto-mvp` | Auto-advance stages where `mvp: true` in frontmatter; pause before Phase 2 stages (`mvp: false`); pause on any HITL |
+| `/run-the-day --auto-all` | Auto-advance all stages; pause **only** on HITL |
 
 In every mode, the orchestrator **never advances past a HITL pause** until the human responds. It is the only surface that calls `ask_user_input_v0`.
 
@@ -35,7 +35,7 @@ In every mode, the orchestrator **never advances past a HITL pause** until the h
 
 Read each file in full before dispatching. Pass the file's body as the prompt to the `Task` tool.
 
-For model override paths, see `skills/setup/references/model-tier-guide.md`.
+For model override paths, see `skills/setup-shop/references/model-tier-guide.md`.
 
 ## Inputs and Preconditions
 
@@ -49,17 +49,17 @@ If any precondition fails, stop and surface the gap to the user before doing any
 
 ## Stage Routing
 
-The orchestrator does not route per stage type — that's `deliver-stage`'s job. Every stage, regardless of `type:`, is dispatched the same way: invoke `/bytheslice:deliver-stage` for the active stage. `deliver-stage` reads the frontmatter and routes internally to the right sub-skill or pipeline (see [deliver-stage SKILL.md](../deliver-stage/SKILL.md) Phase 4 — Stage-Type Routing).
+The orchestrator does not route per stage type — that's `sell-slice`'s job. Every stage, regardless of `type:`, is dispatched the same way: invoke `/bytheslice:sell-slice` for the active stage. `sell-slice` reads the frontmatter and routes internally to the right sub-skill or pipeline (see [sell-slice SKILL.md](../sell-slice/SKILL.md) Phase 4 — Stage-Type Routing).
 
 ## Project Config (optional)
 
 Before Phase 0, check for `bytheslice.config.json` at the project root. If present:
 
 1. Read the file as JSONC (comments + trailing commas allowed).
-2. Apply the precedence rules from [`skills/setup/references/bytheslice-config-schema.md`](../setup/references/bytheslice-config-schema.md): env vars > config file > project rules file > plugin defaults.
+2. Apply the precedence rules from [`skills/setup-shop/references/bytheslice-config-schema.md`](../setup-shop/references/bytheslice-config-schema.md): env vars > config file > project rules file > plugin defaults.
 3. Compute the resolved values for `modelTiers`, `stages`, `mcps`, `visualReview`, `hitl.additionalCategories`, `rules.imports`, and `runPipeline` (the new platform-walk checkpoint settings — see Phase 1.5 below).
 4. Log a one-line summary of any non-default resolutions in the orchestrator's first message so the user knows what's in effect (e.g., `Config overrides: implementer→opus, maxTasksPerStage→8, platformWalkEvery=5`).
-5. Pass the resolved config to each `/deliver-stage` invocation so the inner `rules-loader` agent can re-read it (deliver-stage handles per-agent thread-through internally).
+5. Pass the resolved config to each `/sell-slice` invocation so the inner `rules-loader` agent can re-read it (sell-slice handles per-agent thread-through internally).
 
 If the file exists but parses as malformed JSON, stop and surface an HITL prompt to the user (`hitl_category: "prd_ambiguity"`, `hitl_question: "bytheslice.config.json failed to parse — please fix the syntax error at line N before continuing"`). Never silently fall through to defaults — surprising defaults are worse than an explicit halt.
 
@@ -82,11 +82,11 @@ For each stage from the active starting point, in order:
 
 1. **Pre-stage state check.** Verify `git status` clean, on `main`, latest pulled.
 2. **Read stage frontmatter.** Determine `mvp` (for pause decisions) and `hitl_required`.
-3. **Dispatch `stage-runner`.** The stage-runner is a thin wrapper that invokes `/bytheslice:deliver-stage` for the active stage and returns its structured result. Wait for the return.
-4. **Handle HITL if returned.** If `deliver-stage` (via the stage-runner) returns `needs_human: true`, see HITL Handling below before advancing.
+3. **Dispatch `stage-runner`.** The stage-runner is a thin wrapper that invokes `/bytheslice:sell-slice` for the active stage and returns its structured result. Wait for the return.
+4. **Handle HITL if returned.** If `sell-slice` (via the stage-runner) returns `needs_human: true`, see HITL Handling below before advancing.
 5. **Dispatch `pr-reviewer`** (read-only) against the merged PR. Wait for verdict.
 6. **Walk the Per-Stage Gate Checklist** (see below). Stop the loop if any item fails.
-7. **Update master checklist** if `deliver-stage` did not already flip the row (it usually does, in its Phase 9 closeout). Idempotent — no-op if already `Completed`.
+7. **Update master checklist** if `sell-slice` did not already flip the row (it usually does, in its Phase 9 closeout). Idempotent — no-op if already `Completed`.
 8. **Report stage completion** to the user (see Progress Report Format).
 9. **Mode-based pause decision:**
    - Default mode: always pause. Ask: "Stage N complete. Ready to advance to Stage N+1? (Reply 'continue' or give instructions.)"
@@ -99,14 +99,14 @@ For each stage from the active starting point, in order:
 
 A periodic, read-only cross-cutting audit dispatched between stages during autonomous multi-stage runs. Catches silent regressions on surfaces the just-shipped slice didn't touch — broken footer links, mock-data leaks, dynamic-route validation gaps, console errors on first paint — before they compound across N more stages.
 
-This is distinct from `deliver-stage`'s per-slice `visual-reviewer` (Phase 4.7), which reviews one slice against its declared states. The checkpoint walks **every route** of the whole app.
+This is distinct from `sell-slice`'s per-slice `visual-reviewer` (Phase 4.7), which reviews one slice against its declared states. The checkpoint walks **every route** of the whole app.
 
-**Trigger rule:** Dispatch only if `runPipeline.platformWalkEvery` from the resolved config is a positive integer and `STAGE_N % platformWalkEvery == 0`. If the config key is missing or `0`, the checkpoint is a no-op and the run-pipeline workflow is unchanged from prior versions.
+**Trigger rule:** Dispatch only if `runPipeline.platformWalkEvery` from the resolved config is a positive integer and `STAGE_N % platformWalkEvery == 0`. If the config key is missing or `0`, the checkpoint is a no-op and the run-the-day workflow is unchanged from prior versions.
 
 **Workflow:**
 
 1. **Confirm the gate passed.** If the Per-Stage Gate Checklist for `STAGE_N` did not all pass, skip the checkpoint — the orchestrator is already halted for a stage failure.
-2. **Dispatch `/bytheslice:walk-platform` as a sub-skill.** Read [`../walk-platform/SKILL.md`](../walk-platform/SKILL.md), follow its workflow, and capture the structured return contract. The walk runs in its own sub-agent context so screenshots don't burn the orchestrator's context window.
+2. **Dispatch `/bytheslice:inspect-display` as a sub-skill.** Read [`../inspect-display/SKILL.md`](../inspect-display/SKILL.md), follow its workflow, and capture the structured return contract. The walk runs in its own sub-agent context so screenshots don't burn the orchestrator's context window.
 3. **Capture the verdict and counts** — `verdict` (`clean | drifted | broken`), `report_path`, `screenshot_dir`, `top_gaps`, full `counts` block.
 4. **Apply the halt rule** from `runPipeline.haltOn` (default `"broken"`):
    - `"broken"` — pause for human review if `verdict: broken`. Otherwise log + continue.
@@ -117,12 +117,12 @@ This is distinct from `deliver-stage`'s per-slice `visual-reviewer` (Phase 4.7),
    - Top 5 gaps from the report (each: rank, description, file/route, user-impact)
    - Path to the full report
    - Three options for the user (always with a recommended answer):
-     1. **Halt and address now** (recommended if `verdict: broken`) — exit the pipeline; user opens a fresh chat with `/bytheslice:add-feature` or `/bytheslice:deliver-stage` to fix.
+     1. **Halt and address now** (recommended if `verdict: broken`) — exit the pipeline; user opens a fresh chat with `/bytheslice:special-order` or `/bytheslice:sell-slice` to fix.
      2. **Acknowledge and continue** — record the walk's findings in the orchestrator's session notes; advance to the next stage.
      3. **Disable checkpoints for the rest of this run** — set `platformWalkEvery: 0` for the remainder of this pipeline invocation only (does not modify the config file).
 6. **Include the walk's verdict + top 3 gaps in the per-stage Progress Report** (see Progress Report Format below). If `runPipeline.checkpointMode: "background"`, log only the report path and omit gap detail from the report unless `haltOn` fired.
 
-**Why this works:** the walk is read-only — it never edits code, never opens PRs, never pushes commits. So it cannot corrupt the run-pipeline gate state. The only effect on pipeline flow is the halt decision, which is bounded by the explicit `haltOn` rule.
+**Why this works:** the walk is read-only — it never edits code, never opens PRs, never pushes commits. So it cannot corrupt the run-the-day gate state. The only effect on pipeline flow is the halt decision, which is bounded by the explicit `haltOn` rule.
 
 ### Phase 2 — Final Report
 
@@ -156,7 +156,7 @@ Only the orchestrator calls `ask_user_input_v0`. Sub-agents bubble HITL up via t
 
 The checkpoint produces its own HITL bubbles, separate from stage-runner failures:
 
-- The `/walk-platform` skill itself returns `needs_human: true` with `hitl_category: external_credentials` when no browser MCP is available, the dev server failed to boot within 90s, or env vars are missing. Surface this directly to the user — the run-pipeline run continues only after they resolve it (typically by skipping the walk for this checkpoint via option 3 in the halt prompt, or fixing the env and retrying).
+- The `/inspect-display` skill itself returns `needs_human: true` with `hitl_category: external_credentials` when no browser MCP is available, the dev server failed to boot within 90s, or env vars are missing. Surface this directly to the user — the run-the-day run continues only after they resolve it (typically by skipping the walk for this checkpoint via option 3 in the halt prompt, or fixing the env and retrying).
 - When the walk completes with a `verdict` that triggers the configured `haltOn` rule, the orchestrator initiates a `prd_ambiguity`-categorized HITL itself (no sub-agent bubble — the walk completed successfully; the orchestrator is making the halt decision). See Phase 1.5 step 5 for the prompt shape and options.
 
 In both cases, the orchestrator NEVER advances past the checkpoint until the user responds. Walk-induced HITL pauses follow the same "no auto-advance" rule as stage HITL pauses.
@@ -214,7 +214,7 @@ Walk this checklist after each stage before advancing. Stop and surface any fail
 | `{STAGE_FILE_PATH}` | Workspace-relative path to `docs/plans/stage_<n>_*.md` |
 | `{STAGE_GOAL}` | The goal sentence from the stage file's `**Goal:**` line |
 
-Fill these into the stage-runner prompt (see `agents/stage-runner.md` for the expected format). The stage-runner uses these to invoke `/bytheslice:deliver-stage` for the right stage.
+Fill these into the stage-runner prompt (see `agents/stage-runner.md` for the expected format). The stage-runner uses these to invoke `/bytheslice:sell-slice` for the right stage.
 
 ## Progress Report Format (per stage)
 
@@ -260,15 +260,15 @@ Recommended next: <empty | open Phase 2 work | run another orchestrator pass>
 - **Clean-main invariant.** Enforced before every stage-runner dispatch.
 - **Master checklist is source of truth** for stage ordering and completion. Never re-order stages.
 - **HITL goes through `ask_user_input_v0` only.** Sub-agents bubble up; orchestrator prompts.
-- **No new commands without authorization.** Only activate on `/run-pipeline` or the listed trigger phrases.
-- **Platform-walk checkpoints are read-only and never block stage advance on their own.** They produce a HITL pause only when the configured `haltOn` rule fires. When `platformWalkEvery: 0` (the default), the checkpoint is a complete no-op — run-pipeline behaves identically to its pre-checkpoint version.
+- **No new commands without authorization.** Only activate on `/run-the-day` or the listed trigger phrases.
+- **Platform-walk checkpoints are read-only and never block stage advance on their own.** They produce a HITL pause only when the configured `haltOn` rule fires. When `platformWalkEvery: 0` (the default), the checkpoint is a complete no-op — run-the-day behaves identically to its pre-checkpoint version.
 - **Checkpoint cadence is fixed by config**, not adjusted mid-run. The orchestrator must not re-read `bytheslice.config.json` between stages — the resolved config is fixed at session start. Option 3 of the halt prompt is the only way to change checkpoint behavior mid-run (and it only disables checkpoints; it does not change the frequency).
 
 ## Triggers
 
 Follow this skill whenever the user:
 
-- runs `/run-pipeline` (optionally with `--auto-mvp` or `--auto-all`)
+- runs `/run-the-day` (optionally with `--auto-mvp` or `--auto-all`)
 - says "run the whole plan", "ship every stage", "automate the build", "drive the phased plan to completion", "execute all stages"
 - explicitly passes the master checklist and asks for autonomous delivery
 

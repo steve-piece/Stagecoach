@@ -9,7 +9,7 @@ description: Build the display case the pies will sit in. Bootstraps the project
 
 Load and follow the [`set-display-case`](../skills/set-display-case/SKILL.md) skill.
 
-**Sub-skill of `/bytheslice:deliver-stage`.** This skill is normally dispatched automatically when `deliver-stage` encounters a `type: design-system` stage. Run it directly only when you need to re-validate or re-generate the design-system foundation outside the normal stage loop.
+**Sub-skill of `/bytheslice:sell-slice`.** This skill is normally dispatched automatically when `sell-slice` encounters a `type: design-system` stage. Run it directly only when you need to re-validate or re-generate the design-system foundation outside the normal stage loop.
 
 The skill validates or generates a complete design system before any feature work begins:
 
@@ -26,4 +26,4 @@ The skill validates or generates a complete design system before any feature wor
 
 ## When to use this command
 
-Use `/init-design-system` directly only as an escape hatch — for example, if your design tokens drifted and you want a clean re-validation pass. The everyday entry point is `/bytheslice:deliver-stage`, which runs this sub-skill automatically when the next pending stage has `type: design-system`.
+Use `/set-display-case` directly only as an escape hatch — for example, if your design tokens drifted and you want a clean re-validation pass. The everyday entry point is `/bytheslice:sell-slice`, which runs this sub-skill automatically when the next pending stage has `type: design-system`.

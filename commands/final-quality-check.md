@@ -9,11 +9,11 @@ description: Install the quality line every pie passes through before going on d
 
 Load and follow the [`final-quality-check`](../skills/final-quality-check/SKILL.md) skill.
 
-**Sub-skill of `/bytheslice:deliver-stage`.** This skill is normally dispatched automatically when `deliver-stage` encounters a `type: ci-cd` stage. Run it directly only when you need to re-scaffold or repair the CI/CD baseline outside the normal stage loop.
+**Sub-skill of `/bytheslice:sell-slice`.** This skill is normally dispatched automatically when `sell-slice` encounters a `type: ci-cd` stage. Run it directly only when you need to re-scaffold or repair the CI/CD baseline outside the normal stage loop.
 
 The skill bootstraps the CI/CD and E2E baseline that every later feature slice depends on:
 
-1. Creates a dedicated `chore/scaffold-ci-cd` branch.
+1. Creates a dedicated `chore/final-quality-check` branch.
 2. Installs and configures Playwright with `@feature`, `@regression-core`, and `@visual` tag suites.
 3. Writes GitHub Actions workflows: `ci.yml`, `e2e.yml`, `e2e-coverage.yml`, `design-system-compliance.yml`, and (conditional) `db-schema-drift.yml`.
 4. Configures Husky pre-push hooks and a PR template.
@@ -25,8 +25,8 @@ The skill bootstraps the CI/CD and E2E baseline that every later feature slice d
 
 - Working tree is clean on `main`.
 - `gh` CLI is installed and authenticated.
-- Stage 1 (design system gate) is complete (deliver-stage handles ordering automatically).
+- Stage 1 (design system gate) is complete (sell-slice handles ordering automatically).
 
 ## When to use this command
 
-Use `/scaffold-ci-cd` directly as an escape hatch — for example, when CI has drifted and you want to re-establish the baseline outside the normal phased flow. The everyday entry point is `/bytheslice:deliver-stage`, which runs this sub-skill automatically when the next pending stage has `type: ci-cd`. This skill writes infrastructure, not product code.
+Use `/final-quality-check` directly as an escape hatch — for example, when CI has drifted and you want to re-establish the baseline outside the normal phased flow. The everyday entry point is `/bytheslice:sell-slice`, which runs this sub-skill automatically when the next pending stage has `type: ci-cd`. This skill writes infrastructure, not product code.

@@ -9,7 +9,7 @@ triggers: ["/bytheslice:box-it-up", "/box-it-up", "box up the slice", "hand it o
 
 # /box-it-up
 
-`/deliver-stage` and `/add-feature` stop at "slice committed locally, ready for review". `/ship-pr` is the next step in the chain — it takes a branch with locally-committed work and shepherds it through PR open → CI watch (with an auto-fix loop on red) → user-authorized merge → main sync + branch / worktree cleanup.
+`/sell-slice` and `/special-order` stop at "slice committed locally, ready for review". `/box-it-up` is the next step in the chain — it takes a branch with locally-committed work and shepherds it through PR open → CI watch (with an auto-fix loop on red) → user-authorized merge → main sync + branch / worktree cleanup.
 
 It is intentionally a **separate** skill so you can review the slice locally, run a manual visual UAT, or rebase against fresh main before deciding to ship. The skill is also safe to run on hand-rolled branches that never touched the ByTheSlice delivery loop — pre-flight checks and the closeout pattern are universal.
 
@@ -54,7 +54,7 @@ The skill refuses to proceed past Phase 0 if any check fails. The whole point is
 1. `git status --short` — if there are uncommitted changes, surface them to the user and ask:
    - "Stage and commit these changes with a generated conventional message? (yes / let me write the message / cancel)"
    - **Always provide a recommended answer in available options.** Default recommendation: yes if changes look like the in-scope slice; "let me write" if the diff includes unexpected files.
-   - On `yes`: stage all changes, derive a conventional commit type from the diff (`feat:` for new functionality, `fix:` for bug fix, `chore:` for infra/config-only, `docs:` for doc-only). Use a one-line subject summarizing the slice plus a short body listing the touched files grouped by package/app. **If the slice touched UI** and `/deliver-stage` produced a closing-narrative paragraph (one paragraph: what was built · why this shape · what was left out · what reviewers should pay attention to), include it verbatim in the commit body before the file list. `gh pr create --fill` lifts the commit body into the PR description, so this paragraph carries the design story into the PR without a separate step.
+   - On `yes`: stage all changes, derive a conventional commit type from the diff (`feat:` for new functionality, `fix:` for bug fix, `chore:` for infra/config-only, `docs:` for doc-only). Use a one-line subject summarizing the slice plus a short body listing the touched files grouped by package/app. **If the slice touched UI** and `/sell-slice` produced a closing-narrative paragraph (one paragraph: what was built · why this shape · what was left out · what reviewers should pay attention to), include it verbatim in the commit body before the file list. `gh pr create --fill` lifts the commit body into the PR description, so this paragraph carries the design story into the PR without a separate step.
    - On `let me write`: prompt for the message.
    - On `cancel`: stop here. Working tree unchanged.
 2. `git push origin "$BRANCH"` — push to remote. If the remote rejects (non-fast-forward, etc.), STOP and surface as `destructive_operation` HITL — never auto force-push.
@@ -102,14 +102,14 @@ CI is green. Stop and prompt the user:
 >
 > Options (always include a recommended answer):
 > 1. **Approve and merge now** (recommended if you've already reviewed) — the skill runs `gh pr merge --squash` (or the project's configured strategy) and proceeds to Phase 5.
-> 2. **Hold — keep the PR open for manual review** — the skill exits, leaving the PR open. You merge via the GitHub UI when ready, then re-run `/ship-pr --resume` to do cleanup.
+> 2. **Hold — keep the PR open for manual review** — the skill exits, leaving the PR open. You merge via the GitHub UI when ready, then re-run `/box-it-up --resume` to do cleanup.
 > 3. **Cancel — leave the PR open and stop** — the skill exits without merging.
 
 Default merge strategy is `--squash`. Honor the project's configured default if `gh repo view --json mergeCommitAllowed,squashMergeAllowed,rebaseMergeAllowed` reports a more restrictive setting. Never force-merge a PR with non-required failing checks unless the user explicitly authorizes via the HITL prompt.
 
 ### Phase 5 — Post-merge Cleanup
 
-Only runs after the PR is merged (either by this skill in Phase 4 option 1, or by the user manually before invoking `/ship-pr --resume`).
+Only runs after the PR is merged (either by this skill in Phase 4 option 1, or by the user manually before invoking `/box-it-up --resume`).
 
 1. `gh pr view "$PR_NUMBER" --json state` — confirm state is `MERGED`. If not, STOP. Don't pull or delete branches based on a falsely-assumed merge.
 2. `git checkout main` — if there are local uncommitted changes that would be overwritten, STOP and surface as `destructive_operation` HITL. Never auto-stash.
@@ -167,11 +167,11 @@ HITL categories the skill produces:
 
 Follow this skill whenever the user:
 
-- runs `/ship-pr`
+- runs `/box-it-up`
 - says "ship the pr", "submit the pr", "open and merge the pr", "ship this branch", "ship this slice"
-- has finished a `/deliver-stage` or `/add-feature` invocation, reviewed the locally-committed slice, and is ready to push
+- has finished a `/sell-slice` or `/special-order` invocation, reviewed the locally-committed slice, and is ready to push
 
-If the working tree is on `main` with no feature branch in sight, redirect to `/deliver-stage` or `/add-feature` first.
+If the working tree is on `main` with no feature branch in sight, redirect to `/sell-slice` or `/special-order` first.
 
 If the user's intent is "create the PR but pause before merging for code review," they should pick option 2 (Hold) at the Phase 4 gate.
 
@@ -222,7 +222,7 @@ Walk this at the end of every run. Do not report shipped until every box is `[x]
 
 ## Sub-agent return contract
 
-When `/ship-pr` is invoked as a sub-skill (e.g. by `/run-pipeline` after a stage finishes):
+When `/box-it-up` is invoked as a sub-skill (e.g. by `/run-the-day` after a stage finishes):
 
 ```yaml
 status: complete | failed | needs_human

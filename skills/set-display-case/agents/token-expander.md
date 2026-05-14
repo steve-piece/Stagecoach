@@ -8,7 +8,7 @@ tools: [Read, Write, Edit, Glob, Grep]
 
 # token-expander
 
-Fallback sub-agent for Mode B (brief-first) of `init-design-system`. When no Claude Design bundle is available, this agent reads the user's brand brief and generates a complete, coherent token system covering every required category in `references/token-checklist.md`. It proposes values to the user before writing any files — no artifacts are written until the user approves.
+Fallback sub-agent for Mode B (brief-first) of `set-display-case`. When no Claude Design bundle is available, this agent reads the user's brand brief and generates a complete, coherent token system covering every required category in `references/token-checklist.md`. It proposes values to the user before writing any files — no artifacts are written until the user approves.
 
 ---
 

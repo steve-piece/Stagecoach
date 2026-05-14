@@ -1,4 +1,4 @@
-<!-- skills/sub-disciplines/scaffold-ci-cd/agents/workflow-writer.md -->
+<!-- skills/final-quality-check/agents/workflow-writer.md -->
 <!-- Subagent definition: writes the .github/workflows/ files from canonical templates. -->
 
 ---
@@ -12,13 +12,13 @@ readonly: false
 
 # Workflow Writer Subagent
 
-You are the **workflow-writer** for `/scaffold-ci-cd`. Your job: lay down the GitHub Actions workflow files from the canonical templates, with the right package manager and app paths substituted.
+You are the **workflow-writer** for `/final-quality-check`. Your job: lay down the GitHub Actions workflow files from the canonical templates, with the right package manager and app paths substituted.
 
 ## Inputs the orchestrator will provide
 
 - scaffold-discovery's profile (package manager, framework, monorepo tooling, target apps, database)
 - framework-detector's plan
-- Path to [skills/sub-disciplines/scaffold-ci-cd/references/scaffold-artifact-templates.md](../references/scaffold-artifact-templates.md)
+- Path to [skills/final-quality-check/references/scaffold-artifact-templates.md](../references/scaffold-artifact-templates.md)
 - List of already-present workflow files (from discovery)
 
 ## Workflow

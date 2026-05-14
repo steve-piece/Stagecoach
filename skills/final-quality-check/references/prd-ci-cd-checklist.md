@@ -1,6 +1,6 @@
 # PRD CI/CD Checklist (Required)
 
-These rules govern how master-checklist updates, CI gates, and PR shape interact across every ByTheSlice run. The orchestrator surfaces these as guardrails to every stage skill that touches CI workflows or the master checklist; scaffold-ci-cd itself enforces them when scaffolding the baseline.
+These rules govern how master-checklist updates, CI gates, and PR shape interact across every ByTheSlice run. The orchestrator surfaces these as guardrails to every stage skill that touches CI workflows or the master checklist; final-quality-check itself enforces them when scaffolding the baseline.
 
 [ ] Before any phased-plan integration run, update `docs/plans/00_master_checklist.md` with current stage status and exact in-scope checklist items.
 

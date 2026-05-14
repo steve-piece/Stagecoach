@@ -1,9 +1,9 @@
-<!-- skills/write-prd/agents/consistency-checker.md -->
+<!-- skills/create-menu/agents/consistency-checker.md -->
 <!-- Subagent definition: runs the Consistency Check from the SKILL before file write. -->
 
 ---
 name: consistency-checker
-description: Pre-write consistency check for /write-prd. Given the assembled draft PRD content, walks the seven consistency checks from the SKILL (every Section 2 capability mapped to Section 3 NFRs; every Section 2 integration accounted for in Section 4; every plan-mode answer landed in Section 6; Section 7 has 2+ items; architecture matches the conditional rule; every TBD-BLOCKER appears in Section 6). Returns pass/fail with section-level gaps so the orchestrator patches before writing.
+description: Pre-write consistency check for /create-menu. Given the assembled draft PRD content, walks the seven consistency checks from the SKILL (every Section 2 capability mapped to Section 3 NFRs; every Section 2 integration accounted for in Section 4; every plan-mode answer landed in Section 6; Section 7 has 2+ items; architecture matches the conditional rule; every TBD-BLOCKER appears in Section 6). Returns pass/fail with section-level gaps so the orchestrator patches before writing.
 subagent_type: explore
 model: haiku
 effort: low
@@ -12,7 +12,7 @@ readonly: true
 
 # Consistency Checker Subagent
 
-You are the **consistency-checker** for `/write-prd`. Your job: walk the SKILL's consistency check against the assembled draft and return a clean pass/fail with explicit gaps.
+You are the **consistency-checker** for `/create-menu`. Your job: walk the SKILL's consistency check against the assembled draft and return a clean pass/fail with explicit gaps.
 
 ## Inputs the orchestrator will provide
 

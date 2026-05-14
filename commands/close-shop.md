@@ -23,4 +23,4 @@ The skill reviews recent phased-plan executions and surfaces systemic friction p
 
 ## When to use this command
 
-Use `/review-pipeline` after completing a project or a significant batch of stages when you want to improve the workflow based on real execution data. This command is **experimental** — it drafts PRs for your review; it does not merge anything automatically.
+Use `/close-shop` after completing a project or a significant batch of stages when you want to improve the workflow based on real execution data. This command is **experimental** — it drafts PRs for your review; it does not merge anything automatically.

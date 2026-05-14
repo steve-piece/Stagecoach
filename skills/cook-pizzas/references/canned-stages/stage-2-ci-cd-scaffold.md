@@ -17,13 +17,13 @@ completion_criteria:
 ---
 
 <!-- docs/plans/stage_2_ci_cd_scaffold.md -->
-<!-- Stage 2: bootstrap CI/CD + E2E baseline via scaffold-ci-cd skill -->
+<!-- Stage 2: bootstrap CI/CD + E2E baseline via final-quality-check skill -->
 
 # Stage 2 — CI/CD Scaffold
 
 **Goal:** Bootstrap CI/CD + E2E baseline before any feature work begins.
 
-**Architecture:** This stage delegates entirely to the `scaffold-ci-cd` skill. It establishes Playwright suites (`@feature`, `@regression-core`), GitHub Actions workflows (`ci.yml`, `e2e.yml`), Husky `pre-push`, PR template, and branch-protection setup. Every later stage depends on this baseline.
+**Architecture:** This stage delegates entirely to the `final-quality-check` skill. It establishes Playwright suites (`@feature`, `@regression-core`), GitHub Actions workflows (`ci.yml`, `e2e.yml`), Husky `pre-push`, PR template, and branch-protection setup. Every later stage depends on this baseline.
 
 **Architecture note (project-specific):** [populated by ci-cd-scaffold-stage-writer based on Q8 and Q11]
 - Architecture variant: single-app | monorepo (from Q8)
@@ -44,25 +44,25 @@ completion_criteria:
 
 ## Tasks
 
-### Task 1: Run scaffold-ci-cd skill end-to-end
+### Task 1: Run final-quality-check skill end-to-end
 
 This stage's task list is not duplicated here. The single task is:
 
-[ ] Run the `scaffold-ci-cd` skill in full.
+[ ] Run the `final-quality-check` skill in full.
 
-The skill's `SKILL.md` (Phases 0–6) is the source of truth for the work. Its completion checklist (embedded in `scaffold-ci-cd/SKILL.md`) is the source of truth for "done".
+The skill's `SKILL.md` (Phases 0–6) is the source of truth for the work. Its completion checklist (embedded in `final-quality-check/SKILL.md`) is the source of truth for "done".
 
 Additional CI jobs to add beyond the base scaffold:
 [ ] `design-system-compliance` job — validates no component uses hard-coded color values outside the token system
 [ ] `db-schema-drift` job — validates schema source matches applied migrations (only if Stage 4 is in scope)
 [ ] `visual` job — runs Playwright visual regression at 375 / 768 / 1280 / 1920 viewports
 
-**Commit:** delegated to scaffold-ci-cd skill (conventional commits per task within that skill)
+**Commit:** delegated to final-quality-check skill (conventional commits per task within that skill)
 
 ---
 
 **Exit criteria:**
-- Every completion criterion in `scaffold-ci-cd` skill is satisfied
+- Every completion criterion in `final-quality-check` skill is satisfied
 - `design-system-compliance` CI job added and green on the branch
 - PR template present and references stage plans
 - Branch protection configured on `main`

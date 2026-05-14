@@ -23,7 +23,7 @@ completion_criteria:
 
 **Goal:** Populate all external credentials and verify local development boots end-to-end before any feature stages begin.
 
-**Architecture:** This is a blocking gate. No feature stage (5+) should begin until every environment variable is populated and `local_dev_boots` is confirmed. The `setup-environment` skill is the execution surface for this stage.
+**Architecture:** This is a blocking gate. No feature stage (5+) should begin until every environment variable is populated and `local_dev_boots` is confirmed. The `open-the-shop` skill is the execution surface for this stage.
 
 **Architecture note (project-specific):** [populated by env-setup-stage-writer based on Q4, Q5, Q8, Q10, Q11]
 - Architecture variant: single-app | monorepo (from Q8)

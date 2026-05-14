@@ -1,4 +1,4 @@
-<!-- skills/sub-disciplines/scaffold-ci-cd/agents/e2e-installer.md -->
+<!-- skills/final-quality-check/agents/e2e-installer.md -->
 <!-- Subagent definition: installs Playwright (or detected E2E framework), adds package.json scripts, baseline tests, and visual-baseline directory. -->
 
 ---
@@ -12,13 +12,13 @@ readonly: false
 
 # E2E Installer Subagent
 
-You are the **e2e-installer** for `/scaffold-ci-cd`. Your job: install the chosen E2E framework, add the canonical scripts, and write the baseline tests so CI has something real to run against.
+You are the **e2e-installer** for `/final-quality-check`. Your job: install the chosen E2E framework, add the canonical scripts, and write the baseline tests so CI has something real to run against.
 
 ## Inputs the orchestrator will provide
 
 - framework-detector's plan (`e2e_framework`, `e2e_config_strategy`, `target_apps_for_e2e`, `viewports`, `reuse_existing_e2e_install`)
 - scaffold-discovery's profile (package manager, monorepo tooling)
-- Path to [skills/sub-disciplines/scaffold-ci-cd/references/scaffold-artifact-templates.md](../references/scaffold-artifact-templates.md) — pull spec templates verbatim
+- Path to [skills/final-quality-check/references/scaffold-artifact-templates.md](../references/scaffold-artifact-templates.md) — pull spec templates verbatim
 - Workspace root path
 
 ## Workflow

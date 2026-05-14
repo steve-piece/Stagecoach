@@ -11,28 +11,28 @@ description: EXPERIMENTAL. Open → service → close on autopilot. Drive an ent
 
 Load and follow the [`run-the-day`](../skills/run-the-day/SKILL.md) skill.
 
-The skill drives an entire phased plan end-to-end by **dispatching `/bytheslice:deliver-stage` per stage**:
+The skill drives an entire phased plan end-to-end by **dispatching `/bytheslice:sell-slice` per stage**:
 
 1. Reads `docs/plans/00_master_checklist.md` and identifies the first stage that is not `Completed`.
 2. For each remaining stage (sequentially, never parallel):
-   - Dispatches an opus-tier [`stage-runner`](../skills/run-pipeline/agents/stage-runner.md) subagent that invokes `/bytheslice:deliver-stage` for the active stage and returns its structured result.
-   - Dispatches a sonnet-tier [`pr-reviewer`](../skills/run-pipeline/agents/pr-reviewer.md) subagent to sanity-check the merged PR.
-   - Walks the Per-Stage Gate Checklist (embedded in `skills/run-pipeline/SKILL.md`) before advancing.
+   - Dispatches an opus-tier [`stage-runner`](../skills/run-the-day/agents/stage-runner.md) subagent that invokes `/bytheslice:sell-slice` for the active stage and returns its structured result.
+   - Dispatches a sonnet-tier [`pr-reviewer`](../skills/run-the-day/agents/pr-reviewer.md) subagent to sanity-check the merged PR.
+   - Walks the Per-Stage Gate Checklist (embedded in `skills/run-the-day/SKILL.md`) before advancing.
    - Verifies clean `main` (no leftover branches, no leftover worktrees) between every stage.
-   - Updates the stage row in the master checklist to `Completed` (if `deliver-stage` did not already).
+   - Updates the stage row in the master checklist to `Completed` (if `sell-slice` did not already).
 3. Returns a final report when every stage is `Completed`.
 
 ## Modes
 
 | Invocation | Behavior |
 |---|---|
-| `/run-pipeline` (default) | Dispatch one stage → report → pause and wait for human "continue" |
-| `/run-pipeline --auto-mvp` | Auto-advance MVP stages; pause on Phase 2 stages and on any HITL |
-| `/run-pipeline --auto-all` | Auto-advance every stage; pause only on HITL |
+| `/run-the-day` (default) | Dispatch one stage → report → pause and wait for human "continue" |
+| `/run-the-day --auto-mvp` | Auto-advance MVP stages; pause on Phase 2 stages and on any HITL |
+| `/run-the-day --auto-all` | Auto-advance every stage; pause only on HITL |
 
 ## Preconditions
 
-- Running on the opus model tier (see `skills/setup/references/model-tier-guide.md`). If model is insufficient, the skill stops and reports the gap.
+- Running on the opus model tier (see `skills/setup-shop/references/model-tier-guide.md`). If model is insufficient, the skill stops and reports the gap.
 - `docs/plans/00_master_checklist.md` and every referenced `docs/plans/stage_<n>_*.md` exist.
 - Working tree is clean on `main`.
 - `gh` CLI is installed and authenticated.
@@ -41,4 +41,4 @@ If any precondition fails, the skill stops and reports the gap before doing anyt
 
 ## When to use this command
 
-Use `/run-pipeline` only when you explicitly want autonomous multi-stage delivery in one chat session. For everyday use, run `/bytheslice:deliver-stage` once per slice in a fresh chat — that's the supported, reliable path.
+Use `/run-the-day` only when you explicitly want autonomous multi-stage delivery in one chat session. For everyday use, run `/bytheslice:sell-slice` once per slice in a fresh chat — that's the supported, reliable path.

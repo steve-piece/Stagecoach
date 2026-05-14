@@ -19,8 +19,8 @@ The skill transforms a finalized PRD into a complete, ordered set of implementat
 
 ## Preconditions
 
-- A finalized PRD exists (output of `/write-prd` or equivalent). Raw briefs, specs, and questionnaires feed `/write-prd` first.
+- A finalized PRD exists (output of `/create-menu` or equivalent). Raw briefs, specs, and questionnaires feed `/create-menu` first.
 
 ## When to use this command
 
-Use `/plan-phases` once you have a completed PRD and are ready to produce the full implementation plan. The output is the input for `/bytheslice:deliver-stage` (everyday loop, run once per slice) or `/bytheslice:run-pipeline` (experimental autonomous multi-stage delivery).
+Use `/cook-pizzas` once you have a completed PRD and are ready to produce the full implementation plan. The output is the input for `/bytheslice:sell-slice` (everyday loop, run once per slice) or `/bytheslice:run-the-day` (experimental autonomous multi-stage delivery).

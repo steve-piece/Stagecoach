@@ -13,7 +13,7 @@ The agent loading this skill is the **orchestrator** for one stage of the master
 
 **The orchestrator does not write production code itself.** Every heavy step is a subagent or a sub-skill.
 
-Run `/deliver-stage` → finish a slice → start a fresh chat → run again. Repeat until every row in `docs/plans/00_master_checklist.md` is `[x]`. For multi-stage autonomous delivery (experimental), see `/run-pipeline`. For mid-flight feature additions, see `/add-feature` (it feeds into `deliver-stage`).
+Run `/sell-slice` → finish a slice → start a fresh chat → run again. Repeat until every row in `docs/plans/00_master_checklist.md` is `[x]`. For multi-stage autonomous delivery (experimental), see `/run-the-day`. For mid-flight feature additions, see `/special-order` (it feeds into `sell-slice`).
 
 ---
 
@@ -53,9 +53,9 @@ Each subagent lives in its own file under `./agents/`. **Read the file before di
 
 | Stage `type` | Sub-skill (path) |
 |---|---|
-| `design-system` | [`skills/sub-disciplines/init-design-system/SKILL.md`](../sub-disciplines/init-design-system/SKILL.md) |
-| `ci-cd` | [`skills/sub-disciplines/scaffold-ci-cd/SKILL.md`](../sub-disciplines/scaffold-ci-cd/SKILL.md) |
-| `env-setup` | [`skills/sub-disciplines/setup-environment/SKILL.md`](../sub-disciplines/setup-environment/SKILL.md) |
+| `design-system` | [`skills/set-display-case/SKILL.md`](../sub-disciplines/set-display-case/SKILL.md) |
+| `ci-cd` | [`skills/final-quality-check/SKILL.md`](../sub-disciplines/final-quality-check/SKILL.md) |
+| `env-setup` | [`skills/open-the-shop/SKILL.md`](../sub-disciplines/open-the-shop/SKILL.md) |
 
 ---
 
@@ -65,7 +65,7 @@ Each subagent lives in its own file under `./agents/`. **Read the file before di
 - One or more `docs/plans/stage_<n>_*.md` exist.
 - Clean git working tree, OR explicit user OK to proceed dirty.
 
-If `docs/plans/` is missing, instruct the user to run `/plan-phases` first and stop.
+If `docs/plans/` is missing, instruct the user to run `/cook-pizzas` first and stop.
 
 ---
 
@@ -78,7 +78,7 @@ If `bytheslice.config.json` exists at the project root, the `rules-loader` agent
 - `mcps.*` — declarative MCP availability
 - `visualReview.tools` / `visualReview.vizzly` — passed to `aggregating-test-reviewer`
 
-See [`skills/setup/references/bytheslice-config-schema.md`](../setup/references/bytheslice-config-schema.md) for the full schema.
+See [`skills/setup-shop/references/bytheslice-config-schema.md`](../setup-shop/references/bytheslice-config-schema.md) for the full schema.
 
 ---
 
@@ -88,9 +88,9 @@ Phase 4 routes the work based on the active stage's `type:` frontmatter:
 
 | `type:` | Phase 4 path |
 |---|---|
-| `design-system` | Dispatch the `init-design-system` sub-skill. Skip Phase 4 internal implementer. |
-| `ci-cd` | Dispatch the `scaffold-ci-cd` sub-skill. Skip Phase 4 internal implementer. |
-| `env-setup` | Dispatch the `setup-environment` sub-skill. Skip Phase 4 internal implementer. |
+| `design-system` | Dispatch the `set-display-case` sub-skill. Skip Phase 4 internal implementer. |
+| `ci-cd` | Dispatch the `final-quality-check` sub-skill. Skip Phase 4 internal implementer. |
+| `env-setup` | Dispatch the `open-the-shop` sub-skill. Skip Phase 4 internal implementer. |
 | `frontend` | Run the internal frontend pipeline (4.1 → 4.6). |
 | `backend` | Dispatch the internal `implementer` agent. |
 | `full-stack` | Dispatch the internal `implementer` agent (covers both UI and API code). |
@@ -230,7 +230,7 @@ Same fix loop as Phase 6:
 
 Dispatch `ci-cd-guardrails` with the slice diff + workflow inventory + E2E inventory + acceptance test. Wait for its structured verdict.
 
-- `verdict: fail` with `infrastructure_intact: false` → run `scaffold-ci-cd` sub-skill, then re-dispatch.
+- `verdict: fail` with `infrastructure_intact: false` → run `final-quality-check` sub-skill, then re-dispatch.
 - `verdict: fail` with `workflow_violations` → send violations back to implementer to remove regressions, then re-dispatch.
 - Missing E2E coverage → send proposed specs back to implementer to apply, then re-dispatch.
 - **Do not open the PR until verdict is `pass`.**
@@ -242,19 +242,19 @@ When every in-scope item is `[x]`:
 1. Flip stage status `In Progress` → `Completed` in `docs/plans/00_master_checklist.md` (commit this change on the slice branch).
 2. Confirm the slice branch has every commit it needs and the working tree is clean (`git status --short` empty).
 3. Walk the **Completion Checklist** (below). The slice is not "ready to ship" until every box up through §4 is `[x]`.
-4. Report to the user using the **Progress Report Format**, ending with the **Handoff to `/ship-pr`** message.
+4. Report to the user using the **Progress Report Format**, ending with the **Handoff to `/box-it-up`** message.
 
-**This skill stops here — at "slice committed locally, ready for review."** It does NOT push, open a PR, watch CI, merge, or clean up. That's `/bytheslice:ship-pr`'s job, intentionally separated so you can run a manual visual UAT, do a local code review, or rebase against fresh main before deciding to ship.
+**This skill stops here — at "slice committed locally, ready for review."** It does NOT push, open a PR, watch CI, merge, or clean up. That's `/bytheslice:box-it-up`'s job, intentionally separated so you can run a manual visual UAT, do a local code review, or rebase against fresh main before deciding to ship.
 
-#### Handoff to `/ship-pr`
+#### Handoff to `/box-it-up`
 
 End your final message with:
 
 > Slice complete on branch `<branch>` — every gate passed locally, master checklist updated, slice committed.
 >
-> **Next:** Review the diff at your pace (visual UAT, manual code review, anything else). When you're ready to ship, run `/bytheslice:ship-pr`. It will run pre-flight safety checks, push, open the PR, watch CI (with an auto-fix loop on red), pause for your merge approval, and on approval merge + sync main + delete local and remote branch + remove the worktree.
+> **Next:** Review the diff at your pace (visual UAT, manual code review, anything else). When you're ready to ship, run `/bytheslice:box-it-up`. It will run pre-flight safety checks, push, open the PR, watch CI (with an auto-fix loop on red), pause for your merge approval, and on approval merge + sync main + delete local and remote branch + remove the worktree.
 >
-> If CI fails on the PR, `/ship-pr`'s `ci-fix-attempter` agent applies targeted fixes for up to 3 attempts before bubbling to you — so this hand-off is genuinely "review and walk away" if you want it to be.
+> If CI fails on the PR, `/box-it-up`'s `ci-fix-attempter` agent applies targeted fixes for up to 3 attempts before bubbling to you — so this hand-off is genuinely "review and walk away" if you want it to be.
 
 ---
 
@@ -291,13 +291,13 @@ After each task and at stage closeout:
 - **Always provide a recommended answer in available options** at every elicitation point.
 - **Phase 6 (basic-checks) and Phase 7 (aggregating-test-review) gate the output summary.** No "stage complete" report until both pass (or are intentionally skipped per stage type).
 - **Strip `// INSTRUMENT` lines** before final commit if `debug-instrumenter` ran.
-- **Session goal is set at most once per slice run, after Phase 2 authorization.** Phase 2.5 enforces the parent-goal pre-check; if `/run-pipeline` already set a plan-level goal, the slice-level goal is skipped. Never overwrite an active parent goal with a narrower slice-level condition.
+- **Session goal is set at most once per slice run, after Phase 2 authorization.** Phase 2.5 enforces the parent-goal pre-check; if `/run-the-day` already set a plan-level goal, the slice-level goal is skipped. Never overwrite an active parent goal with a narrower slice-level condition.
 
 ---
 
 ## Completion Checklist
 
-Run at the end of every slice. Do not report the slice "ready to ship" until every box up through §4 is `[x]`. Sections §5 (PR + CI) and §6 (cleanup) belong to `/bytheslice:ship-pr` and are not this skill's responsibility.
+Run at the end of every slice. Do not report the slice "ready to ship" until every box up through §4 is `[x]`. Sections §5 (PR + CI) and §6 (cleanup) belong to `/bytheslice:box-it-up` and are not this skill's responsibility.
 
 ### 1. Plan Tasks Complete
 
@@ -349,16 +349,16 @@ Skip only if the slice is documentation-only or has zero observable behavior cha
 
 ---
 
-### Handed off to `/bytheslice:ship-pr` — NOT this skill's responsibility
+### Handed off to `/bytheslice:box-it-up` — NOT this skill's responsibility
 
-The following sections live in [`/bytheslice:ship-pr`](../ship-pr/SKILL.md)'s Completion Checklist. They are listed here for cross-reference only; this skill does not run them.
+The following sections live in [`/bytheslice:box-it-up`](../box-it-up/SKILL.md)'s Completion Checklist. They are listed here for cross-reference only; this skill does not run them.
 
-#### 5. PR open + CI green (handled by `/ship-pr` Phase 1–3)
+#### 5. PR open + CI green (handled by `/box-it-up` Phase 1–3)
 - Branch pushed to `origin`; PR open against `main`; PR URL surfaced.
 - `gh pr checks <pr> --watch` returned exit 0 on the latest head SHA.
 - If the auto-fix loop ran, the final attempt cleared green.
 
-#### 6. Merge + Cleanup (handled by `/ship-pr` Phase 4–5)
+#### 6. Merge + Cleanup (handled by `/box-it-up` Phase 4–5)
 - Merge authorized at the user gate; PR state is `MERGED`.
 - Local `main` synced with `--ff-only`.
 - Local + remote slice branch deleted.
@@ -378,4 +378,4 @@ ANTHROPIC_DEFAULT_OPUS_MODEL=<model-id>
 CLAUDE_CODE_SUBAGENT_MODEL=<model-id>   # overrides all sub-agent tiers at once
 ```
 
-See [`skills/setup/references/model-tier-guide.md`](../setup/references/model-tier-guide.md) for the full tier philosophy and per-provider alias resolution.
+See [`skills/setup-shop/references/model-tier-guide.md`](../setup-shop/references/model-tier-guide.md) for the full tier philosophy and per-provider alias resolution.

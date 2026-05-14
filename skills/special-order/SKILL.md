@@ -12,7 +12,7 @@ triggers: ["/bytheslice:special-order", "/special-order", "custom order", "off-m
 
 # Special Order — Add Features Mid-Flight
 
-Bolt new features onto an existing project without restarting from a fresh PRD. Used after `/bytheslice:run-pipeline` has already shipped the original plan, OR for adding ByTheSlice to an existing non-ByTheSlice project.
+Bolt new features onto an existing project without restarting from a fresh PRD. Used after `/bytheslice:run-the-day` has already shipped the original plan, OR for adding ByTheSlice to an existing non-ByTheSlice project.
 
 The flow auto-detects which state the project is in and either runs the addition flow directly or redirects you to the right entry point first.
 
@@ -20,23 +20,23 @@ The flow auto-detects which state the project is in and either runs the addition
 
 | File | Purpose |
 | --- | --- |
-| [`skills/plan-phases/references/stage-frontmatter-contract.md`](../plan-phases/references/stage-frontmatter-contract.md) | YAML frontmatter shape every new stage file must match |
-| [`skills/plan-phases/references/templates.md`](../plan-phases/references/templates.md) | Stage plan + master checklist templates |
-| [`skills/plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md`](../plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md) | Auto-injected if any new feature is auth-tagged |
-| [`skills/setup/references/bytheslice-config-schema.md`](../setup/references/bytheslice-config-schema.md) | Honors `stages.maxTasksPerStage` from `bytheslice.config.json` |
+| [`skills/cook-pizzas/references/stage-frontmatter-contract.md`](../cook-pizzas/references/stage-frontmatter-contract.md) | YAML frontmatter shape every new stage file must match |
+| [`skills/cook-pizzas/references/templates.md`](../cook-pizzas/references/templates.md) | Stage plan + master checklist templates |
+| [`skills/cook-pizzas/references/canned-stages/auth-dev-mode-switcher-task.md`](../cook-pizzas/references/canned-stages/auth-dev-mode-switcher-task.md) | Auto-injected if any new feature is auth-tagged |
+| [`skills/setup-shop/references/bytheslice-config-schema.md`](../setup-shop/references/bytheslice-config-schema.md) | Honors `stages.maxTasksPerStage` from `bytheslice.config.json` |
 
 ## Sub-agents
 
 | When | File | Model | Effort |
 |---|---|---|---|
 | Step 1 (always) | [`agents/complexity-assessor.md`](agents/complexity-assessor.md) | `sonnet` | medium |
-| Step 2 (always) | [`../plan-phases/agents/phased-plan-writer.md`](../plan-phases/agents/phased-plan-writer.md) | `sonnet` | medium |
+| Step 2 (always) | [`../cook-pizzas/agents/phased-plan-writer.md`](../cook-pizzas/agents/phased-plan-writer.md) | `sonnet` | medium |
 
 `phased-plan-writer` runs in **incremental mode** for this skill (no PRD context — receives the user's feature description + complexity-assessor output + existing-stages context directly). See its incremental-mode block.
 
 ## Project Config
 
-Honor these `bytheslice.config.json` keys when present (see [`skills/setup/references/bytheslice-config-schema.md`](../setup/references/bytheslice-config-schema.md)):
+Honor these `bytheslice.config.json` keys when present (see [`skills/setup-shop/references/bytheslice-config-schema.md`](../setup-shop/references/bytheslice-config-schema.md)):
 
 - `stages.maxTasksPerStage` — passed to phased-plan-writer for the new stage(s)
 - `modelTiers.complexityAssessor` — overrides this skill's complexity-assessor model
@@ -52,9 +52,9 @@ Run this detection before doing any work. It picks one of three paths.
    No  → continue to step 2
 
 2. Does package.json exist in the working directory?
-   Yes → Path B (existing app, not ByTheSlice — redirect to /bytheslice:setup
-                  for config + CI/CD baseline before re-invoking add-feature)
-   No  → Path C (no project on disk — redirect to /bytheslice:setup for
+   Yes → Path B (existing app, not ByTheSlice — redirect to /bytheslice:setup-shop
+                  for config + CI/CD baseline before re-invoking special-order)
+   No  → Path C (no project on disk — redirect to /bytheslice:setup-shop for
                   full bootstrap before any feature work)
 ```
 
@@ -141,13 +141,13 @@ If the user requests edits, re-dispatch the assessor with the user's feedback. C
 
 ### Phase 4 — Write stage files
 
-Read `../plan-phases/agents/phased-plan-writer.md` and dispatch it ONCE PER NEW STAGE in **incremental mode**. Pass:
+Read `../cook-pizzas/agents/phased-plan-writer.md` and dispatch it ONCE PER NEW STAGE in **incremental mode**. Pass:
 - Stage number, short name, output path (`docs/plans/stage_<N>_<slug>.md`)
 - One-sentence goal
 - `mvp:` flag from Q-mvp-band
 - Scope: in-scope tasks list (≤ `stages.maxTasksPerStage`, default 6)
 - Context: feature description + complexity-assessor rationale + relationship to existing features + similar-stage frontmatter for pattern matching
-- Auth-tagged? If yes, the writer auto-injects the dev-mode auth helpers task — localhost auto-login (opt-in via `DEV_AUTH_BYPASS`) + user switcher banner, as one combined task (per [`auth-dev-mode-switcher-task.md`](../plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md))
+- Auth-tagged? If yes, the writer auto-injects the dev-mode auth helpers task — localhost auto-login (opt-in via `DEV_AUTH_BYPASS`) + user switcher banner, as one combined task (per [`auth-dev-mode-switcher-task.md`](../cook-pizzas/references/canned-stages/auth-dev-mode-switcher-task.md))
 - Dependencies: stages this new feature depends on (from `depends_on:` frontmatter — usually `[]` or just the design-system + db-schema foundation stages already built)
 - The project rules file path
 
@@ -182,7 +182,7 @@ Use the same checklist row format as the existing stages in the file. Do NOT alt
    - Stage every new `docs/plans/stage_<n>_*.md` file plus the modified `docs/plans/00_master_checklist.md`
    - Conventional commit: `chore: add stages <lo>-<hi> (<feature names>)` with a body listing each new stage and its `type:` / `mvp:` flag
    - Working tree should be clean on the branch after this commit
-2. **Do NOT push or open a PR from this skill.** That's `/bytheslice:ship-pr`'s responsibility — keeping the same separation as `/deliver-stage`.
+2. **Do NOT push or open a PR from this skill.** That's `/bytheslice:box-it-up`'s responsibility — keeping the same separation as `/sell-slice`.
 3. Print the handoff message:
 
 > Stage(s) added to `docs/plans/00_master_checklist.md` and committed on branch `chore/add-stages-<lo>-<hi>`:
@@ -191,11 +191,11 @@ Use the same checklist row format as the existing stages in the file. Do NOT alt
 > - `stage_30_admin-csv-export.md` (backend, mvp)
 >
 > **Next steps (pick one):**
-> - **Ship the plan changes as a chore PR first** (recommended for clean separation): run `/bytheslice:ship-pr`. The plan-only PR opens, CI runs (lint / link-check on the new files), you approve merge, the chore branch is cleaned up. Then start a fresh chat and run `/bytheslice:deliver-stage` to ship the first new stage.
-> - **Skip the chore PR — start delivery immediately**: switch back to `main` (`git checkout main`), then run `/bytheslice:deliver-stage`. The first slice's PR will mix the new plan files with the implementation.
-> - **Multi-stage autonomous delivery (experimental)**: `/bytheslice:run-pipeline` drives every new stage end-to-end with per-stage approval pauses. Best for batches you want shipped without per-stage babysitting.
+> - **Ship the plan changes as a chore PR first** (recommended for clean separation): run `/bytheslice:box-it-up`. The plan-only PR opens, CI runs (lint / link-check on the new files), you approve merge, the chore branch is cleaned up. Then start a fresh chat and run `/bytheslice:sell-slice` to ship the first new stage.
+> - **Skip the chore PR — start delivery immediately**: switch back to `main` (`git checkout main`), then run `/bytheslice:sell-slice`. The first slice's PR will mix the new plan files with the implementation.
+> - **Multi-stage autonomous delivery (experimental)**: `/bytheslice:run-the-day` drives every new stage end-to-end with per-stage approval pauses. Best for batches you want shipped without per-stage babysitting.
 >
-> All new stages will go through the full CI gate (`@feature` + `@regression-core` + `@visual` + design-system-compliance + db-schema-drift if applicable). Visual + design-system-compliance gates require the project to have already run `/bytheslice:scaffold-ci-cd` — if absent, the orchestrator will surface that and ask whether to scaffold first.
+> All new stages will go through the full CI gate (`@feature` + `@regression-core` + `@visual` + design-system-compliance + db-schema-drift if applicable). Visual + design-system-compliance gates require the project to have already run `/bytheslice:final-quality-check` — if absent, the orchestrator will surface that and ask whether to scaffold first.
 
 Return.
 
@@ -209,21 +209,21 @@ Print to the user:
 
 > This project has a `package.json` but no `docs/plans/` — it wasn't built with ByTheSlice.
 >
-> Before adding features through ByTheSlice, run `/bytheslice:setup` first. It will:
+> Before adding features through ByTheSlice, run `/bytheslice:setup-shop` first. It will:
 > 1. Drop in a per-project `bytheslice.config.json` (Step 2 of Setup)
-> 2. Check for CI/CD baseline and offer to scaffold it via `/bytheslice:scaffold-ci-cd` if missing (Step 3 of Setup, new in v2.2)
+> 2. Check for CI/CD baseline and offer to scaffold it via `/bytheslice:final-quality-check` if missing (Step 3 of Setup, new in v2.2)
 >
-> After setup completes, re-invoke `/bytheslice:add-feature` and I'll detect the new state and proceed with Path A — but note: without an existing `docs/plans/` and a master checklist of completed work, I'll be working with a much narrower context. You may want to first run `/bytheslice:write-prd` against the EXISTING app's known surface area to give the complexity assessor better grounding.
+> After setup completes, re-invoke `/bytheslice:special-order` and I'll detect the new state and proceed with Path A — but note: without an existing `docs/plans/` and a master checklist of completed work, I'll be working with a much narrower context. You may want to first run `/bytheslice:create-menu` against the EXISTING app's known surface area to give the complexity assessor better grounding.
 
 Bubble HITL:
 
 ```yaml
 status: needs_human
-summary: Existing project detected (has package.json) but not ByTheSlice-built (no docs/plans/). Redirecting to /bytheslice:setup before feature addition can proceed.
+summary: Existing project detected (has package.json) but not ByTheSlice-built (no docs/plans/). Redirecting to /bytheslice:setup-shop before feature addition can proceed.
 artifacts: []
 needs_human: true
 hitl_category: prd_ambiguity
-hitl_question: "Run /bytheslice:setup first to add the config + CI/CD baseline, then re-invoke /bytheslice:add-feature?"
+hitl_question: "Run /bytheslice:setup-shop first to add the config + CI/CD baseline, then re-invoke /bytheslice:special-order?"
 hitl_context: "No docs/plans/00_master_checklist.md found in working directory; package.json present at <path>."
 ```
 
@@ -237,17 +237,17 @@ Then return.
 
 Print:
 
-> No project detected in this directory. Run `/bytheslice:setup` first — it will scaffold a fresh Next.js single-app or Turborepo monorepo (Flow B) and drop in the per-project config. Once a project exists, run `/bytheslice:write-prd` for new builds, or `/bytheslice:add-feature` once you have a master checklist to extend.
+> No project detected in this directory. Run `/bytheslice:setup-shop` first — it will scaffold a fresh Next.js single-app or Turborepo monorepo (Flow B) and drop in the per-project config. Once a project exists, run `/bytheslice:create-menu` for new builds, or `/bytheslice:special-order` once you have a master checklist to extend.
 
 Bubble HITL:
 
 ```yaml
 status: needs_human
-summary: No project on disk. Redirecting to /bytheslice:setup for project bootstrap.
+summary: No project on disk. Redirecting to /bytheslice:setup-shop for project bootstrap.
 artifacts: []
 needs_human: true
 hitl_category: prd_ambiguity
-hitl_question: "Run /bytheslice:setup to scaffold a new project, then run /bytheslice:write-prd to start the full PRD-to-app flow?"
+hitl_question: "Run /bytheslice:setup-shop to scaffold a new project, then run /bytheslice:create-menu to start the full PRD-to-app flow?"
 hitl_context: "Working directory has no package.json and no docs/plans/."
 ```
 
@@ -258,10 +258,10 @@ Then return.
 ## Hard Constraints
 
 - **Never invent a master checklist.** Only Path A operates on existing `docs/plans/`. Paths B and C ALWAYS redirect to setup.
-- **Never alter completed stage rows.** add-feature only APPENDS new stages. Existing stages are read-only context.
+- **Never alter completed stage rows.** special-order only APPENDS new stages. Existing stages are read-only context.
 - **One slice per PR is still the rule.** Pass `pr_style` from Q-pr-style to phased-plan-writer; default is one PR per stage.
 - **Honor `stages.maxTasksPerStage`** from `bytheslice.config.json` (default 6). The complexity-assessor uses this when proposing breakdowns.
-- **Auth-tagged stages must inject the dev-mode auth helpers task** — one combined task with two sub-bullets (localhost auto-login + user switcher banner) that ship together. This is mandatory per [`auth-dev-mode-switcher-task.md`](../plan-phases/references/canned-stages/auth-dev-mode-switcher-task.md). The phased-plan-writer handles this in incremental mode the same way it does in plan-phases mode.
+- **Auth-tagged stages must inject the dev-mode auth helpers task** — one combined task with two sub-bullets (localhost auto-login + user switcher banner) that ship together. This is mandatory per [`auth-dev-mode-switcher-task.md`](../cook-pizzas/references/canned-stages/auth-dev-mode-switcher-task.md). The phased-plan-writer handles this in incremental mode the same way it does in cook-pizzas mode.
 - **Out-of-scope guard.** If the user proposes features that contradict the original PRD's "Out of Scope" section (Section 7), surface as HITL `prd_ambiguity` BEFORE writing any stage files.
 
 ---
@@ -275,10 +275,10 @@ Then return.
 [ ] (Path A only) Assessment surfaced to user; user authorization received
 [ ] (Path A only) phased-plan-writer dispatched once per new stage (incremental mode)
 [ ] (Path A only) Master checklist updated with new stage rows (existing rows untouched)
-[ ] (Path A only) New plan files + master-checklist update committed on a `chore/add-stages-<lo>-<hi>` branch (no push, no PR — handed off to `/bytheslice:ship-pr`)
-[ ] (Path A only) Handoff message printed with the three next-step options (`/ship-pr` for plan-only chore PR / direct `/deliver-stage` / `/run-pipeline` for batch)
-[ ] (Path B only) HITL bubble surfaced; user redirected to /bytheslice:setup
-[ ] (Path C only) HITL bubble surfaced; user redirected to /bytheslice:setup for bootstrap
+[ ] (Path A only) New plan files + master-checklist update committed on a `chore/add-stages-<lo>-<hi>` branch (no push, no PR — handed off to `/bytheslice:box-it-up`)
+[ ] (Path A only) Handoff message printed with the three next-step options (`/box-it-up` for plan-only chore PR / direct `/sell-slice` / `/run-the-day` for batch)
+[ ] (Path B only) HITL bubble surfaced; user redirected to /bytheslice:setup-shop
+[ ] (Path C only) HITL bubble surfaced; user redirected to /bytheslice:setup-shop for bootstrap
 
 ---
 

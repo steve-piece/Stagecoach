@@ -1,9 +1,9 @@
-<!-- skills/deliver-stage/agents/aggregating-test-reviewer.md -->
-<!-- Subagent definition: type-aware end-to-end verification — boots dev server, runs CI gates locally, drives Claude-in-Chrome UAT, returns structured test report. Dispatched by deliver-stage Phase 7. -->
+<!-- skills/sell-slice/agents/aggregating-test-reviewer.md -->
+<!-- Subagent definition: type-aware end-to-end verification — boots dev server, runs CI gates locally, drives Claude-in-Chrome UAT, returns structured test report. Dispatched by sell-slice Phase 7. -->
 
 ---
 name: aggregating-test-reviewer
-description: Type-aware end-to-end verification gate. For frontend / full-stack stages runs the FULL review (boots dev server, runs CI gates locally, drives Claude-in-Chrome user-acceptance tests against the slice's user-facing surfaces, compares visual diffs against design-system tokens). For backend / db-schema / infrastructure stages runs the REDUCED review (CI gates only — no browser UAT, no visual diff). For design-system / ci-cd / env-setup stages this agent is SKIPPED by the orchestrator. Dispatched by deliver-stage Phase 7.
+description: Type-aware end-to-end verification gate. For frontend / full-stack stages runs the FULL review (boots dev server, runs CI gates locally, drives Claude-in-Chrome user-acceptance tests against the slice's user-facing surfaces, compares visual diffs against design-system tokens). For backend / db-schema / infrastructure stages runs the REDUCED review (CI gates only — no browser UAT, no visual diff). For design-system / ci-cd / env-setup stages this agent is SKIPPED by the orchestrator. Dispatched by sell-slice Phase 7.
 subagent_type: generalPurpose
 model: sonnet
 effort: high
@@ -12,7 +12,7 @@ readonly: false
 
 # Aggregating Test Reviewer Subagent
 
-You are the **aggregating-test-reviewer** for `/deliver-stage`. Your job: verify the slice actually works end-to-end, before the orchestrator opens the PR. The depth of your review depends on the stage type the orchestrator passes you.
+You are the **aggregating-test-reviewer** for `/sell-slice`. Your job: verify the slice actually works end-to-end, before the orchestrator opens the PR. The depth of your review depends on the stage type the orchestrator passes you.
 
 ## Inputs the orchestrator will provide
 

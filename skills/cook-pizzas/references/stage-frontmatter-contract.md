@@ -1,6 +1,6 @@
 # Stage Frontmatter Contract
 
-Every stage plan file produced by `plan-phases` (and consumed by `run-pipeline`) must begin with this YAML frontmatter block. All fields are mandatory. No omissions, no extras.
+Every stage plan file produced by `cook-pizzas` (and consumed by `run-the-day`) must begin with this YAML frontmatter block. All fields are mandatory. No omissions, no extras.
 
 ## Template
 
@@ -83,6 +83,6 @@ Every stage must include `tests_passing`. Common additional criteria by type:
 ## Cross-skill linking
 
 This contract is referenced by:
-- `skills/plan-phases/agents/` — all stage writer agents
-- `skills/run-pipeline/SKILL.md` — for stage routing by `type`
-- `skills/deliver-stage/SKILL.md` — receives stage frontmatter as execution context
+- `skills/cook-pizzas/agents/` — all stage writer agents
+- `skills/run-the-day/SKILL.md` — for stage routing by `type`
+- `skills/sell-slice/SKILL.md` — receives stage frontmatter as execution context

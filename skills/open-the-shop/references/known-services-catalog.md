@@ -1,9 +1,9 @@
-<!-- skills/setup-environment/references/known-services-catalog.md -->
-<!-- Extensible catalog mapping env var prefix patterns to external services. Used by setup-environment Phase 1 to detect which services a project requires. To add a new service: append a new entry following the ENTRY FORMAT below. -->
+<!-- skills/open-the-shop/references/known-services-catalog.md -->
+<!-- Extensible catalog mapping env var prefix patterns to external services. Used by open-the-shop Phase 1 to detect which services a project requires. To add a new service: append a new entry following the ENTRY FORMAT below. -->
 
 # Known Services Catalog
 
-This catalog maps environment variable prefix patterns to external service identities. The `setup-environment` skill uses this during Phase 1 (service detection) to group keys by service and generate targeted provisioning checklists.
+This catalog maps environment variable prefix patterns to external service identities. The `open-the-shop` skill uses this during Phase 1 (service detection) to group keys by service and generate targeted provisioning checklists.
 
 ## How to Add a New Service
 

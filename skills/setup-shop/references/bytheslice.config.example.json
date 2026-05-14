@@ -41,22 +41,22 @@
     ]
   },
 
-  // External rule-file imports (skips plan-phases elicitation Q9 when non-empty).
+  // External rule-file imports (skips cook-pizzas elicitation Q9 when non-empty).
   "rules": {
     "imports": [
       // "https://github.com/your-org/agentic-rules/blob/main/monorepo-nextjs/CLAUDE.md"
     ]
   },
 
-  // Bootstrap defaults — used by /bytheslice:setup.
+  // Bootstrap defaults — used by /bytheslice:setup-shop.
   "bootstrap": {
     // "variant": "single-app",
     // "stack": "nextjs",
     // "roadmapFile": "ROADMAP.local.md"
   },
 
-  // Run-pipeline checkpoints — dispatch /walk-platform every N stages
-  // during autonomous multi-stage runs. Read by /bytheslice:run-pipeline.
+  // Run-pipeline checkpoints — dispatch /inspect-display every N stages
+  // during autonomous multi-stage runs. Read by /bytheslice:run-the-day.
   "runPipeline": {
     // "platformWalkEvery": 5,           // 0 = disabled
     // "haltOn": "broken",               // "broken" | "drifted" | "never"

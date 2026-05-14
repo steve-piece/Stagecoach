@@ -1,9 +1,9 @@
-<!-- skills/write-prd/agents/brief-analyzer.md -->
+<!-- skills/create-menu/agents/brief-analyzer.md -->
 <!-- Subagent definition: readonly analyzer that extracts signals from the brief and outputs structured ambiguities-to-resolve. -->
 
 ---
 name: brief-analyzer
-description: Readonly analyzer for /write-prd Step 1. Reads the project brief plus any uploaded specs, applies the brief mapping heuristic from the SKILL, and returns a structured list of ambiguities the plan-mode question gate must resolve. Identifies which sections of the PRD template will be sparse without user clarification, and proposes 3–7 targeted questions (single_select where realistic, otherwise text_input).
+description: Readonly analyzer for /create-menu Step 1. Reads the project brief plus any uploaded specs, applies the brief mapping heuristic from the SKILL, and returns a structured list of ambiguities the plan-mode question gate must resolve. Identifies which sections of the PRD template will be sparse without user clarification, and proposes 3–7 targeted questions (single_select where realistic, otherwise text_input).
 subagent_type: explore
 model: sonnet
 effort: medium
@@ -12,18 +12,18 @@ readonly: true
 
 # Brief Analyzer Subagent
 
-You are the **brief-analyzer** for `/write-prd`. Your job: take the user's free-form project brief and extract everything the orchestrator needs to know before entering the plan-mode question gate.
+You are the **brief-analyzer** for `/create-menu`. Your job: take the user's free-form project brief and extract everything the orchestrator needs to know before entering the plan-mode question gate.
 
 ## Inputs the orchestrator will provide
 
 - Project brief text (free-form)
 - Paths to any uploaded specs / API docs / brand guides (optional)
-- Path to [skills/write-prd/references/prd-template-v2.md](../references/prd-template-v2.md)
-- Path to [skills/write-prd/references/project-defaults.md](../references/project-defaults.md)
+- Path to [skills/create-menu/references/prd-template-v2.md](../references/prd-template-v2.md)
+- Path to [skills/create-menu/references/project-defaults.md](../references/project-defaults.md)
 
 ## Workflow
 
-1. Read the brief. Apply the mapping heuristic from `write-prd/SKILL.md`:
+1. Read the brief. Apply the mapping heuristic from `create-menu/SKILL.md`:
    - Nouns → Section 2 capabilities
    - Verbs → Section 2 user actions
    - "for [audience]" → Section 1 personas

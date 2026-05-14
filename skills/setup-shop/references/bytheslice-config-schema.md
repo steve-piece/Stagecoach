@@ -8,7 +8,7 @@
 <user-project-root>/bytheslice.config.json
 ```
 
-If the file is absent, the plugin uses its built-in defaults (see [`skills/setup/references/model-tier-guide.md`](./model-tier-guide.md) for model defaults). All keys are optional — a config file with `{}` is valid and equivalent to no config.
+If the file is absent, the plugin uses its built-in defaults (see [`skills/setup-shop/references/model-tier-guide.md`](./model-tier-guide.md) for model defaults). All keys are optional — a config file with `{}` is valid and equivalent to no config.
 
 ## Format
 
@@ -61,14 +61,14 @@ When two sources disagree, the higher-precedence source wins. The orchestrator l
     "retrospectiveReviewer": "opus"
   },
 
-  // Per-stage shape preferences for plan-phases + deliver-stage.
+  // Per-stage shape preferences for cook-pizzas + sell-slice.
   "stages": {
     "maxTasksPerStage": 6,            // hard cap per stage; default 6
     "targetFeatureStages": "20-30"    // splitter aims for this band; "10-15" or "30-40" also reasonable
   },
 
-  // Which MCPs the project has installed. Read by deliver-stage (frontend pipeline),
-  // deliver-stage, init-design-system.
+  // Which MCPs the project has installed. Read by sell-slice (frontend pipeline),
+  // sell-slice, set-display-case.
   // If the project rules file ALSO declares MCPs, this config wins.
   "mcps": {
     "shadcn": true,
@@ -79,7 +79,7 @@ When two sources disagree, the higher-precedence source wins. The orchestrator l
     "gitnexus": true
   },
 
-  // Visual review tooling for deliver-stage's visual-reviewer.
+  // Visual review tooling for sell-slice's visual-reviewer.
   // The "tools" array is an ORDERED priority list — the agent uses
   // the first available one. Defaults match the plugin's hardcoded
   // priority: claude-in-chrome > chrome-devtools-mcp > playwright > vizzly.
@@ -98,15 +98,15 @@ When two sources disagree, the higher-precedence source wins. The orchestrator l
     ]
   },
 
-  // External rule-file imports (matches plan-phases elicitation Q9).
-  // When non-empty, plan-phases skips Q9 and uses these directly.
+  // External rule-file imports (matches cook-pizzas elicitation Q9).
+  // When non-empty, cook-pizzas skips Q9 and uses these directly.
   "rules": {
     "imports": [
       // "https://github.com/your-org/agentic-rules/blob/main/monorepo-nextjs/CLAUDE.md"
     ]
   },
 
-  // Bootstrap defaults — used by /bytheslice:setup when present.
+  // Bootstrap defaults — used by /bytheslice:setup-shop when present.
   // If absent, bootstrap asks via plan-mode questions.
   "bootstrap": {
     "variant": "single-app",          // "single-app" | "monorepo"
@@ -115,9 +115,9 @@ When two sources disagree, the higher-precedence source wins. The orchestrator l
   },
 
   // Run-pipeline behavior — periodic platform-walk checkpoints during
-  // autonomous multi-stage runs. Read by /bytheslice:run-pipeline only.
+  // autonomous multi-stage runs. Read by /bytheslice:run-the-day only.
   "runPipeline": {
-    "platformWalkEvery": 5,    // 0 = disabled; positive int = dispatch /walk-platform every N completed stages
+    "platformWalkEvery": 5,    // 0 = disabled; positive int = dispatch /inspect-display every N completed stages
     "haltOn": "broken",        // "broken" (default) | "drifted" | "never" — when to pause for human review
     "checkpointMode": "foreground" // "foreground" (default — visible in progress report) | "background" (logged only)
   }
@@ -154,30 +154,30 @@ Each entry is `{ name: string, promptHint: string }`. Sub-agents that want to es
 
 ### `rules.imports`
 
-URLs to external rule files (the same shape as elicitation Q9). When this array is non-empty, `plan-phases` skips Q9 entirely and uses these imports instead — useful for re-running the planner without re-prompting.
+URLs to external rule files (the same shape as elicitation Q9). When this array is non-empty, `cook-pizzas` skips Q9 entirely and uses these imports instead — useful for re-running the planner without re-prompting.
 
 ### `bootstrap`
 
-Defaults for `/bytheslice:setup`. When present, bootstrap skips its plan-mode question gate and uses these values directly. Useful for repeatable scaffolding (CI / templates).
+Defaults for `/bytheslice:setup-shop`. When present, bootstrap skips its plan-mode question gate and uses these values directly. Useful for repeatable scaffolding (CI / templates).
 
 ### `runPipeline`
 
-Controls periodic platform-walk checkpoints during autonomous multi-stage runs (`/bytheslice:run-pipeline`). Each key is independent — set only what you want to override.
+Controls periodic platform-walk checkpoints during autonomous multi-stage runs (`/bytheslice:run-the-day`). Each key is independent — set only what you want to override.
 
-- **`platformWalkEvery`** *(int, default `0` = disabled)* — dispatch `/bytheslice:walk-platform` every N completed stages. The walk runs **after** the per-stage gate checklist passes for stage N — so a failing gate halts the run before the walk would have run. Recommended values: `5` for 20-stage plans, `10` for plans where individual stages already include heavy per-slice review.
+- **`platformWalkEvery`** *(int, default `0` = disabled)* — dispatch `/bytheslice:inspect-display` every N completed stages. The walk runs **after** the per-stage gate checklist passes for stage N — so a failing gate halts the run before the walk would have run. Recommended values: `5` for 20-stage plans, `10` for plans where individual stages already include heavy per-slice review.
 - **`haltOn`** *(string, default `"broken"`)* — when the walk's `verdict` should pause the autonomous run:
   - `"broken"` *(default)* — pause only when the walk reports `verdict: broken` (conversion flow or auth broken, or >25% of public routes 404/500). The orchestrator prompts the user with `hitl_category: prd_ambiguity` and the walk's top gaps.
   - `"drifted"` — pause on `verdict: drifted` OR `broken`. Stricter; useful when shipping toward a UAT date.
   - `"never"` — log the walk's findings in the progress report but never pause. Truly autonomous.
 - **`checkpointMode`** *(string, default `"foreground"`)* — `"foreground"` includes the walk's verdict + top 3 gaps in the per-stage Progress Report. `"background"` logs the report path silently and omits gap detail from the report unless `haltOn` fires.
 
-The walk is read-only by construction (it never edits code or pushes commits), so the run-pipeline gate state is unaffected by checkpoint dispatch on its own. Only the `haltOn` rule influences whether the run advances.
+The walk is read-only by construction (it never edits code or pushes commits), so the run-the-day gate state is unaffected by checkpoint dispatch on its own. Only the `haltOn` rule influences whether the run advances.
 
-If `platformWalkEvery: 0` (the default), the entire checkpoint flow is a no-op — run-pipeline behaves exactly as it did before this config existed.
+If `platformWalkEvery: 0` (the default), the entire checkpoint flow is a no-op — run-the-day behaves exactly as it did before this config existed.
 
 ## How the plugin reads this file
 
-At session start, every ByTheSlice skill checks for `bytheslice.config.json` at the project root, parses it as JSONC, and merges it with the precedence above. The orchestrator (`/bytheslice:run-pipeline`) logs the resolved settings in its first message so the user sees what's in effect.
+At session start, every ByTheSlice skill checks for `bytheslice.config.json` at the project root, parses it as JSONC, and merges it with the precedence above. The orchestrator (`/bytheslice:run-the-day`) logs the resolved settings in its first message so the user sees what's in effect.
 
 If the file is malformed JSON, the plugin halts with an HITL prompt asking the user to fix it (HITL category: `prd_ambiguity` — closest fit). It does NOT fall through to defaults silently — silent fallthrough on a config error would surprise users.
 

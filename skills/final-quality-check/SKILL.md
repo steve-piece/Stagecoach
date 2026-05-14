@@ -46,7 +46,7 @@ The PR template (Phase 3D) is small enough that the orchestrator writes it direc
 
 | State | Action |
 |---|---|
-| Fully built (every scaffold artifact present and CI green) | Stop. Report "baseline already in place". Recommend `/bytheslice:deliver-stage` for the next slice. |
+| Fully built (every scaffold artifact present and CI green) | Stop. Report "baseline already in place". Recommend `/bytheslice:sell-slice` for the next slice. |
 | Partially built (some artifacts present, others missing) | Run discovery, dispatch only the agents that fill the gaps; never overwrite existing artifacts without surfacing to the user. |
 | Not yet started (clean repo, no `.github/workflows/`) | Run the full pipeline end-to-end. |
 
@@ -77,7 +77,7 @@ Wait for answers before continuing.
 
 ### Phase 2 — Branch Setup
 
-- Create a dedicated branch: `chore/scaffold-ci-cd`.
+- Create a dedicated branch: `chore/final-quality-check`.
 - Never scaffold CI directly on `main` / `master`.
 - Keep this PR minimal: baseline quality + smoke E2E only. No product features.
 
@@ -95,15 +95,15 @@ Each sub-block dispatches its agent, waits for the structured return, and commit
 | F | `branch-protection-writer` | `scripts/setup-branch-protection.sh` (executable) |
 | G | (orchestrator direct) | Project rules file (CLAUDE.md / AGENTS.md) "CI/CD Operational Rules" section populated from `references/prd-ci-cd-checklist.md` |
 
-After each sub-block A–F, run a spec-compliance + code-quality review pass (reuse `deliver-stage/agents/spec-reviewer.md` and `deliver-stage/agents/quality-reviewer.md`). Fix findings before moving to the next sub-block. Sub-block G is a deterministic file write and does not need a review pass.
+After each sub-block A–F, run a spec-compliance + code-quality review pass (reuse `sell-slice/agents/spec-reviewer.md` and `sell-slice/agents/quality-reviewer.md`). Fix findings before moving to the next sub-block. Sub-block G is a deterministic file write and does not need a review pass.
 
 #### Sub-block G — Append CI/CD operational rules to the project rules file
 
 The orchestrator (no subagent dispatch — this is a small, deterministic write similar to sub-block D's PR template):
 
-1. Locate the project rules file. If `plan-phases` ran first, the file already exists at `CLAUDE.md` or `AGENTS.md` per Q12, with a placeholder section labeled "CI/CD Operational Rules — populated by `scaffold-ci-cd`" written by the `rules-assembler` agent.
+1. Locate the project rules file. If `cook-pizzas` ran first, the file already exists at `CLAUDE.md` or `AGENTS.md` per Q12, with a placeholder section labeled "CI/CD Operational Rules — populated by `final-quality-check`" written by the `rules-assembler` agent.
 2. If the placeholder is present, replace its body with the contents of `references/prd-ci-cd-checklist.md` (preserving the `[ ]` checkbox format verbatim — these are runtime gates the user and every agent walk on every PR, not one-time scaffold checks).
-3. If the placeholder is absent (e.g. the project skipped `plan-phases` and ran `/scaffold-ci-cd` directly as an escape hatch), append a new section to the project rules file:
+3. If the placeholder is absent (e.g. the project skipped `cook-pizzas` and ran `/final-quality-check` directly as an escape hatch), append a new section to the project rules file:
    ```markdown
    <!-- bytheslice: ci-cd-operational-rules-start -->
    ## CI/CD Operational Rules
@@ -114,7 +114,7 @@ The orchestrator (no subagent dispatch — this is a small, deterministic write 
    <!-- bytheslice: ci-cd-operational-rules-end -->
    ```
 4. **Idempotent re-runs.** If the section markers already exist, replace the body in place; never duplicate the section. User-edited content between the markers should be surfaced as a conflict via HITL `destructive_operation` rather than overwritten silently.
-5. If neither `CLAUDE.md` nor `AGENTS.md` exists at the project root, create `CLAUDE.md` with just this section plus a one-line precedence header. Surface to the user that a fuller rules file should ideally be assembled by `/plan-phases`.
+5. If neither `CLAUDE.md` nor `AGENTS.md` exists at the project root, create `CLAUDE.md` with just this section plus a one-line precedence header. Surface to the user that a fuller rules file should ideally be assembled by `/cook-pizzas`.
 
 ### Phase 4 — Local Verification Gates
 
@@ -124,7 +124,7 @@ If any gate fails, fix on the same branch before proceeding. The Husky `pre-push
 
 ### Phase 5 — PR + CI/CD
 
-1. Push `chore/scaffold-ci-cd` to remote.
+1. Push `chore/final-quality-check` to remote.
 2. Open the PR via `git-commit-push-pr` / `new-branch-and-pr` skill if available; otherwise `gh pr create`. PR description must list every artifact created.
 3. Wait for CI to complete. If any required check fails, patch on the same branch and push until green.
 4. Once CI is green, merge.
@@ -132,8 +132,8 @@ If any gate fails, fix on the same branch before proceeding. The Husky `pre-push
 ### Phase 6 — Closeout
 
 1. After merge, update local `main`: `git checkout main && git pull --ff-only origin main`.
-2. Delete the local branch: `git branch -d chore/scaffold-ci-cd`.
-3. Delete the remote branch if not auto-deleted: `git push origin --delete chore/scaffold-ci-cd`.
+2. Delete the local branch: `git branch -d chore/final-quality-check`.
+3. Delete the remote branch if not auto-deleted: `git push origin --delete chore/final-quality-check`.
 4. Verify `git status` is clean on `main`.
 5. Remind the user (once) to run `scripts/setup-branch-protection.sh` to enable required status checks on `main`.
 6. Walk the **Completion Checklist** below and confirm every box is `[x]`.
@@ -147,15 +147,15 @@ After Phase 6, report:
 3. Local verification commands and outcomes.
 4. Confirmed presence of all scaffold artifacts (see checklist below).
 5. PR URL and merged commit SHA.
-6. Recommended next E2E flows to add (handed to `deliver-stage`).
+6. Recommended next E2E flows to add (handed to `sell-slice`).
 7. Reminder: run `scripts/setup-branch-protection.sh` once to enable required status checks on `main`.
 
 ## Hard Constraints
 
-- **Never scaffold CI directly on `main` / `master`.** Always use `chore/scaffold-ci-cd`.
+- **Never scaffold CI directly on `main` / `master`.** Always use `chore/final-quality-check`.
 - **Never weaken or remove existing workflows.** This skill adds; it does not subtract. If existing workflows conflict, surface to the user and stop.
 - **Completion checklist is mandatory.** The scaffold is not "done" until every box is `[x]`.
-- **Sub-skill contract.** When invoked as a `type: ci-cd` stage by `deliver-stage`, this skill is the entire stage. After completion, mark the stage `Completed` in `docs/plans/00_master_checklist.md`.
+- **Sub-skill contract.** When invoked as a `type: ci-cd` stage by `sell-slice`, this skill is the entire stage. After completion, mark the stage `Completed` in `docs/plans/00_master_checklist.md`.
 - **Subagent prompts live in `./agents/*.md`.** This SKILL.md is workflow only — never inline subagent prompts here.
 - **No platform-specific rule references.** Do not write "cursor rules" or "claude rules" — use "rules file (cursor or claude)" if the distinction matters, or simply "project rules file".
 
@@ -163,11 +163,11 @@ After Phase 6, report:
 
 Follow this skill whenever the user:
 
-- runs `/scaffold-ci-cd` (escape hatch)
+- runs `/final-quality-check` (escape hatch)
 - says "scaffold ci/cd", "set up CI", "bootstrap quality gates", "set up Playwright + GitHub Actions"
-- has `deliver-stage` reach a `type: ci-cd` stage in the master checklist (auto-dispatch)
+- has `sell-slice` reach a `type: ci-cd` stage in the master checklist (auto-dispatch)
 
-If the repo already has the baseline, stop and recommend `/bytheslice:deliver-stage` instead.
+If the repo already has the baseline, stop and recommend `/bytheslice:sell-slice` instead.
 
 ---
 
@@ -213,7 +213,7 @@ Run this checklist at the end of every run. Do **not** consider the scaffold "do
 
 ### 4. PR Created and Submitted
 
-[ ] All work happened on branch `chore/scaffold-ci-cd` — never on `main`.
+[ ] All work happened on branch `chore/final-quality-check` — never on `main`.
 [ ] PR opened via `git-commit-push-pr` / `new-branch-and-pr` skill or `gh pr create`.
 [ ] PR description lists every artifact created.
 [ ] PR is targeted at `main` and is **not** draft.
@@ -222,7 +222,7 @@ Run this checklist at the end of every run. Do **not** consider the scaffold "do
 
 [ ] All required GitHub Actions checks have completed (no `pending` / `queued`).
 [ ] Every required check is green. No skipped checks counted as passing.
-[ ] If any check failed: read failing job logs, patch on `chore/scaffold-ci-cd`, push, repeat until all checks pass.
+[ ] If any check failed: read failing job logs, patch on `chore/final-quality-check`, push, repeat until all checks pass.
 [ ] Final CI run reflects the latest commit on the PR head, not a stale SHA.
 
 ### 6. Branch Cleanup and Return to Main
@@ -232,12 +232,12 @@ Only after CI is fully green and the PR is merged.
 [ ] PR merged into `main`.
 [ ] Local `main` updated: `git checkout main && git pull --ff-only origin main`.
 [ ] Confirm scaffold commits are present on `main` (`git log --oneline | head`).
-[ ] Local `chore/scaffold-ci-cd` branch deleted: `git branch -d chore/scaffold-ci-cd`.
-[ ] Remote `chore/scaffold-ci-cd` deleted: `git push origin --delete chore/scaffold-ci-cd` (skip if auto-deleted).
+[ ] Local `chore/final-quality-check` branch deleted: `git branch -d chore/final-quality-check`.
+[ ] Remote `chore/final-quality-check` deleted: `git push origin --delete chore/final-quality-check` (skip if auto-deleted).
 [ ] If a worktree was used: `git worktree remove <path>` and `git worktree prune`.
 [ ] Final `git status` shows clean tree on `main`.
 [ ] User reminded once to run `scripts/setup-branch-protection.sh`.
-[ ] If invoked as a `type: ci-cd` stage by `deliver-stage`, `docs/plans/00_master_checklist.md` row flipped to `Completed`.
+[ ] If invoked as a `type: ci-cd` stage by `sell-slice`, `docs/plans/00_master_checklist.md` row flipped to `Completed`.
 
 ### Done Criteria
 

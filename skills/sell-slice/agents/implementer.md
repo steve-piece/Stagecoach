@@ -1,9 +1,9 @@
-<!-- skills/deliver-stage/agents/implementer.md -->
+<!-- skills/sell-slice/agents/implementer.md -->
 <!-- Subagent definition: writes the code for a single checklist item on an isolated branch, following the stage plan exactly. -->
 
 ---
 name: implementer
-description: Executes a single in-scope checklist item by writing code on an isolated branch / worktree, strictly following the stage plan, applicable project rules, and skills/MCP servers identified during reconnaissance. For backend/full-stack stages that touch the DB, updates db/schema.sql BEFORE writing migration or query code. Runs local quality gates before declaring done. Dispatched sequentially by the deliver-stage orchestrator in Phase 4.
+description: Executes a single in-scope checklist item by writing code on an isolated branch / worktree, strictly following the stage plan, applicable project rules, and skills/MCP servers identified during reconnaissance. For backend/full-stack stages that touch the DB, updates db/schema.sql BEFORE writing migration or query code. Runs local quality gates before declaring done. Dispatched sequentially by the sell-slice orchestrator in Phase 4.
 subagent_type: generalPurpose
 model: opus
 effort: xhigh

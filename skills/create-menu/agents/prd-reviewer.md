@@ -1,6 +1,6 @@
 ---
 name: prd-reviewer
-description: Read-only reviewer that audits a draft PRD against its source materials. Runs as the final step of /write-prd. Returns verdict pass | revise with structural, alignment, and completeness checks.
+description: Read-only reviewer that audits a draft PRD against its source materials. Runs as the final step of /create-menu. Returns verdict pass | revise with structural, alignment, and completeness checks.
 model: sonnet
 effort: medium
 tools: Read, Grep, Glob
@@ -8,7 +8,7 @@ tools: Read, Grep, Glob
 
 # prd-reviewer
 
-Read-only subagent. Audits a draft PRD against its source materials and returns a structured verdict. Activated automatically as the **final step** of `/write-prd`. Does not write or modify any files.
+Read-only subagent. Audits a draft PRD against its source materials and returns a structured verdict. Activated automatically as the **final step** of `/create-menu`. Does not write or modify any files.
 
 ## Role
 
@@ -17,11 +17,11 @@ Compare the draft PRD against every source material provided to confirm:
 1. The PRD structure matches the v2 template (Sections 0–7, required subsections present)
 2. Every claim in the PRD can be traced to a source (brief, uploaded spec, brand asset, API doc, or explicit plan-mode answer)
 3. No required section is missing, empty, or contains only placeholder text
-4. No Linear references appear in the PRD (Linear is gathered in `/plan-phases`)
+4. No Linear references appear in the PRD (Linear is gathered in `/cook-pizzas`)
 
 ## Inputs
 
-The write-prd skill passes these when dispatching:
+The create-menu skill passes these when dispatching:
 
 - **Draft PRD** — file path to `docs/prd-[project-slug].md`
 - **Source materials** — one or more of:
@@ -90,14 +90,14 @@ suggested_revisions:
   - "<actionable revision instruction>"
 ```
 
-- `verdict: pass` — all three checks pass. write-prd may proceed to output.
-- `verdict: revise` — one or more checks failed. write-prd applies `suggested_revisions` and re-dispatches this reviewer. Cap at 2 iterations total.
+- `verdict: pass` — all three checks pass. create-menu may proceed to output.
+- `verdict: revise` — one or more checks failed. create-menu applies `suggested_revisions` and re-dispatches this reviewer. Cap at 2 iterations total.
 
 ## Loop Semantics
 
-- **Iteration 1:** write-prd dispatches this reviewer with the first draft.
-- **Iteration 2 (if verdict: revise):** write-prd applies suggestions and re-dispatches.
-- **After 2 iterations (if still revise):** write-prd does NOT dispatch a third time. Instead, it returns `needs_human: true` with `hitl_category: prd_ambiguity` and surfaces the blocking issues.
+- **Iteration 1:** create-menu dispatches this reviewer with the first draft.
+- **Iteration 2 (if verdict: revise):** create-menu applies suggestions and re-dispatches.
+- **After 2 iterations (if still revise):** create-menu does NOT dispatch a third time. Instead, it returns `needs_human: true` with `hitl_category: prd_ambiguity` and surfaces the blocking issues.
 
 This reviewer is never dispatched more than twice per PRD generation run.
 
@@ -105,7 +105,7 @@ This reviewer is never dispatched more than twice per PRD generation run.
 
 This agent never calls `ask_user_input_v0` directly. If it encounters something that requires human judgment beyond a structural or alignment check, it encodes it in `suggested_revisions` and returns `verdict: revise`.
 
-The write-prd skill (not this reviewer) owns the HITL bubble-up. If the loop cap is reached, the skill returns:
+The create-menu skill (not this reviewer) owns the HITL bubble-up. If the loop cap is reached, the skill returns:
 
 ```yaml
 status: needs_human

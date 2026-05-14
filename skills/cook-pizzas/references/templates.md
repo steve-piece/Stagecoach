@@ -2,7 +2,7 @@
 
 ## Stage Frontmatter Template
 
-Every stage file produced by `plan-phases` must begin with this YAML frontmatter. See `references/stage-frontmatter-contract.md` for full field definitions.
+Every stage file produced by `cook-pizzas` must begin with this YAML frontmatter. See `references/stage-frontmatter-contract.md` for full field definitions.
 
 ```yaml
 ---

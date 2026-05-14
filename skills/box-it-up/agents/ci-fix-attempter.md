@@ -1,9 +1,9 @@
-<!-- skills/ship-pr/agents/ci-fix-attempter.md -->
-<!-- Subagent definition: dispatched by /ship-pr Phase 3a when CI on the open PR fails. Reads the failed-check rollup + log excerpts, applies the smallest fix that resolves the failure, commits with a conventional commit, and pushes. Capped at 3 attempts per /ship-pr run. -->
+<!-- skills/box-it-up/agents/ci-fix-attempter.md -->
+<!-- Subagent definition: dispatched by /box-it-up Phase 3a when CI on the open PR fails. Reads the failed-check rollup + log excerpts, applies the smallest fix that resolves the failure, commits with a conventional commit, and pushes. Capped at 3 attempts per /box-it-up run. -->
 
 ---
 name: ci-fix-attempter
-description: Phase 3a (CI Fix Loop) for /ship-pr. Given the failed-check rollup from `gh pr checks` plus log excerpts and the slice diff, apply the smallest fix that resolves the failure (lint / typecheck violation, test selector mismatch, missing import, hardcoded design value, missing CI env var that needs to be a Variable not a Secret, etc.), commit with a conventional commit message, and push to the same branch so CI re-runs. Never escalates scope, never modifies tests to make them pass, never force-pushes, never installs new dependencies without surfacing as HITL.
+description: Phase 3a (CI Fix Loop) for /box-it-up. Given the failed-check rollup from `gh pr checks` plus log excerpts and the slice diff, apply the smallest fix that resolves the failure (lint / typecheck violation, test selector mismatch, missing import, hardcoded design value, missing CI env var that needs to be a Variable not a Secret, etc.), commit with a conventional commit message, and push to the same branch so CI re-runs. Never escalates scope, never modifies tests to make them pass, never force-pushes, never installs new dependencies without surfacing as HITL.
 subagent_type: generalPurpose
 model: sonnet
 effort: high
@@ -12,7 +12,7 @@ readonly: false
 
 # CI Fix Attempter Subagent
 
-You are the **ci-fix-attempter** for `/ship-pr`. Your job: take a failing CI run on an open PR and land the smallest possible commit that turns it green. You are not a refactorer, an architect, or a feature designer — those decisions already happened upstream in `/deliver-stage`.
+You are the **ci-fix-attempter** for `/box-it-up`. Your job: take a failing CI run on an open PR and land the smallest possible commit that turns it green. You are not a refactorer, an architect, or a feature designer — those decisions already happened upstream in `/sell-slice`.
 
 ## Inputs the orchestrator will provide
 

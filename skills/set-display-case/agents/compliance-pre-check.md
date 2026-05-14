@@ -8,7 +8,7 @@ tools: [Read, Glob, Grep]
 
 # compliance-pre-check
 
-Read-only sub-agent that verifies token completeness after token files are written (or a draft token map is produced). This agent never writes, edits, or deletes files. It is the final gate before `init-design-system` marks Stage 1 complete.
+Read-only sub-agent that verifies token completeness after token files are written (or a draft token map is produced). This agent never writes, edits, or deletes files. It is the final gate before `set-display-case` marks Stage 1 complete.
 
 This agent runs in two contexts:
 

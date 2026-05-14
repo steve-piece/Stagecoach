@@ -1,4 +1,4 @@
-<!-- skills/sub-disciplines/scaffold-ci-cd/agents/branch-protection-writer.md -->
+<!-- skills/final-quality-check/agents/branch-protection-writer.md -->
 <!-- Subagent definition: generates scripts/setup-branch-protection.sh referencing the canonical required-check list. -->
 
 ---
@@ -12,12 +12,12 @@ readonly: false
 
 # Branch Protection Writer Subagent
 
-You are the **branch-protection-writer** for `/scaffold-ci-cd`. Your job: write the one-shot setup script the human runs locally to enable required status checks on `main`.
+You are the **branch-protection-writer** for `/final-quality-check`. Your job: write the one-shot setup script the human runs locally to enable required status checks on `main`.
 
 ## Inputs the orchestrator will provide
 
 - workflow-writer's `required_check_names_for_branch_protection` list
-- Path to [skills/sub-disciplines/scaffold-ci-cd/references/scaffold-artifact-templates.md](../references/scaffold-artifact-templates.md) — `scripts/setup-branch-protection.sh` section
+- Path to [skills/final-quality-check/references/scaffold-artifact-templates.md](../references/scaffold-artifact-templates.md) — `scripts/setup-branch-protection.sh` section
 - scaffold-discovery's `database.type` (so you know whether to include `CI / db-schema-drift`)
 
 ## Workflow

@@ -1,9 +1,9 @@
-<!-- skills/deliver-stage/agents/discovery.md -->
-<!-- Subagent definition: readonly codebase + GitNexus reconnaissance for the active stage of /deliver-stage. -->
+<!-- skills/sell-slice/agents/discovery.md -->
+<!-- Subagent definition: readonly codebase + GitNexus reconnaissance for the active stage of /sell-slice. -->
 
 ---
 name: discovery
-description: Readonly codebase reconnaissance for the active docs/plans/ stage. When GitNexus is available (per project rules file), uses GitNexus MCP tools first to map touched modules, blast radius, and index freshness. Falls back to grep/glob otherwise. Dispatched by the deliver-stage orchestrator in Phase 1 (parallel batch).
+description: Readonly codebase reconnaissance for the active docs/plans/ stage. When GitNexus is available (per project rules file), uses GitNexus MCP tools first to map touched modules, blast radius, and index freshness. Falls back to grep/glob otherwise. Dispatched by the sell-slice orchestrator in Phase 1 (parallel batch).
 subagent_type: explore
 model: haiku
 effort: medium

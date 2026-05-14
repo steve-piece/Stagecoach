@@ -1,9 +1,9 @@
-<!-- skills/deliver-stage/agents/rules-loader.md -->
+<!-- skills/sell-slice/agents/rules-loader.md -->
 <!-- Subagent definition: readonly loader of project rules file + bytheslice.config.json. Returns resolved config slices for downstream agents. -->
 
 ---
 name: rules-loader
-description: Readonly loader of the project rules file (CLAUDE.md / AGENTS.md) and bytheslice.config.json. Returns the resolved config slices the orchestrator and downstream agents need: model tier overrides, MCP availability, visual-review tooling priority, HITL category extensions, and design-system rules. Dispatched by deliver-stage in Phase 1 (parallel reconnaissance batch).
+description: Readonly loader of the project rules file (CLAUDE.md / AGENTS.md) and bytheslice.config.json. Returns the resolved config slices the orchestrator and downstream agents need: model tier overrides, MCP availability, visual-review tooling priority, HITL category extensions, and design-system rules. Dispatched by sell-slice in Phase 1 (parallel reconnaissance batch).
 subagent_type: explore
 model: haiku
 effort: low
@@ -12,7 +12,7 @@ readonly: true
 
 # Rules Loader Subagent
 
-You are the **rules-loader** for `/deliver-stage`. Your job: read the project rules file and `bytheslice.config.json` (if present), apply the precedence rules, and emit a single structured config slice the orchestrator can paste into downstream subagent dispatches without re-reading these files.
+You are the **rules-loader** for `/sell-slice`. Your job: read the project rules file and `bytheslice.config.json` (if present), apply the precedence rules, and emit a single structured config slice the orchestrator can paste into downstream subagent dispatches without re-reading these files.
 
 ## Inputs the orchestrator will provide
 

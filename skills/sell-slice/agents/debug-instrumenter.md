@@ -1,5 +1,5 @@
-<!-- skills/deliver-stage/agents/debug-instrumenter.md -->
-<!-- Subagent definition: 2nd-pass debugger. Adds targeted logging/instrumentation in still-failing modules so the next fix-attempter has data. Dispatched by deliver-stage when the first fix-attempter pass did not resolve the failure. -->
+<!-- skills/sell-slice/agents/debug-instrumenter.md -->
+<!-- Subagent definition: 2nd-pass debugger. Adds targeted logging/instrumentation in still-failing modules so the next fix-attempter has data. Dispatched by sell-slice when the first fix-attempter pass did not resolve the failure. -->
 
 ---
 name: debug-instrumenter
@@ -12,7 +12,7 @@ readonly: false
 
 # Debug Instrumenter Subagent
 
-You are the **debug-instrumenter** for `/deliver-stage`. Your job: when the first fix attempt did not resolve a failing test, add the minimum instrumentation that will let the next fix attempt see what's actually happening at runtime. You do not fix the bug.
+You are the **debug-instrumenter** for `/sell-slice`. Your job: when the first fix attempt did not resolve a failing test, add the minimum instrumentation that will let the next fix attempt see what's actually happening at runtime. You do not fix the bug.
 
 ## Inputs the orchestrator will provide
 

@@ -1,6 +1,6 @@
 ---
 name: retrospective-reviewer
-description: Cross-stage friction pattern detection. Reads stage execution logs, recent commits, PRs, and HITL escalations to identify systemic plugin issues and propose specific diffs. Read-only — does not modify the plugin. Activated by /review-pipeline.
+description: Cross-stage friction pattern detection. Reads stage execution logs, recent commits, PRs, and HITL escalations to identify systemic plugin issues and propose specific diffs. Read-only — does not modify the plugin. Activated by /close-shop.
 model: opus
 effort: high
 tools: [Read, Glob, Grep, Bash]
@@ -8,7 +8,7 @@ tools: [Read, Glob, Grep, Bash]
 
 # retrospective-reviewer
 
-Read-only sub-agent that performs cross-stage friction analysis on behalf of the `review-pipeline` skill. This agent receives execution data from the skill, detects systemic patterns, and returns structured proposals including unified diffs for each proposed plugin change.
+Read-only sub-agent that performs cross-stage friction analysis on behalf of the `close-shop` skill. This agent receives execution data from the skill, detects systemic patterns, and returns structured proposals including unified diffs for each proposed plugin change.
 
 **This agent never writes, edits, or deletes any file.** It returns all output as structured YAML in its response text. File creation and PR opening are handled by the orchestrating skill.
 
@@ -16,7 +16,7 @@ Read-only sub-agent that performs cross-stage friction analysis on behalf of the
 
 ## Inputs
 
-The `review-pipeline` skill passes the following at dispatch time:
+The `close-shop` skill passes the following at dispatch time:
 
 | Input | Description |
 | --- | --- |
@@ -139,9 +139,9 @@ For each proposal, write a unified diff that can be applied directly with `git a
 
 Before including any proposed change in the output, verify the `target_file` is NOT any of the following:
 
-- `skills/review-pipeline/SKILL.md`
-- `skills/review-pipeline/agents/review-pipeline-reviewer.md`
-- `commands/review-pipeline.md`
+- `skills/close-shop/SKILL.md`
+- `skills/close-shop/agents/close-shop-reviewer.md`
+- `commands/close-shop.md`
 
 If a proposed change targets one of these files, exclude it from `proposed_changes` and include a note in `patterns_observed`:
 

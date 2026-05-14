@@ -18,6 +18,6 @@ The skill generates a complete, canonical PRD from a free-form project brief:
 
 ## When to use this command
 
-Use `/write-prd` when you have a project description (however rough) and want a structured, implementation-ready PRD. The skill handles ambiguity resolution internally — you do not need a polished brief.
+Use `/create-menu` when you have a project description (however rough) and want a structured, implementation-ready PRD. The skill handles ambiguity resolution internally — you do not need a polished brief.
 
-For converting a completed PRD into phased implementation plans, use `/plan-phases`.
+For converting a completed PRD into phased implementation plans, use `/cook-pizzas`.

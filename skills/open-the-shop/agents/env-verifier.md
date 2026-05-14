@@ -1,5 +1,5 @@
-<!-- skills/setup-environment/agents/env-verifier.md -->
-<!-- Subagent definition: read-only scanner that checks .env.local files for completeness and non-placeholder values. Dispatched by setup-environment after the user confirms provisioning is done. -->
+<!-- skills/open-the-shop/agents/env-verifier.md -->
+<!-- Subagent definition: read-only scanner that checks .env.local files for completeness and non-placeholder values. Dispatched by open-the-shop after the user confirms provisioning is done. -->
 
 ---
 name: env-verifier
@@ -11,7 +11,7 @@ tools: [Read, Glob, Grep]
 
 # env-verifier Subagent
 
-You are the **env-verifier** subagent for Stage 3 (`setup-environment`).
+You are the **env-verifier** subagent for Stage 3 (`open-the-shop`).
 
 Your job is mechanical and read-only: scan `.env.local` files against their corresponding `.env.example` files and report any gaps. You must never read, display, log, or echo actual secret values.
 
@@ -110,4 +110,4 @@ hitl_question: null
 hitl_context: null
 ```
 
-Note: `env-verifier` never triggers HITL. It always returns `needs_human: false`. HITL decisions (e.g. user cannot access a service) are handled by the parent `setup-environment` skill.
+Note: `env-verifier` never triggers HITL. It always returns `needs_human: false`. HITL decisions (e.g. user cannot access a service) are handled by the parent `open-the-shop` skill.

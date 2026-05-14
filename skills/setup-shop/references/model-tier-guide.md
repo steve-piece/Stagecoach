@@ -25,36 +25,36 @@ The table below reflects the **actual current values** in each agent file. Where
 
 | Skill | Agent | Model | Effort | Readonly |
 |---|---|---|---|---|
-| **write-prd** | prd-reviewer | `sonnet` | medium | — |
-| **plan-phases** | ci-cd-scaffold-stage-writer | `sonnet` | medium | — |
-| **plan-phases** | db-schema-stage-writer | `sonnet` | medium | — |
-| **plan-phases** | design-system-stage-writer | `sonnet` | medium | — |
-| **plan-phases** | env-setup-stage-writer | `sonnet` | medium | — |
-| **plan-phases** | master-checklist-synthesizer | `sonnet` | medium | — |
-| **plan-phases** | phased-plan-writer | `sonnet` | medium | — |
-| **init-design-system** | bundle-validator | `sonnet` | medium | — |
-| **init-design-system** | compliance-pre-check | `sonnet` | medium | — |
-| **init-design-system** | token-expander | `opus` | high | — |
-| **setup-environment** | env-verifier | `haiku` | low | — |
-| **deliver-stage** | checklist-curator | `sonnet` | medium | yes |
-| **deliver-stage** | ci-cd-guardrails | `sonnet` | medium | yes |
-| **deliver-stage** | discovery | `haiku` | medium | yes |
-| **deliver-stage** | implementer | `opus` | xhigh | — |
-| **deliver-stage** | quality-reviewer | `opus` | high | yes |
-| **deliver-stage** | spec-reviewer | `sonnet` | medium | yes |
-| **deliver-stage** (frontend) | block-composer | `sonnet` | medium | — |
-| **deliver-stage** (frontend) | component-crafter | `sonnet` | medium | — |
-| **deliver-stage** (frontend) | layout-architect | `sonnet` | medium | — |
-| **deliver-stage** (frontend) | modern-ux-expert | `sonnet` | medium | — |
-| **deliver-stage** (frontend) | state-illustrator | `sonnet` | medium | — |
-| **deliver-stage** (frontend) | visual-reviewer | `sonnet` | medium | yes |
-| **add-feature** | complexity-assessor | `sonnet` | medium | yes |
-| **add-feature** | phased-plan-writer (incremental mode) | `sonnet` | medium | — |
-| **run-pipeline** | pr-reviewer | `sonnet` | medium | yes |
-| **run-pipeline** | stage-runner | `opus` | high | — |
-| **review-pipeline** | retrospective-reviewer | `opus` | high | — |
+| **create-menu** | prd-reviewer | `sonnet` | medium | — |
+| **cook-pizzas** | ci-cd-scaffold-stage-writer | `sonnet` | medium | — |
+| **cook-pizzas** | db-schema-stage-writer | `sonnet` | medium | — |
+| **cook-pizzas** | design-system-stage-writer | `sonnet` | medium | — |
+| **cook-pizzas** | env-setup-stage-writer | `sonnet` | medium | — |
+| **cook-pizzas** | master-checklist-synthesizer | `sonnet` | medium | — |
+| **cook-pizzas** | phased-plan-writer | `sonnet` | medium | — |
+| **set-display-case** | bundle-validator | `sonnet` | medium | — |
+| **set-display-case** | compliance-pre-check | `sonnet` | medium | — |
+| **set-display-case** | token-expander | `opus` | high | — |
+| **open-the-shop** | env-verifier | `haiku` | low | — |
+| **sell-slice** | checklist-curator | `sonnet` | medium | yes |
+| **sell-slice** | ci-cd-guardrails | `sonnet` | medium | yes |
+| **sell-slice** | discovery | `haiku` | medium | yes |
+| **sell-slice** | implementer | `opus` | xhigh | — |
+| **sell-slice** | quality-reviewer | `opus` | high | yes |
+| **sell-slice** | spec-reviewer | `sonnet` | medium | yes |
+| **sell-slice** (frontend) | block-composer | `sonnet` | medium | — |
+| **sell-slice** (frontend) | component-crafter | `sonnet` | medium | — |
+| **sell-slice** (frontend) | layout-architect | `sonnet` | medium | — |
+| **sell-slice** (frontend) | modern-ux-expert | `sonnet` | medium | — |
+| **sell-slice** (frontend) | state-illustrator | `sonnet` | medium | — |
+| **sell-slice** (frontend) | visual-reviewer | `sonnet` | medium | yes |
+| **special-order** | complexity-assessor | `sonnet` | medium | yes |
+| **special-order** | phased-plan-writer (incremental mode) | `sonnet` | medium | — |
+| **run-the-day** | pr-reviewer | `sonnet` | medium | yes |
+| **run-the-day** | stage-runner | `opus` | high | — |
+| **close-shop** | retrospective-reviewer | `opus` | high | — |
 
-> **Note on `review-pipeline`:** The `retrospective-reviewer` agent is experimental. Its model and effort assignments are fixed as documented above.
+> **Note on `close-shop`:** The `retrospective-reviewer` agent is experimental. Its model and effort assignments are fixed as documented above.
 
 Aliases (`haiku`, `sonnet`, `opus`) resolve to:
 
@@ -104,5 +104,5 @@ The plugin intentionally invests heavier compute on agents that PRODUCE or VERIF
 - The `quality-reviewer` (the gate that catches what the implementer missed) runs at deep tier with high effort (`opus/high`). This is a user override from the spec default of `sonnet/medium`: the reasoning is that a Sonnet reviewer applied to Opus output would miss subtle issues that only a model of equal depth can catch.
 - The `ci-cd-guardrails` agent runs at balanced tier (`sonnet/medium`, NOT `haiku/low` as the spec originally assigned). The upgrade was made because subtle CI-config violations missed at this stage are expensive to debug downstream; deterministic-looking checks still require judgment about precedence and environment interaction.
 - Pure scan-and-list agents (`env-verifier`, `discovery`) stay on the fast tier — judgment is cheap there.
-- The `token-expander` in `init-design-system` runs at deep tier (`opus/high`) because brand token expansion is a genuinely creative act; the output constrains the entire visual system.
-- The `stage-runner` in `run-pipeline` runs at deep tier (`opus/high`) because it coordinates full stage execution and must reason across multiple agent outputs.
+- The `token-expander` in `set-display-case` runs at deep tier (`opus/high`) because brand token expansion is a genuinely creative act; the output constrains the entire visual system.
+- The `stage-runner` in `run-the-day` runs at deep tier (`opus/high`) because it coordinates full stage execution and must reason across multiple agent outputs.

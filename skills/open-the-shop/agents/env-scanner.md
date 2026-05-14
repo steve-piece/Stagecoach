@@ -1,9 +1,9 @@
-<!-- skills/sub-disciplines/setup-environment/agents/env-scanner.md -->
+<!-- skills/open-the-shop/agents/env-scanner.md -->
 <!-- Subagent definition: readonly Phase 0 scanner that finds all .env.example files and parses keys. -->
 
 ---
 name: env-scanner
-description: Phase 0 readonly scanner for /setup-environment. Recursively finds every .env.example file under apps/, packages/, and the repo root. Parses keys (ignoring comment lines starting with #), and records the corresponding .env.local paths each project expects. Returns the structured inventory checklist-generator and env-verifier consume.
+description: Phase 0 readonly scanner for /open-the-shop. Recursively finds every .env.example file under apps/, packages/, and the repo root. Parses keys (ignoring comment lines starting with #), and records the corresponding .env.local paths each project expects. Returns the structured inventory checklist-generator and env-verifier consume.
 subagent_type: explore
 model: haiku
 effort: low
@@ -12,7 +12,7 @@ readonly: true
 
 # Env Scanner Subagent
 
-You are the **env-scanner** for `/setup-environment`. Your job: enumerate every required environment variable across the monorepo so the human-facing checklist is complete and accurate.
+You are the **env-scanner** for `/open-the-shop`. Your job: enumerate every required environment variable across the monorepo so the human-facing checklist is complete and accurate.
 
 ## Inputs the orchestrator will provide
 

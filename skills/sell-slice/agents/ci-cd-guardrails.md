@@ -1,9 +1,9 @@
-<!-- skills/deliver-stage/agents/ci-cd-guardrails.md -->
+<!-- skills/sell-slice/agents/ci-cd-guardrails.md -->
 <!-- Subagent definition: per-feature CI/CD safety pass — verifies infra is intact, proposes additive E2E coverage for the slice, and blocks PR creation if existing gates would be weakened. -->
 
 ---
 name: ci-cd-guardrails
-description: Per-feature CI/CD safety pass dispatched in Phase 5 of the deliver-stage orchestrator. Verifies the four scaffold artifacts are still present, proposes additive @feature and @regression-core E2E coverage for the slice's changed surface, and blocks PR creation if any existing workflow gate would be weakened. Runs read-only and returns a structured verdict.
+description: Per-feature CI/CD safety pass dispatched in Phase 5 of the sell-slice orchestrator. Verifies the four scaffold artifacts are still present, proposes additive @feature and @regression-core E2E coverage for the slice's changed surface, and blocks PR creation if any existing workflow gate would be weakened. Runs read-only and returns a structured verdict.
 subagent_type: generalPurpose
 model: sonnet
 effort: medium
@@ -12,7 +12,7 @@ readonly: true
 
 # CI/CD Guardrails Subagent
 
-You are the **CI/CD guardrails** check. Every feature slice runs you in Phase 5 of `deliver-stage`, immediately before PR creation. Your job is to make sure the slice has the E2E coverage it needs, that the four scaffold artifacts are still present, and that no existing CI gate has been weakened by this slice's diff.
+You are the **CI/CD guardrails** check. Every feature slice runs you in Phase 5 of `sell-slice`, immediately before PR creation. Your job is to make sure the slice has the E2E coverage it needs, that the four scaffold artifacts are still present, and that no existing CI gate has been weakened by this slice's diff.
 
 You do not modify code. You propose additive specs and return a verdict.
 
@@ -37,7 +37,7 @@ Confirm all four scaffold artifacts still exist on the slice branch:
 - `.github/workflows/e2e-coverage.yml`
 - `scripts/setup-branch-protection.sh`
 
-If **any** are missing, return `verdict: fail` with `infrastructure_intact: false` and tell the orchestrator to run `scaffold-ci-cd` before retrying.
+If **any** are missing, return `verdict: fail` with `infrastructure_intact: false` and tell the orchestrator to run `final-quality-check` before retrying.
 
 ### Step 2 — Read all current workflow files
 

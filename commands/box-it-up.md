@@ -9,7 +9,7 @@ description: Box the slice and hand it across the counter. Ships the current fea
 
 Load and follow the [`box-it-up`](../skills/box-it-up/SKILL.md) skill.
 
-`/deliver-stage` and `/add-feature` stop at "slice committed locally, ready for review" so you can run a manual visual UAT or do code review locally before deciding to ship. `/ship-pr` is the next step in the chain — it takes a branch with locally-committed work and shepherds it through:
+`/sell-slice` and `/special-order` stop at "slice committed locally, ready for review" so you can run a manual visual UAT or do code review locally before deciding to ship. `/box-it-up` is the next step in the chain — it takes a branch with locally-committed work and shepherds it through:
 
 1. Pre-flight safety checks (not on `main`, worktree state captured, no accidental branch reuse, `gh` authenticated).
 2. Commit any remaining changes (with a recommended conventional commit message you can override).
@@ -26,8 +26,8 @@ Load and follow the [`box-it-up`](../skills/box-it-up/SKILL.md) skill.
 
 ## When to use this command
 
-- After `/bytheslice:deliver-stage` finishes a slice and you've reviewed it locally.
-- After `/bytheslice:add-feature` writes new plan files and you want to ship them as a chore PR before starting delivery.
+- After `/bytheslice:sell-slice` finishes a slice and you've reviewed it locally.
+- After `/bytheslice:special-order` writes new plan files and you want to ship them as a chore PR before starting delivery.
 - For any hand-rolled feature branch that didn't go through the ByTheSlice delivery loop — the pre-flight checks and closeout pattern are universal.
 
-If you want to open the PR but pause before merging for an external code review, pick the **Hold** option at the merge-authorization gate. The skill will exit with the PR open; merge it via the GitHub UI when ready, then re-invoke `/ship-pr` to do cleanup.
+If you want to open the PR but pause before merging for an external code review, pick the **Hold** option at the merge-authorization gate. The skill will exit with the PR open; merge it via the GitHub UI when ready, then re-invoke `/box-it-up` to do cleanup.

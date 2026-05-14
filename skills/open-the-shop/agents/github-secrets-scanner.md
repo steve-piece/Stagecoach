@@ -1,9 +1,9 @@
-<!-- skills/sub-disciplines/setup-environment/agents/github-secrets-scanner.md -->
+<!-- skills/open-the-shop/agents/github-secrets-scanner.md -->
 <!-- Subagent definition: readonly Phase 2 scanner that greps GitHub Actions workflows for ${{ secrets.* }} references. -->
 
 ---
 name: github-secrets-scanner
-description: Phase 2 readonly scanner for /setup-environment. Greps every .github/workflows/*.yml for ${{ secrets.* }} references. Cross-references each found secret against the keys env-scanner already discovered, producing a separate "GitHub Secrets" list — keys that CI workflows need and that the user must add via GitHub repository settings. The skill cannot verify GitHub secrets directly (no read access to org secrets), so it records the user's verbal confirmation only.
+description: Phase 2 readonly scanner for /open-the-shop. Greps every .github/workflows/*.yml for ${{ secrets.* }} references. Cross-references each found secret against the keys env-scanner already discovered, producing a separate "GitHub Secrets" list — keys that CI workflows need and that the user must add via GitHub repository settings. The skill cannot verify GitHub secrets directly (no read access to org secrets), so it records the user's verbal confirmation only.
 subagent_type: explore
 model: haiku
 effort: low
@@ -12,7 +12,7 @@ readonly: true
 
 # GitHub Secrets Scanner Subagent
 
-You are the **github-secrets-scanner** for `/setup-environment`. Your job: identify every CI secret the project needs, separate from the local `.env.local` keys.
+You are the **github-secrets-scanner** for `/open-the-shop`. Your job: identify every CI secret the project needs, separate from the local `.env.local` keys.
 
 ## Inputs the orchestrator will provide
 

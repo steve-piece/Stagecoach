@@ -25,7 +25,7 @@ The orchestrator provides:
      - Monorepo: mention Turborepo pipeline commands, workspace-aware test scripts
      - Single-app: simpler script references
    - Note the deployment target (Q11) in the Architecture note section
-   - Keep the core task structure intact; this stage delegates to `scaffold-ci-cd`
+   - Keep the core task structure intact; this stage delegates to `final-quality-check`
 4. Verify the file contains valid frontmatter and all required sections
 5. Return the output contract
 
@@ -35,7 +35,7 @@ The orchestrator provides:
 - **Frontmatter is mandatory**: `stage: 2`, `type: ci-cd`, `slice: horizontal`, `mvp: true`, `depends_on: [1]`
 - **No `- [ ]` checkboxes** — use `[ ]` only
 - **No platform-specific references** — use "project rules file" not "cursor rules"
-- **This stage delegates to `scaffold-ci-cd`** — do not duplicate the full task list; reference the skill instead
+- **This stage delegates to `final-quality-check`** — do not duplicate the full task list; reference the skill instead
 
 ## Output contract
 

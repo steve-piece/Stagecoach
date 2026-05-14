@@ -1,11 +1,11 @@
 ---
 title: Design System Rules Block Template
-purpose: Verbatim rules block that init-design-system appends to the project rules file (CLAUDE.md or AGENTS.md). The design-system-stage-writer pulls from this template, fills in the token catalog path and project-specific code patterns, then appends it.
+purpose: Verbatim rules block that set-display-case appends to the project rules file (CLAUDE.md or AGENTS.md). The design-system-stage-writer pulls from this template, fills in the token catalog path and project-specific code patterns, then appends it.
 ---
 
 # Design System Rules Block Template
 
-The `init-design-system` skill appends the block below to the project rules file (the file may be named `CLAUDE.md`, `AGENTS.md`, or an equivalent — the skill detects which is present). This file is the authoritative source for that block's content and structure.
+The `set-display-case` skill appends the block below to the project rules file (the file may be named `CLAUDE.md`, `AGENTS.md`, or an equivalent — the skill detects which is present). This file is the authoritative source for that block's content and structure.
 
 ## How the design-system-stage-writer uses this template
 
@@ -43,7 +43,7 @@ Token catalog: `docs/design-system.md`. Every styling decision references tokens
 
 ### Preview-first UI workflow
 
-UI changes go through the operator-only `/library` showcase route BEFORE landing in any production route. `/deliver-stage`'s Phase 4.5 (Library Preview Gate) enforces this — non-skippable for new components AND for consumer-side edits that change a user-visible surface (props, copy, content, variants, states, or styles) of an existing library component. Pure internal refactors with no rendered-output delta are exempt.
+UI changes go through the operator-only `/library` showcase route BEFORE landing in any production route. `/sell-slice`'s Phase 4.5 (Library Preview Gate) enforces this — non-skippable for new components AND for consumer-side edits that change a user-visible surface (props, copy, content, variants, states, or styles) of an existing library component. Pure internal refactors with no rendered-output delta are exempt.
 
 - **`?tab=<id>` routing.** One page route at `/library` reads `?tab=<id>`, validates against `LIBRARY_TABS`, and dispatches via `STORIES`. Each entry is one file under `_entries/<id>-entry.tsx`; the URL is always `/library?tab=<id>`.
 - **One entry per component / block.** Each entry renders the full variants × states matrix (default / hover / focus / disabled / loading / empty / error / populated) and registers in three places: `_registry/tabs.ts` (`LIBRARY_TABS`), `_registry/stories.tsx` (`STORIES`), `_registry/entries.ts` (sidebar metadata). TypeScript fails the build if any of the three drifts.

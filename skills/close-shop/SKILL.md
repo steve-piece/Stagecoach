@@ -38,7 +38,7 @@ Before invoking this skill, verify:
 
 2. **`gh` CLI** — Must be installed and authenticated against the plugin repo (`steve-piece/bytheslice`). Run `gh auth status` to verify before proceeding.
 
-3. **Invocation** — User invokes via `/review-pipeline`. Natural-language triggers: "review the workflow", "improve the plugin".
+3. **Invocation** — User invokes via `/close-shop`. Natural-language triggers: "review the workflow", "improve the plugin".
 
 ---
 
@@ -46,7 +46,7 @@ Before invoking this skill, verify:
 
 ```mermaid
 flowchart LR
-  Invoke["/review-pipeline"] --> Scope["Ask: review last N stages,<br/>last project, or specific skill?"]
+  Invoke["/close-shop"] --> Scope["Ask: review last N stages,<br/>last project, or specific skill?"]
   Scope --> Read["Read stage execution logs<br/>(docs/plans/, git log,<br/>recent PRs)"]
   Read --> Analyze["retrospective-reviewer (opus)<br/>identifies friction patterns"]
   Analyze --> Draft["Draft proposal:<br/>- skill change<br/>- agent prompt change<br/>- new reference file<br/>- bug fix"]
@@ -79,11 +79,11 @@ Collect the following for the chosen scope:
 | Recent PRs (project repo) | PR titles, descriptions, review comments via `gh pr list` |
 | HITL escalation log | Any `needs_human: true` returns captured in stage output |
 
-Pass all collected data to `agents/review-pipeline-reviewer.md`.
+Pass all collected data to `agents/close-shop-reviewer.md`.
 
 ### Step 3 — Analyze and draft proposals
 
-Dispatch `agents/review-pipeline-reviewer.md` (opus, high effort). The agent reads the collected data, identifies friction patterns, and returns structured proposals including unified diffs for each proposed change.
+Dispatch `agents/close-shop-reviewer.md` (opus, high effort). The agent reads the collected data, identifies friction patterns, and returns structured proposals including unified diffs for each proposed change.
 
 ### Step 4 — Surface proposals to user
 
@@ -92,7 +92,7 @@ Present the `patterns_observed` and `proposed_changes` returned by `retrospectiv
 > "Here are the proposed plugin improvements. Would you like to open a draft PR?"
 > single_select: ["Yes — open a draft PR", "No — save proposals locally and exit"]
 
-If the user chooses **No**: write the proposals to `docs/review-pipeline-<yyyy-mm-dd>.md` in the current project directory and exit.
+If the user chooses **No**: write the proposals to `docs/close-shop-<yyyy-mm-dd>.md` in the current project directory and exit.
 
 ### Step 5 — Create PR (if confirmed)
 
@@ -123,7 +123,7 @@ Return the PR URL to the user.
 
 ## D. retrospective-reviewer Agent
 
-The analysis step is delegated entirely to `agents/review-pipeline-reviewer.md`.
+The analysis step is delegated entirely to `agents/close-shop-reviewer.md`.
 
 - Model: `opus`, effort: high — cross-stage pattern detection benefits from depth
 - Tools: `Read`, `Glob`, `Grep`, `Bash` (read-only invocations only)
@@ -166,7 +166,7 @@ The following limits are hard constraints — not suggestions:
 
 2. **Never auto-merge.** All PRs open as drafts. The skill does not call `gh pr merge` under any circumstances.
 
-3. **Never modifies the retrospective skill itself.** If `retrospective-reviewer` proposes a change to any file under `skills/review-pipeline/` or `commands/review-pipeline.md`, the skill must skip that proposal, log a warning in the PR body ("Skipped: self-modification guard"), and continue with other proposals. This prevents infinite recursion.
+3. **Never modifies the retrospective skill itself.** If `retrospective-reviewer` proposes a change to any file under `skills/close-shop/` or `commands/close-shop.md`, the skill must skip that proposal, log a warning in the PR body ("Skipped: self-modification guard"), and continue with other proposals. This prevents infinite recursion.
 
 ---
 
@@ -202,7 +202,7 @@ This skill does NOT call `ask_user_input_v0` for HITL resolution — it bubbles 
 [ ] Execution data gathered: stage files, git log, recent PRs, HITL escalation records
 [ ] `retrospective-reviewer` (opus) dispatched with all gathered data
 [ ] `patterns_observed` and `proposed_changes` received from `retrospective-reviewer`
-[ ] Self-modification guard applied — no proposals targeting `skills/review-pipeline/` or `commands/review-pipeline.md`
+[ ] Self-modification guard applied — no proposals targeting `skills/close-shop/` or `commands/close-shop.md`
 [ ] Proposals surfaced to user with clear summary
 [ ] User confirmed PR or elected to save locally
 [ ] If PR: branch name follows `retrospective/<yyyy-mm-dd>-<topic>` format
@@ -210,7 +210,7 @@ This skill does NOT call `ask_user_input_v0` for HITL resolution — it bubbles 
 [ ] If PR: labeled `retrospective` and `experimental`
 [ ] If PR: body includes patterns observed, proposed changes summary, and project link
 [ ] Duplicate PR guard checked (max 1 open retrospective PR per project per week)
-[ ] If save locally: proposals written to `docs/review-pipeline-<yyyy-mm-dd>.md`
+[ ] If save locally: proposals written to `docs/close-shop-<yyyy-mm-dd>.md`
 [ ] Return contract YAML emitted
 [ ] No `- [ ]` checkbox syntax used in any output — only `[ ]`
 [ ] No platform-specific bare references ("cursor rules", "claude rules") in any output

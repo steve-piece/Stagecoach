@@ -10,7 +10,7 @@ argument-hint: [optional — scope hints like "marketplace only", "skip /host-re
 
 Load and follow the [`inspect-display`](../skills/inspect-display/SKILL.md) skill.
 
-`/deliver-stage`'s frontend pipeline already runs a sophisticated per-slice visual reviewer (Phase 4.7) — that's the right gate when shipping one slice. `/walk-platform` is a different shape: a cross-cutting, on-demand walkthrough of the *whole running app* to catch what per-slice review can't.
+`/sell-slice`'s frontend pipeline already runs a sophisticated per-slice visual reviewer (Phase 4.7) — that's the right gate when shipping one slice. `/inspect-display` is a different shape: a cross-cutting, on-demand walkthrough of the *whole running app* to catch what per-slice review can't.
 
 The workflow:
 
@@ -26,6 +26,6 @@ Use this when:
 - A batch of slices just shipped and you want to verify nothing else broke
 - Master checklist and runtime reality might have drifted
 
-Not the right tool for per-slice spec compliance — that's `visual-reviewer` inside `/deliver-stage`.
+Not the right tool for per-slice spec compliance — that's `visual-reviewer` inside `/sell-slice`.
 
 $ARGUMENTS

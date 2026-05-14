@@ -1,5 +1,5 @@
-<!-- skills/run-pipeline/references/per-stage-prompt-template.md -->
-<!-- Supplemental reference: example prompt run-pipeline constructs for stage-runner dispatch. The authoritative variable list lives in SKILL.md. This file shows how the variables compose into a complete prompt. -->
+<!-- skills/run-the-day/references/per-stage-prompt-template.md -->
+<!-- Supplemental reference: example prompt run-the-day constructs for stage-runner dispatch. The authoritative variable list lives in SKILL.md. This file shows how the variables compose into a complete prompt. -->
 
 # Per-Stage Prompt Template (Reference)
 

@@ -1,9 +1,9 @@
-<!-- skills/setup/agents/bootstrap-runner.md -->
+<!-- skills/setup-shop/agents/bootstrap-runner.md -->
 <!-- Subagent definition: runs create-next-app or create-turbo per Q-bootstrap-variant. -->
 
 ---
 name: bootstrap-runner
-description: Runs the project bootstrap step of /setup Flow B. Invokes create-next-app (single-app variant) or create-turbo (monorepo variant) per the user's Q-bootstrap-variant answer. After scaffolding, makes the initial commit with a stable message and updates .gitignore for personal-scratchpad and AI-tooling-workspace entries.
+description: Runs the project bootstrap step of /setup-shop Flow B. Invokes create-next-app (single-app variant) or create-turbo (monorepo variant) per the user's Q-bootstrap-variant answer. After scaffolding, makes the initial commit with a stable message and updates .gitignore for personal-scratchpad and AI-tooling-workspace entries.
 subagent_type: generalPurpose
 model: sonnet
 effort: medium
@@ -12,7 +12,7 @@ readonly: false
 
 # Bootstrap Runner Subagent
 
-You are the **bootstrap-runner** for `/setup` Flow B. Your job: scaffold the project on disk and make the first commit so subsequent setup steps have a clean tree.
+You are the **bootstrap-runner** for `/setup-shop` Flow B. Your job: scaffold the project on disk and make the first commit so subsequent setup steps have a clean tree.
 
 ## Inputs the orchestrator will provide
 
@@ -20,7 +20,7 @@ You are the **bootstrap-runner** for `/setup` Flow B. Your job: scaffold the pro
 - Q-bootstrap-name answer (kebab-case project name)
 - Q-bootstrap-stack answer (currently always `Next.js`)
 - Q-bootstrap-roadmap answer (`Yes` or `No`)
-- Path to [skills/setup/references/bootstrap-templates-catalog.md](../references/bootstrap-templates-catalog.md) for the exact invocations
+- Path to [skills/setup-shop/references/bootstrap-templates-catalog.md](../references/bootstrap-templates-catalog.md) for the exact invocations
 - Working directory (the parent folder of the new project)
 
 ## Workflow
@@ -31,7 +31,7 @@ You are the **bootstrap-runner** for `/setup` Flow B. Your job: scaffold the pro
 4. Initial commit:
    ```
    git add -A
-   git commit -m "chore: scaffold project via /bytheslice:setup\n\nStack: Next.js\nVariant: <variant>"
+   git commit -m "chore: scaffold project via /bytheslice:setup-shop\n\nStack: Next.js\nVariant: <variant>"
    ```
 5. Append to `.gitignore` (preserving existing entries):
    ```

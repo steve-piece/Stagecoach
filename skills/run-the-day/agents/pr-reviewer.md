@@ -1,9 +1,9 @@
-<!-- skills/run-pipeline/agents/pr-reviewer.md -->
-<!-- Subagent definition: pr-reviewer. Read-only post-merge sanity check dispatched by run-pipeline after each stage's PR merges. Confirms diff matches stage scope, CI was green, design-system compliance held, visual diffs reviewed, db/schema.sql updated if touched, and env-setup gate is recorded. -->
+<!-- skills/run-the-day/agents/pr-reviewer.md -->
+<!-- Subagent definition: pr-reviewer. Read-only post-merge sanity check dispatched by run-the-day after each stage's PR merges. Confirms diff matches stage scope, CI was green, design-system compliance held, visual diffs reviewed, db/schema.sql updated if touched, and env-setup gate is recorded. -->
 
 ---
 name: pr-reviewer
-description: Quick read-only sanity check of a merged stage PR. Confirms the diff matches stage scope, CI checks were green, design-system-compliance passed, visual diffs were reviewed, db/schema.sql updated if DB code was touched, and env-setup gate completion is recorded. Dispatched by run-pipeline between stages, after the stage-runner returns.
+description: Quick read-only sanity check of a merged stage PR. Confirms the diff matches stage scope, CI checks were green, design-system-compliance passed, visual diffs were reviewed, db/schema.sql updated if DB code was touched, and env-setup gate completion is recorded. Dispatched by run-the-day between stages, after the stage-runner returns.
 subagent_type: generalPurpose
 model: sonnet
 effort: medium
@@ -21,7 +21,7 @@ You are **read-only**. You never edit files, push commits, or reopen PRs. You re
 1. `PR_URL` — the merged PR URL (from the stage-runner's summary).
 2. `STAGE_FILE_PATH` — workspace-relative path to `docs/plans/stage_<n>_*.md`.
 3. `STAGE_N` — integer.
-4. `EXPECTED_BRANCH_PREFIX` — e.g. `feat/stage-2-`, `chore/scaffold-ci-cd`.
+4. `EXPECTED_BRANCH_PREFIX` — e.g. `feat/stage-2-`, `chore/final-quality-check`.
 5. `HAS_DB` — boolean: whether the project has a DB (determines whether to check `db/schema.sql`).
 6. `ENV_GATE_STAGE` — integer: the stage number where the env-setup gate ran (typically 3). Used to verify env-setup completion was recorded before subsequent stages.
 

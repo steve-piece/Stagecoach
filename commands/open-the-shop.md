@@ -9,7 +9,7 @@ description: Doors unlocked, lights flipped, OPEN sign up. Scans .env.example fi
 
 Load and follow the [`open-the-shop`](../skills/open-the-shop/SKILL.md) skill.
 
-**Sub-skill of `/bytheslice:deliver-stage`.** This skill is normally dispatched automatically when `deliver-stage` encounters a `type: env-setup` stage. Run it directly only when you need to re-verify environment state outside the normal stage loop.
+**Sub-skill of `/bytheslice:sell-slice`.** This skill is normally dispatched automatically when `sell-slice` encounters a `type: env-setup` stage. Run it directly only when you need to re-verify environment state outside the normal stage loop.
 
 The skill is a human-in-the-loop gate that ensures all required environment variables are populated before CI runs or feature work begins:
 
@@ -21,9 +21,9 @@ The skill is a human-in-the-loop gate that ensures all required environment vari
 
 ## Preconditions
 
-- Stage 1 (design system) and Stage 2 (CI/CD scaffold) are complete (`deliver-stage` handles ordering automatically).
+- Stage 1 (design system) and Stage 2 (CI/CD scaffold) are complete (`sell-slice` handles ordering automatically).
 - `.env.example` files exist listing all required variables.
 
 ## When to use this command
 
-Use `/setup-environment` directly as an escape hatch — for example, when you've added new external services mid-flight and want to re-run the gate. The everyday entry point is `/bytheslice:deliver-stage`, which runs this sub-skill automatically when the next pending stage has `type: env-setup`.
+Use `/open-the-shop` directly as an escape hatch — for example, when you've added new external services mid-flight and want to re-run the gate. The everyday entry point is `/bytheslice:sell-slice`, which runs this sub-skill automatically when the next pending stage has `type: env-setup`.

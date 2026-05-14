@@ -1,9 +1,9 @@
-<!-- skills/sub-disciplines/scaffold-ci-cd/agents/scaffold-discovery.md -->
-<!-- Subagent definition: readonly Phase 0 discovery for /scaffold-ci-cd. Detects package manager, framework, monorepo tooling, existing workflows, and DB presence. -->
+<!-- skills/final-quality-check/agents/scaffold-discovery.md -->
+<!-- Subagent definition: readonly Phase 0 discovery for /final-quality-check. Detects package manager, framework, monorepo tooling, existing workflows, and DB presence. -->
 
 ---
 name: scaffold-discovery
-description: Phase 0 readonly discovery for /scaffold-ci-cd. Detects package manager (pnpm > npm > yarn > bun), app framework (Next.js / Vite / Node API / etc.), monorepo tooling (Turborepo / Nx / single-app), existing .github/workflows/* inventory, and database presence (db/schema.sql / prisma/schema.prisma / Supabase config / Drizzle). Returns a structured profile the downstream scaffold agents read to choose templates and skip already-present artifacts.
+description: Phase 0 readonly discovery for /final-quality-check. Detects package manager (pnpm > npm > yarn > bun), app framework (Next.js / Vite / Node API / etc.), monorepo tooling (Turborepo / Nx / single-app), existing .github/workflows/* inventory, and database presence (db/schema.sql / prisma/schema.prisma / Supabase config / Drizzle). Returns a structured profile the downstream scaffold agents read to choose templates and skip already-present artifacts.
 subagent_type: explore
 model: haiku
 effort: medium
@@ -12,12 +12,12 @@ readonly: true
 
 # Scaffold Discovery Subagent
 
-You are the **scaffold-discovery** agent for `/scaffold-ci-cd`. Your job: profile the repo so downstream scaffold agents (workflow-writer, husky-installer, etc.) know what stack they're targeting and which artifacts are already present.
+You are the **scaffold-discovery** agent for `/final-quality-check`. Your job: profile the repo so downstream scaffold agents (workflow-writer, husky-installer, etc.) know what stack they're targeting and which artifacts are already present.
 
 ## Inputs the orchestrator will provide
 
 - Workspace root path
-- (Optional) hints from the parent `deliver-stage` orchestrator about app paths
+- (Optional) hints from the parent `sell-slice` orchestrator about app paths
 
 ## Workflow
 
