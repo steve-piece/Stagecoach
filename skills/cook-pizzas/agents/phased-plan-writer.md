@@ -133,7 +133,7 @@ Every stage plan file must include, in order:
    - **Steps**: ordered, imperative instructions
    - **Code**: full file contents or full function bodies for non-trivial implementations (no pseudo-code, no `// TODO`)
    - **Commit**: suggested conventional-commit message
-9. **Exit criteria**: testable, binary conditions (`pnpm test` passes, route renders without errors, etc.)
+9. **Exit criteria**: testable, binary conditions consumed verbatim by `/bytheslice:sell-slice` Phase 2.5 as the `/goal` condition. Every line MUST be transcript-verifiable from the conversation alone — name the specific test command and exit code, the subagent verdict, the captured screenshot, or the file path Claude has read. Write `pnpm test --filter @repo/auth exits 0` not "tests pass". Write `quality-reviewer returned verdict: pass for every task` not "code quality is high". For UI-touching stages, include the Library Preview Gate line. See `../references/templates.md` → "Exit-criteria contract (consumed by `/goal`)" for the full contract.
 
 ## Hard rules
 

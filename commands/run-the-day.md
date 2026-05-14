@@ -24,11 +24,13 @@ The skill drives an entire phased plan end-to-end by **dispatching `/bytheslice:
 
 ## Modes
 
-| Invocation | Behavior |
-|---|---|
-| `/run-the-day` (default) | Dispatch one stage → report → pause and wait for human "continue" |
-| `/run-the-day --auto-mvp` | Auto-advance MVP stages; pause on Phase 2 stages and on any HITL |
-| `/run-the-day --auto-all` | Auto-advance every stage; pause only on HITL |
+| Invocation | Behavior | Session goal? |
+|---|---|---|
+| `/run-the-day` (default) | Dispatch one stage → report → pause and wait for human "continue" | No |
+| `/run-the-day --auto-mvp` | Auto-advance MVP stages; pause on Phase 2 stages and on any HITL | Yes — scoped to `mvp: true` stages |
+| `/run-the-day --auto-all` | Auto-advance every stage; pause only on HITL | Yes — scoped to the full plan |
+
+In `--auto-*` modes, the orchestrator's Phase 0.5 sets a session-scoped `/goal` whose condition encodes the pipeline's end state. A prompt-based Stop hook checks the condition between turns, removing the need for per-turn user re-prompting; HITL bubbles still end turns and the evaluator returns "not yet" until they resolve. See the skill's Phase 0.5 for the exact condition strings and fallback behavior when `/goal` is unavailable.
 
 ## Preconditions
 

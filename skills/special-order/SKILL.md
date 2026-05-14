@@ -163,6 +163,8 @@ Read `../cook-pizzas/agents/phased-plan-writer.md` and dispatch it ONCE PER NEW 
 
 Dispatch all per-stage writers in parallel where independent; sequentially where one stage depends on another being defined first.
 
+**Verify Exit-criteria contract before accepting each writer's output.** Every new stage file's body MUST end with an `**Exit criteria:**` block where each bullet is transcript-verifiable, binary, and specific to the slice (per [`../cook-pizzas/references/templates.md`](../cook-pizzas/references/templates.md) → "Exit-criteria contract (consumed by `/goal`)"). This block is what `/bytheslice:sell-slice` Phase 2.5 lifts into the session-scoped `/goal` — vague lines like "tests pass" or "looks good" break the goal evaluator. If a writer's output has weak Exit criteria, re-dispatch with a critique citing the contract. Cap at 2 re-write rounds; on round 3 → bubble HITL `prd_ambiguity`.
+
 ### Phase 5 — Update master checklist
 
 Append the new stages to `docs/plans/00_master_checklist.md`:

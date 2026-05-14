@@ -149,10 +149,47 @@ git commit -m "feat: [description]"
 ---
 
 **Exit criteria:**
-- `pnpm test` passes
-- Route `/path` renders without errors
-- [Other testable, binary condition]
+- `pnpm test` passes (or the project's resolved test command exits 0)
+- Route `/path` renders without errors (capture screenshot proof in the transcript)
+- [Other testable, binary condition — see the contract below]
 ```
+
+### Exit-criteria contract (consumed by `/goal`)
+
+The **Exit criteria** block is the single source of truth for "what it means for this slice to be done." `/bytheslice:sell-slice` Phase 2.5 lifts this block verbatim into the session-scoped `/goal` condition, where a fast model (default Haiku) checks it between turns.
+
+Every line MUST be:
+
+1. **Transcript-verifiable from the conversation.** The evaluator does not run commands or read files independently — only what Claude has already surfaced in the transcript counts as evidence. Write criteria that Claude's own output can demonstrate (a command's exit code that lands in the transcript, a subagent's structured `verdict: pass`, a file path Claude has read).
+2. **Binary.** Each criterion is either met or not met. No partial credit, no "looks good."
+3. **Specific to this slice.** Avoid generic platitudes like "no regressions" — name the routes, files, or test suites that prove the slice's intent.
+
+Good examples (transcript-verifiable, binary, specific):
+
+- ``pnpm test --filter @repo/auth`` exits 0 with all suites green
+- `tsc --noEmit` exits 0 with no errors
+- `gh pr checks <pr-number> --watch` returns exit 0 on the merged head SHA
+- `aggregating-test-reviewer` agent returns `verdict: pass` for this slice
+- `quality-reviewer` and `spec-reviewer` agents both return `verdict: pass` for every in-scope task
+- `library-entry-writer` reports `production_imports_added: 0` until user approval; then user explicitly approved each entry at the Phase 4.5 gate
+- Route `/dashboard/billing` renders with no console errors (screenshot captured in transcript)
+- `db/schema.sql` updated and `supabase db diff` shows the new `subscriptions` table with RLS policies present
+
+Bad examples (vague, non-transcript-verifiable, generic):
+
+- "Auth works correctly" → unmeasurable; what command proves it?
+- "No regressions" → too broad; which routes / suites?
+- "Code quality is high" → subjective; not binary
+- "Ship-ready" → meta; not a criterion
+- "Tests pass" without naming the test command → too generic
+
+### Library Preview Gate criterion (UI-touching stages only)
+
+For any stage whose `type:` is `frontend`, `full-stack`, or a `backend`/`db-schema` stage that touches a production-route's user-visible surface, the Exit criteria block MUST include:
+
+- For every component or block this slice authored or modified: `/library/<slug>` entry rendered all variants × states, user explicitly approved at the Phase 4.5 gate before any production-route import landed
+
+Drop this line only for pure internal refactors with no rendered-output delta in any production route (`sell-slice` Phase 2.5 trims it accordingly).
 
 ## Canned Stage Templates
 

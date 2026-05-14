@@ -201,7 +201,7 @@ CLAUDE.md or AGENTS.md (per Q12)
 - **Hard cap**: 6 tasks per stage, max ~10-15 files changed, completable in one Claude session
 - **One PR per stage**: stages are independently reviewable and mergeable
 - **No forward references**: stages may only reference packages, tables, or components built in prior stages
-- **Exit criteria are testable**: "pnpm test passes" not "looks good"
+- **Exit criteria are testable AND transcript-verifiable**: every line in a stage's `**Exit criteria:**` block must be something a fast model could verify by reading the conversation alone — a specific command's exit code, a subagent's `verdict: pass`, a captured screenshot, a file path Claude has read. Write "`pnpm test --filter @repo/auth` exits 0" not "tests pass"; write "`quality-reviewer` returned `verdict: pass`" not "code quality is high". This block is the single source of truth that `/bytheslice:sell-slice` Phase 2.5 lifts verbatim into the session-scoped `/goal` condition. See `references/templates.md` → "Exit-criteria contract (consumed by `/goal`)" for the full contract and good/bad examples.
 - **Auth stages always get the dev-mode auth helpers task** — one combined task bundling localhost auto-login (opt-in via `DEV_AUTH_BYPASS`) + seeded-user switcher banner; both sub-bullets ship together (see `references/canned-stages/auth-dev-mode-switcher-task.md`)
 
 ## Stage frontmatter contract

@@ -82,6 +82,28 @@ If the file is absent, proceed with plugin defaults (no warning).
 5. If any stage file is missing, stop and ask the user.
 6. Confirm workspace is on `main`, clean, latest pulled.
 
+### Phase 0.5 — Set session goal (auto modes only)
+
+If the invocation is `/run-the-day --auto-mvp` or `/run-the-day --auto-all`, the orchestrator sets a session-scoped completion goal via `/goal` before entering the per-stage loop. The goal's prompt-based Stop hook checks the condition between turns and keeps the session driving forward without per-turn user prompts; HITL pauses still end turns naturally and the evaluator returns "not yet" until they are resolved.
+
+**Default mode (no flag)**: skip this phase entirely. The orchestrator pauses between every stage by design — no goal is set.
+
+**Goal conditions:**
+
+| Mode | `/goal` condition |
+|---|---|
+| `--auto-all` | `Every stage in docs/plans/00_master_checklist.md shows Status: Completed, every stage's task rows are all [x], every stage PR is MERGED per gh pr view, the working tree is clean on main synced with origin/main, no leftover slice branches or worktrees exist, and any platform-walk halts have been resolved. Pause on any HITL bubble surfaced via ask_user_input_v0. Stop after the number of remaining stages × 60 turns if not yet complete.` |
+| `--auto-mvp` | `Every stage with mvp: true in docs/plans/00_master_checklist.md shows Status: Completed and its PR is MERGED, the working tree is clean on main synced with origin/main, no leftover slice branches or worktrees exist. Pause on any HITL bubble and before starting any stage where mvp: false. Stop after the number of remaining mvp stages × 60 turns if not yet complete.` |
+
+**How to set it:** invoke the `/goal` slash command with the condition string above (substituted for the active mode). Log a one-line summary to the user: `Session goal set for --auto-all (N stages remaining)`.
+
+**Fallback:** if `/goal` is unavailable (workspace trust dialog not accepted, `disableAllHooks` set at any level, or `allowManagedHooksOnly` in managed settings), the slash command will report why. Surface that reason to the user as a one-line note and continue without a goal — the orchestrator falls back to the prior continuation logic per the mode rules.
+
+**Clearing the goal:**
+- On normal completion (Phase 2 — Final Report), the evaluator auto-clears the goal — no action needed.
+- On a platform-walk halt where the user chose option 1 (Halt and address now), the orchestrator MUST invoke `/goal clear` before exiting so the user can use the session for other work without the goal nagging.
+- On any other early exit (user-requested stop, unresolvable HITL), the orchestrator MUST invoke `/goal clear` before returning control.
+
 ### Phase 1 — Per-stage loop (strictly sequential)
 
 For each stage from the active starting point, in order:
@@ -269,6 +291,8 @@ Recommended next: <empty | open Phase 2 work | run another orchestrator pass>
 - **No new commands without authorization.** Only activate on `/run-the-day` or the listed trigger phrases.
 - **Platform-walk checkpoints are read-only and never block stage advance on their own.** They produce a HITL pause only when the configured `haltOn` rule fires. When `platformWalkEvery: 0` (the default), the checkpoint is a complete no-op — run-the-day behaves identically to its pre-checkpoint version.
 - **Checkpoint cadence is fixed by config**, not adjusted mid-run. The orchestrator must not re-read `bytheslice.config.json` between stages — the resolved config is fixed at session start. Option 3 of the halt prompt is the only way to change checkpoint behavior mid-run (and it only disables checkpoints; it does not change the frequency).
+- **Session goal is set exactly once per run in auto modes.** Phase 0.5 sets it; Phase 2 / halt / abort clear it (see Phase 0.5 "Clearing the goal"). Never overwrite the goal mid-run with a narrower condition — the evaluator should always be checking the pipeline's true end state. Default mode (no flag) never sets a goal.
+- **Sub-skill goal coordination.** `/sell-slice`, when dispatched from this orchestrator, checks for an active session goal before considering its own slice-scoped goal. The plan-level goal subsumes the per-slice condition, so `/sell-slice` skips its own goal-set when run under `/run-the-day`.
 
 ## Triggers
 

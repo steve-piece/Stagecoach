@@ -148,6 +148,37 @@ End with: **"Authorize this build plan? (yes / edits / cancel)"** and wait. Phas
 
 If discovery reported `index_freshness: stale`, run `npx gitnexus analyze` once before re-dispatching discovery (or proceed with the user's blessing).
 
+### Phase 2.5 — Set slice-completion goal (conditional)
+
+After the user authorizes the build plan and before Phase 3 begins, the orchestrator considers setting a session-scoped `/goal` for this slice. The goal's prompt-based Stop hook keeps the orchestrator moving through Phases 3 → 9 without requiring per-turn user re-prompting; HITL gates (Library Preview HARD STOP in Phase 4.5, fix-attempter / debug-instrumenter loops in Phases 6–7, ci-cd-guardrails iteration in Phase 8) still end turns naturally and the evaluator returns "not yet" until they resolve.
+
+**Pre-check — parent goal coordination.** Invoke `/goal` with no argument to read the current session-goal state.
+
+- **If a goal is already active**, this skill is running under `/run-the-day --auto-mvp` or `--auto-all` (or another wrapper). The plan-level goal subsumes the per-slice condition. **Skip the slice-goal set** and continue to Phase 3. Log a one-line note to the user: `Parent session goal active (run-the-day); sell-slice will not set its own.`
+- **If no goal is active**, proceed to set the slice-goal below.
+- **If `/goal` is unavailable** (workspace trust dialog not accepted, `disableAllHooks` set at any level, or `allowManagedHooksOnly` in managed settings), the slash command will report why. Surface that reason as a one-line note and continue without a goal — the orchestrator falls back to phase-by-phase execution under the user's manual prompting.
+
+**Goal condition.** The condition is **lifted from the active stage file's `**Exit criteria:**` block** — the same block `/bytheslice:cook-pizzas` (or `/bytheslice:special-order`) wrote when the stage was scaffolded. The Exit-criteria contract (see [`../cook-pizzas/references/templates.md`](../cook-pizzas/references/templates.md) → "Exit-criteria contract (consumed by `/goal`)") guarantees every line is transcript-verifiable, binary, and specific to this slice.
+
+Build the `/goal` condition string in this exact order:
+
+1. **Header** — one sentence: `Slice for stage <STAGE_N> (<stage name>) at <stage_file_path> is ready for review locally:`
+2. **Lifted Exit criteria** — copy every bullet from the stage file's `**Exit criteria:**` block verbatim, preserving order. If the stage is `backend` / `db-schema` / `infrastructure` with zero UI surface (or a pure internal refactor with no rendered-output delta), drop the Library Preview Gate line if present.
+3. **Pipeline-level constraints** — append exactly these three lines:
+   - `master checklist row for stage <STAGE_N> in docs/plans/00_master_checklist.md shows Status: Completed`
+   - `working tree clean on the slice branch with the slice committed locally; not yet pushed`
+   - `Pause on any HITL bubble surfaced via ask_user_input_v0 (Library Preview Gate, fix-loop exhaustion, prd_ambiguity, external_credentials, destructive_operation, creative_direction)`
+4. **Turn cap** — append: `Stop after 40 turns if not yet complete.`
+
+**Missing Exit criteria block.** If the stage file does NOT have a well-formed `**Exit criteria:**` block (or it contains vague non-transcript-verifiable lines like "tests pass" or "looks good"), **do not invent one**. Surface as `prd_ambiguity` HITL: *"The stage plan at `<path>` is missing transcript-verifiable Exit criteria — `/goal` cannot be set with confidence. Re-open `/bytheslice:cook-pizzas` (or `/bytheslice:special-order`) to regenerate the stage with proper exit criteria per the contract, then re-authorize this build plan."* If the user explicitly chooses to skip, proceed without a goal and continue phase-by-phase under manual prompting.
+
+Invoke `/goal <full condition string>`. Log a one-line summary to the user: `Slice-completion goal set for stage <STAGE_N> (lifted N lines from Exit criteria).`
+
+**Clearing the goal:**
+- On Phase 9 normal closeout, the evaluator auto-clears the goal once the condition is met — no action needed.
+- On a HITL bubble where the user chooses to abandon the slice (e.g. answers "cancel" to a re-dispatch prompt), the orchestrator MUST invoke `/goal clear` before returning control so the next conversation is not nagged by a stale goal.
+- On the 3rd persistent failure in any fix loop (Phase 6 or Phase 7), the orchestrator bubbles HITL with full evidence — the goal remains active so that, if the user resolves the failure and tells the orchestrator to continue, the loop picks back up naturally. Only clear the goal if the user explicitly abandons the slice.
+
 ### Phase 3 — Branch / Worktree Setup
 
 - Branch naming: `feat/stage-<n>-<scope>` | `fix/stage-<n>-<scope>` | `chore/stage-<n>-<scope>`

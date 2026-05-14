@@ -71,6 +71,8 @@ completion_criteria:
 
 ## Completion criteria conventions
 
+`completion_criteria:` in frontmatter is a list of **slug-form metadata** used by the master-checklist-synthesizer to generate the `[ ]` rows on `docs/plans/00_master_checklist.md`. These slugs are NOT what `/goal` evaluates directly — they drive checklist row generation only.
+
 Every stage must include `tests_passing`. Common additional criteria by type:
 
 - `design-system`: `token_files_committed`, `design_system_compliance_check_passing`, `storybook_builds`
@@ -79,6 +81,18 @@ Every stage must include `tests_passing`. Common additional criteria by type:
 - `db-schema`: `migration_applied`, `types_generated`, `rls_policies_verified` (Supabase only)
 - `frontend` / `full-stack`: `tests_passing`, `route_renders_without_error`, `visual_review_passed`
 - `backend`: `tests_passing`, `api_contract_verified`
+
+## Body: Exit criteria contract
+
+Separate from the frontmatter slugs, every stage file's body MUST end with an `**Exit criteria:**` bullet block. This block is the single source of truth that `/bytheslice:sell-slice` Phase 2.5 lifts verbatim into the session-scoped `/goal` condition.
+
+Every line MUST be:
+
+1. **Transcript-verifiable** — the `/goal` evaluator does not run commands or read files independently; it only judges what Claude has already surfaced in the conversation. Write criteria that Claude's own output can demonstrate.
+2. **Binary** — either met or not met.
+3. **Specific to this slice** — name the routes, files, suites, or subagent verdicts that prove intent.
+
+See `references/templates.md` → "Exit-criteria contract (consumed by `/goal`)" for full guidance and good/bad examples. The `phased-plan-writer` agent is the enforcement point.
 
 ## Cross-skill linking
 
