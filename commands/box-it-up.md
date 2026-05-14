@@ -1,13 +1,13 @@
-<!-- commands/ship-pr.md -->
-<!-- Slash command that loads the ship-pr skill: takes a feature branch with locally-committed work and ships it through PR open → CI watch (with auto-fix loop on red) → user-authorized merge → main sync + cleanup. -->
+<!-- commands/box-it-up.md -->
+<!-- Slash command that loads the box-it-up skill: takes a feature branch with locally-committed work and ships it through PR open → CI watch (with auto-fix loop on red) → user-authorized merge → main sync + cleanup. Pizza-shop framing: pie's cooled, inspection passed — box it and hand it over. -->
 
 ---
-description: Ship the current feature branch end-to-end. Pre-flight safety checks (not on main, branch + worktree state confirmed), commits any remaining changes, pushes, opens the PR, watches CI to settle (auto-dispatches ci-fix-attempter to push targeted fixes on red, capped at 3 attempts), pauses for user merge approval when CI is green, then on approval merges and cleans up local + remote branch and worktree. Decoupled from /deliver-stage and /add-feature so you can review or UAT the slice locally first. Use after /deliver-stage or /add-feature finishes.
+description: Box the slice and hand it across the counter. Ships the current feature branch end-to-end. Pre-flight safety checks (not on main, branch + worktree state confirmed), commits any remaining changes, pushes, opens the PR, watches CI to settle (auto-dispatches ci-fix-attempter to push targeted fixes on red, capped at 3 attempts), pauses for user merge approval when CI is green, then on approval merges and cleans up local + remote branch and worktree. Decoupled from /sell-slice and /special-order so you can review or UAT the slice locally first. Use after /sell-slice or /special-order finishes.
 ---
 
-# /ship-pr
+# /box-it-up
 
-Load and follow the [`ship-pr`](../skills/ship-pr/SKILL.md) skill.
+Load and follow the [`box-it-up`](../skills/box-it-up/SKILL.md) skill.
 
 `/deliver-stage` and `/add-feature` stop at "slice committed locally, ready for review" so you can run a manual visual UAT or do code review locally before deciding to ship. `/ship-pr` is the next step in the chain — it takes a branch with locally-committed work and shepherds it through:
 

@@ -1,14 +1,14 @@
 ---
-name: run-pipeline
-description: EXPERIMENTAL. Drive your entire phased plan to completion in one session (supervised by default).
+name: run-the-day
+description: EXPERIMENTAL. Open → service → close on autopilot. Drive your entire phased plan to completion in one session (supervised by default).
 experimental: true
 user-invocable: true
-triggers: ["/bytheslice:run-pipeline", "/run-pipeline", "run the pipeline", "run pipeline", "autonomous delivery", "run all stages"]
+triggers: ["/bytheslice:run-the-day", "/run-the-day", "run the day", "fire the tray", "/bytheslice:run-pipeline", "/run-pipeline", "run the pipeline", "run pipeline", "autonomous delivery", "run all stages"]
 ---
-<!-- skills/run-pipeline/SKILL.md -->
-<!-- EXPERIMENTAL multi-stage orchestrator. Drives a phased plan to completion in one chat session by dispatching /deliver-stage per stage. The everyday tool is /deliver-stage (run once per slice, fresh chat each time); run-pipeline is a sidecar for users who want autonomous multi-stage delivery and accept the reliability tradeoff. -->
+<!-- skills/run-the-day/SKILL.md -->
+<!-- EXPERIMENTAL multi-stage orchestrator. Pizza-shop framing: open the shop, run the whole day's service end-to-end, close out. Drives a phased plan to completion in one chat session by dispatching /sell-slice per stage. The everyday tool is /sell-slice (run once per slice, fresh chat each time); /run-the-day is a sidecar for users who want autonomous multi-stage delivery and accept the reliability tradeoff. -->
 
-# The Orchestrator (EXPERIMENTAL)
+# Run the Day — Autonomous Multi-Stage Orchestrator (EXPERIMENTAL)
 
 > **EXPERIMENTAL.** This skill is the autonomous multi-stage variant. It tries to drive every stage in one chat session, which is unreliable for full 20–30-stage plans today. The everyday tool is **`/bytheslice:deliver-stage`** — run it once per slice, in a fresh chat. Use `/run-pipeline` only when you explicitly want a single-session multi-stage run and accept the reliability tradeoff.
 

@@ -1,12 +1,15 @@
 ---
-name: review-pipeline
-description: EXPERIMENTAL. Review stage execution friction and draft improvements back to the plugin.
+name: close-shop
+description: EXPERIMENTAL. After-service retro — review how recent stages and skills executed, identify systemic friction patterns, draft targeted improvement PRs against the plugin. Bookends /setup-shop.
 user-invocable: true
-triggers: ["/bytheslice:review-pipeline", "/review-pipeline", "review the workflow", "improve the plugin"]
 experimental: true
+triggers: ["/bytheslice:close-shop", "/close-shop", "close the shop", "shift retro", "end-of-day debrief", "/bytheslice:review-pipeline", "/review-pipeline", "review the workflow", "improve the plugin"]
 ---
 
-# review-pipeline
+<!-- skills/close-shop/SKILL.md -->
+<!-- EXPERIMENTAL. Pizza-shop framing: bookends /setup-shop — once the day's service is done, sit down and debrief the shift. Reviews how recent stages and skills executed, identifies systemic friction patterns, and drafts targeted improvement PRs against the plugin repository. -->
+
+# Close the Shop — After-Service Retro
 
 > **EXPERIMENTAL.** This skill is under active development. All PRs it generates open as drafts and require human review before merge. The skill never auto-merges and never modifies itself.
 

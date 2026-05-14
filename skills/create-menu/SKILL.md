@@ -1,13 +1,16 @@
 ---
-name: write-prd
-description: Turn a project brief into a structured 8-section PRD with phased implementation guidance.
+name: create-menu
+description: Create the day's pre-made pizza menu — turn a project brief into a structured 8-section PRD with phased implementation guidance.
 model: opus
 effort: high
 user-invocable: true
-triggers: ["/bytheslice:write-prd", "/write-prd", "write a prd", "generate a prd", "create a prd", "write prd", "build a prd"]
+triggers: ["/bytheslice:create-menu", "/create-menu", "create the menu", "plan the menu", "today's menu", "/bytheslice:write-prd", "/write-prd", "write a prd", "generate a prd", "create a prd", "write prd", "build a prd"]
 ---
 
-# PRD Generator
+<!-- skills/create-menu/SKILL.md -->
+<!-- Pizza-shop framing: pick the day's pre-made pies for the display tray (the PRD = the menu). PRD generator from a free-form brief; uses plan mode to resolve ambiguity before writing, and invokes `prd-reviewer` as its final step. -->
+
+# Create Menu — PRD Generator
 
 Generate a complete, canonical PRD from a free-form project brief. This skill uses plan mode to resolve ambiguity before writing, and invokes `prd-reviewer` as its final step.
 

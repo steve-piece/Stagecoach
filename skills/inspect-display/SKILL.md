@@ -1,13 +1,13 @@
 ---
-name: walk-platform
-description: Run a cross-cutting, platform-wide visual walkthrough of a running web app. Discovers every route, drives a live browser through them, and surfaces what's broken, mocked, stubbed, or empty across the whole product — not just the most recent slice. Use before UAT, before a demo, after a batch of `/ship-pr` runs, or any time the checklist and reality have drifted.
+name: inspect-display
+description: Walk the display tray and eyeball every pie that's already on display — a cross-cutting, platform-wide visual walkthrough of a running web app. Catches what's broken, mocked, or empty across the WHOLE product, not just the latest slice. Read-only. Use before UAT, before a demo, after a batch of `/box-it-up` runs, or any time the checklist and reality have drifted.
 user-invocable: true
-triggers: ["/bytheslice:walk-platform", "/walk-platform", "walk the platform", "walk the app", "audit the app", "audit the platform", "pre-uat walk", "smoke test the whole app", "platform-wide visual audit"]
+triggers: ["/bytheslice:inspect-display", "/inspect-display", "walk the display", "case walk", "/bytheslice:walk-platform", "/walk-platform", "walk the platform", "walk the app", "audit the app", "audit the platform", "pre-uat walk", "smoke test the whole app", "platform-wide visual audit"]
 ---
-<!-- skills/walk-platform/SKILL.md -->
-<!-- On-demand, platform-wide visual walkthrough. Complements (does not replace) deliver-stage's per-slice visual-reviewer: that agent reviews ONE slice against its declared states; this skill walks EVERY route to catch unrelated regressions, mock-data leaks, dead links, and dynamic-route validation gaps. Read-only. -->
+<!-- skills/inspect-display/SKILL.md -->
+<!-- On-demand, platform-wide visual walkthrough. Pizza-shop framing: walk past the display tray, eyes on every pie that's already up. Complements (does not replace) /sell-slice's per-slice visual-reviewer: that agent reviews ONE slice against its declared states; this skill walks EVERY route to catch unrelated regressions, mock-data leaks, dead links, and dynamic-route validation gaps. Read-only. -->
 
-# /walk-platform
+# /inspect-display
 
 `/deliver-stage`'s frontend pipeline already runs a sophisticated **per-slice** visual reviewer (Phase 4.7) that checks the just-built slice against the design system at 4 viewports. That's the right gate when shipping a single slice.
 

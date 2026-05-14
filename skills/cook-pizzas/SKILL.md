@@ -1,11 +1,14 @@
 ---
-name: plan-phases
-description: Transform a PRD into an ordered roadmap with design-system, CI/CD, and 20-30 vertical-slice feature stages.
+name: cook-pizzas
+description: Cook the pre-made pies before the shop opens — transform a PRD into an ordered roadmap of 20–30 vertical-slice feature stages. Each plan file is one cooked pie sitting in the display case for customers to grab a slice of.
 user-invocable: true
-triggers: ["/bytheslice:plan-phases", "/plan-phases", "plan phases", "break into phases", "phased plan", "create a development plan", "decompose the prd"]
+triggers: ["/bytheslice:cook-pizzas", "/cook-pizzas", "cook the pizzas", "make the pies", "prep the pies", "/bytheslice:plan-phases", "/plan-phases", "plan phases", "break into phases", "phased plan", "create a development plan", "decompose the prd"]
 ---
 
-# PRD to Phased Plans
+<!-- skills/cook-pizzas/SKILL.md -->
+<!-- Pizza-shop framing: cook every pre-made pie that will sit in the display case (each plan file = one pie). PRD-to-master-checklist transformer with stage-writer agents per stage type. -->
+
+# Cook the Pizzas — PRD to Phased Plans
 
 Transform a finalized PRD into a complete, ordered set of implementation stages plus a project rules file.
 

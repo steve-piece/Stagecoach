@@ -1,13 +1,13 @@
-<!-- commands/write-prd.md -->
-<!-- Slash command shim that loads the prd-generator skill to generate a complete PRD from a free-form project brief. -->
+<!-- commands/create-menu.md -->
+<!-- Slash command that loads the create-menu skill — generate a complete PRD from a free-form project brief. Pizza-shop framing: pick today's pre-made pies. -->
 
 ---
-description: Generate a complete PRD (Product Requirements Document) from a free-form project brief. Use when the user provides a project description and wants a structured PRD, says "create a PRD", "write a PRD", "generate a PRD", "build a PRD", or "document requirements". Follows the Phased PRD Template v2 with 8 sections (0–7). References bundled defaults for tech stack, architecture, and delivery conventions.
+description: Create the day's pre-made pizza menu. Generate a complete PRD (Product Requirements Document) from a free-form project brief. Use when the user provides a project description and wants a structured PRD, says "create a PRD", "write a PRD", "generate a PRD", "build a PRD", or "document requirements". Follows the Phased PRD Template v2 with 8 sections (0–7). References bundled defaults for tech stack, architecture, and delivery conventions.
 ---
 
-# /write-prd
+# /create-menu
 
-Load and follow the [`write-prd`](../skills/write-prd/SKILL.md) skill.
+Load and follow the [`create-menu`](../skills/create-menu/SKILL.md) skill.
 
 The skill generates a complete, canonical PRD from a free-form project brief:
 

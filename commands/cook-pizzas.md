@@ -1,13 +1,13 @@
-<!-- commands/plan-phases.md -->
-<!-- Slash command shim that loads the prd-to-phased-plans skill to decompose a finalized PRD into phased development plans. -->
+<!-- commands/cook-pizzas.md -->
+<!-- Slash command that loads the cook-pizzas skill — decompose a finalized PRD into a master checklist of vertical-slice feature stages. Pizza-shop framing: cook every pre-made pie for the display case. -->
 
 ---
-description: Decompose a finalized PRD into phased development plans — design-system stage, CI/CD scaffold, env-setup gate, optional DB schema foundation, 20-30 vertical-slice feature stages, a master checklist, and a populated project rules file. Use when the user has a completed PRD and wants an implementation-ready plan. Also use when the user says "break this into phases", "create a development plan", or "phased approach".
+description: Cook the pre-made pies before the shop opens. Decompose a finalized PRD into phased development plans — 20-30 vertical-slice feature stages, a master checklist, a top "Prep" section pointing at the foundation skills (/set-display-case, /final-quality-check, /open-the-shop), and a populated project rules file. Use when the user has a completed PRD and wants an implementation-ready plan. Also use when the user says "break this into phases", "create a development plan", or "phased approach".
 ---
 
-# /plan-phases
+# /cook-pizzas
 
-Load and follow the [`plan-phases`](../skills/plan-phases/SKILL.md) skill.
+Load and follow the [`cook-pizzas`](../skills/cook-pizzas/SKILL.md) skill.
 
 The skill transforms a finalized PRD into a complete, ordered set of implementation stages:
 

@@ -1,13 +1,13 @@
-<!-- commands/setup.md -->
-<!-- Slash command shim that loads the setup skill — ByTheSlice's first-touch entry point. Three flows in one skill: first-time install (system-wide defaults), new-project bootstrap, existing-project config customization. -->
+<!-- commands/setup-shop.md -->
+<!-- Slash command that loads the setup-shop skill — ByTheSlice's first-touch entry point. Pizza-shop framing: morning prep (chairs out, oven hot, lights on). Three flows in one skill: first-time install (system-wide defaults), new-project bootstrap, existing-project config customization. -->
 
 ---
-description: ByTheSlice setup — three flows in one skill. (1) First-time install creates a system-wide ~/.bytheslice/defaults.json so future projects can opt in to your preferences. (2) New project scaffolds a fresh single-app or Turborepo monorepo, then drops in a per-project bytheslice.config.json. (3) Existing project skips the bootstrap and goes straight to per-project config customization. Use for any first-touch interaction with ByTheSlice.
+description: Start the oven, check ingredients, prep the shop. ByTheSlice setup — three flows in one skill. (1) First-time install creates a system-wide ~/.bytheslice/defaults.json so future projects can opt in to your preferences. (2) New project scaffolds a fresh single-app or Turborepo monorepo, then drops in a per-project bytheslice.config.json. (3) Existing project skips the bootstrap and goes straight to per-project config customization. Use for any first-touch interaction with ByTheSlice.
 ---
 
-# /setup
+# /setup-shop
 
-Load and follow the [`setup`](../skills/setup/SKILL.md) skill.
+Load and follow the [`setup-shop`](../skills/setup-shop/SKILL.md) skill.
 
 The skill auto-detects which flow applies:
 

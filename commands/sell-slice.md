@@ -1,13 +1,13 @@
-<!-- commands/deliver-stage.md -->
-<!-- Slash command that loads the deliver-stage skill: the everyday stage-delivery loop. Replaces ship-feature + ship-frontend in v3. -->
+<!-- commands/sell-slice.md -->
+<!-- Slash command that loads the sell-slice skill: the everyday delivery loop. Pizza-shop framing: pull one pie off the rack, run it through the line, slice and serve to one customer. -->
 
 ---
-description: The everyday stage-delivery loop. Reads the master checklist, picks the next Not-Started stage, dispatches the right sub-skill by stage type (design-system / ci-cd / env-setup / frontend / backend / full-stack / db-schema), runs spec/quality review, basic checks (lint/type/build), and a type-aware aggregating test review (dev server + browser UAT for frontend; CI gates only for backend), then opens the PR. Use when the user runs /deliver-stage, says "deliver the next stage", "ship stage N", "work the checklist", "ship a slice", or "execute docs/plans".
+description: Sell a customer their slice — the everyday delivery loop. Reads the master checklist, picks the next Not-Started stage, dispatches the right pipeline by stage type (frontend / backend / full-stack / db-schema), runs spec/quality review, basic checks (lint/type/build), and a type-aware aggregating test review (dev server + browser UAT for frontend; CI gates only for backend), then commits the slice locally. Hands off to /box-it-up for shipping. Use when the user runs /sell-slice, says "sell a slice", "deliver the next stage", "ship stage N", "work the checklist", or "execute docs/plans".
 ---
 
-# /deliver-stage
+# /sell-slice
 
-Load and follow the [`deliver-stage`](../skills/deliver-stage/SKILL.md) skill.
+Load and follow the [`sell-slice`](../skills/sell-slice/SKILL.md) skill.
 
 `deliver-stage` is the everyday delivery loop in ByTheSlice v3. It replaces both `ship-feature` and `ship-frontend` from v2 — one command, one stage at a time, automatic routing by stage `type:`.
 

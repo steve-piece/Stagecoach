@@ -1,13 +1,13 @@
-<!-- commands/init-design-system.md -->
-<!-- Slash command that loads the init-design-system skill. Sub-skill of /deliver-stage; auto-dispatched on type:design-system stages. -->
+<!-- commands/set-display-case.md -->
+<!-- Slash command that loads the set-display-case skill. Daily-prep skill; run before /sell-slice. Also invocable standalone on any project. -->
 
 ---
-description: Sub-skill of /bytheslice:deliver-stage. Bootstraps the project design system. Validates Claude Design bundle if present, otherwise expands brand brief. Outputs globals.css, Tailwind config, design-system.md, and design-system rules in project rules file. Auto-dispatched by /deliver-stage on type:design-system stages; invoke directly to re-run the design-system foundation manually.
+description: Build the display case the pies will sit in. Bootstraps the project design system — validates Claude Design bundle if present, otherwise expands brand brief. Outputs globals.css, Tailwind config, design-system.md, and design-system rules in the project rules file. Also scaffolds the operator-only /library preview route. Run once before /sell-slice (part of the foundation prep phase); also invocable standalone to bolt a design system onto any project.
 ---
 
-# /init-design-system
+# /set-display-case
 
-Load and follow the [`init-design-system`](../skills/sub-disciplines/init-design-system/SKILL.md) skill.
+Load and follow the [`set-display-case`](../skills/set-display-case/SKILL.md) skill.
 
 **Sub-skill of `/bytheslice:deliver-stage`.** This skill is normally dispatched automatically when `deliver-stage` encounters a `type: design-system` stage. Run it directly only when you need to re-validate or re-generate the design-system foundation outside the normal stage loop.
 

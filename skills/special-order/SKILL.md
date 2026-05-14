@@ -1,16 +1,16 @@
 ---
-name: add-feature
-description: Add one or more features to an existing project mid-flight. Auto-detects project type and extends the master checklist.
+name: special-order
+description: Cook a slice with the customer's specifications on the spot — add new features mid-flight to an existing project. Auto-detects project type and extends the master checklist with new stages.
 model: opus
 effort: high
 user-invocable: true
-triggers: ["/bytheslice:add-feature", "/add-feature", "add a feature", "add features", "extend the app", "bolt on a feature", "what about adding"]
+triggers: ["/bytheslice:special-order", "/special-order", "custom order", "off-menu request", "/bytheslice:add-feature", "/add-feature", "add a feature", "add features", "extend the app", "bolt on a feature", "what about adding"]
 ---
 
-<!-- skills/add-feature/SKILL.md -->
-<!-- Mid-flight feature addition. Detects project state, assesses complexity, writes incremental stage files, hands off to deliver-stage. For non-ByTheSlice apps, redirects to setup. -->
+<!-- skills/special-order/SKILL.md -->
+<!-- Mid-flight feature addition. Pizza-shop framing: a walk-in wants something not on today's menu — cook it on the spot and add it to the tray. Detects project state, assesses complexity, writes incremental stage files, hands off to /sell-slice. For non-ByTheSlice apps, redirects to /setup-shop. -->
 
-# Add Feature
+# Special Order — Add Features Mid-Flight
 
 Bolt new features onto an existing project without restarting from a fresh PRD. Used after `/bytheslice:run-pipeline` has already shipped the original plan, OR for adding ByTheSlice to an existing non-ByTheSlice project.
 

@@ -1,13 +1,13 @@
 ---
-name: deliver-stage
-description: Execute one stage from your master checklist: spec review, implementation, testing, and PR open.
+name: sell-slice
+description: Sell a customer their slice — the everyday delivery loop. Execute one stage from your master checklist: spec review, implementation, testing, gates, commit. Run me repeatedly, one fresh chat per slice.
 user-invocable: true
-triggers: ["/bytheslice:deliver-stage", "/deliver-stage", "deliver the next stage", "ship the next slice", "work the checklist"]
+triggers: ["/bytheslice:sell-slice", "/sell-slice", "sell a slice", "serve a customer", "bake the slice", "/bytheslice:deliver-stage", "/deliver-stage", "deliver the next stage", "ship the next slice", "work the checklist"]
 ---
-<!-- skills/deliver-stage/SKILL.md -->
-<!-- The everyday delivery loop. Reads the master checklist, picks the next Not-Started stage, dispatches the right sub-skill or internal pipeline by stage type, runs basic checks + type-aware aggregating test review, and opens the PR. Replaces v2 ship-feature + ship-frontend in v3. -->
+<!-- skills/sell-slice/SKILL.md -->
+<!-- The everyday delivery loop. Pizza-shop framing: pull one pie off the rack, run it through the line, slice and serve to one customer. Reads the master checklist, picks the next Not-Started stage, dispatches subagents by stage type, runs basic checks + type-aware aggregating test review, and commits the slice locally. /box-it-up is the handoff. -->
 
-# /deliver-stage — The Everyday Delivery Loop
+# /sell-slice — The Everyday Delivery Loop
 
 The agent loading this skill is the **orchestrator** for one stage of the master checklist. It reads plans, routes by stage `type:`, dispatches subagents, merges their structured outputs, and gates the PR on real verification.
 

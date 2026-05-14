@@ -1,15 +1,15 @@
-<!-- commands/run-pipeline.md -->
-<!-- EXPERIMENTAL slash command that loads the run-pipeline skill — autonomous multi-stage variant of /deliver-stage. -->
+<!-- commands/run-the-day.md -->
+<!-- EXPERIMENTAL slash command that loads the run-the-day skill — autonomous multi-stage variant of /sell-slice. Pizza-shop framing: open the shop, run the whole day's service end-to-end, close out. -->
 
 ---
-description: EXPERIMENTAL. Drive an entire phased plan end-to-end in one chat session by dispatching /bytheslice:deliver-stage per stage in strict sequence. Reads docs/plans/00_master_checklist.md, invokes deliver-stage on the next Not-Started stage, waits for the structured result, sanity-checks the merged PR, ensures clean return to main, then advances. The everyday tool is /bytheslice:deliver-stage (run once per slice, fresh chat each time); use /run-pipeline only when you want autonomous multi-stage delivery and accept that long sessions can drift.
+description: EXPERIMENTAL. Open → service → close on autopilot. Drive an entire phased plan end-to-end in one chat session by dispatching /bytheslice:sell-slice per stage in strict sequence. Reads docs/plans/00_master_checklist.md, invokes sell-slice on the next Not-Started stage, waits for the structured result, sanity-checks the merged PR, ensures clean return to main, then advances. The everyday tool is /bytheslice:sell-slice (run once per slice, fresh chat each time); use /run-the-day only when you want autonomous multi-stage delivery and accept that long sessions can drift.
 ---
 
-# /run-pipeline (EXPERIMENTAL)
+# /run-the-day (EXPERIMENTAL)
 
-> **EXPERIMENTAL.** This command tries to deliver every remaining stage in one chat session, which is unreliable for full 20–30-stage plans today. The everyday entry point is **`/bytheslice:deliver-stage`** — run it once per slice in a fresh chat. Use `/run-pipeline` only when you want a single-session autonomous multi-stage run and accept the reliability tradeoff.
+> **EXPERIMENTAL.** This command tries to deliver every remaining stage in one chat session, which is unreliable for full 20–30-stage plans today. The everyday entry point is **`/bytheslice:sell-slice`** — run it once per slice in a fresh chat. Use `/run-the-day` only when you want a single-session autonomous multi-stage run and accept the reliability tradeoff.
 
-Load and follow the [`run-pipeline`](../skills/run-pipeline/SKILL.md) skill.
+Load and follow the [`run-the-day`](../skills/run-the-day/SKILL.md) skill.
 
 The skill drives an entire phased plan end-to-end by **dispatching `/bytheslice:deliver-stage` per stage**:
 

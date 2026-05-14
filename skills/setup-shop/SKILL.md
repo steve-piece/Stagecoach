@@ -1,14 +1,14 @@
 ---
-name: setup
-description: Bootstrap a new project or configure ByTheSlice in an existing one. Auto-detects your setup context and scaffolds the right foundation.
+name: setup-shop
+description: Start the oven, check ingredients, prep the shop. Bootstrap a new project or configure ByTheSlice in an existing one. First-time install, system-wide config, or per-project setup.
 model: opus
 effort: high
 user-invocable: true
-triggers: ["/bytheslice:setup", "/setup", "set up bytheslice", "configure bytheslice", "scaffold a new project", "first time using bytheslice", "create a new monorepo", "create a next.js app for bytheslice"]
+triggers: ["/bytheslice:setup-shop", "/setup-shop", "set up the shop", "open the pizza shop", "/bytheslice:setup", "/setup", "set up bytheslice", "configure bytheslice", "scaffold a new project", "first time using bytheslice", "create a new monorepo", "create a next.js app for bytheslice"]
 ---
 
-<!-- skills/setup/SKILL.md -->
-<!-- Three-flow setup orchestrator: first-time-install (system-wide), new-project (bootstrap + per-project config), existing-project (per-project config only). All ByTheSlice personalization flows through this skill. -->
+<!-- skills/setup-shop/SKILL.md -->
+<!-- Pizza-shop framing: this is the morning-prep / shop-opening action — chairs out, oven hot, lights on. Three-flow setup orchestrator: first-time-install (system-wide), new-project (bootstrap + per-project config), existing-project (per-project config only). All ByTheSlice personalization flows through this skill. -->
 
 # Setup
 

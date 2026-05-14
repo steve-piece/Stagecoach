@@ -1,13 +1,13 @@
 ---
-name: scaffold-ci-cd
-description: Wire CI/CD, E2E testing, and design-system compliance gates. Auto-dispatched by deliver-stage on ci-cd stages.
+name: final-quality-check
+description: Install the quality line every pie passes through before going on display — wire CI/CD, E2E testing, design-system compliance, and visual-regression gates. Run once before /sell-slice; also invocable standalone on any project.
 user-invocable: true
-triggers: ["/bytheslice:scaffold-ci-cd", "/scaffold-ci-cd", "scaffold ci/cd", "set up ci", "bootstrap quality gates", "ci-cd stage"]
+triggers: ["/bytheslice:final-quality-check", "/final-quality-check", "install the quality line", "wire the inspection station", "/bytheslice:scaffold-ci-cd", "/scaffold-ci-cd", "scaffold ci/cd", "set up ci", "bootstrap quality gates", "ci-cd stage"]
 ---
-<!-- skills/sub-disciplines/scaffold-ci-cd/SKILL.md -->
-<!-- Sub-skill of /bytheslice:deliver-stage. Orchestrator-only: dispatches eight specialized agents to bootstrap the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore/scaffold-ci-cd branch. -->
+<!-- skills/final-quality-check/SKILL.md -->
+<!-- Daily-prep skill (run before /sell-slice). Pizza-shop framing: install the quality line every pie crosses before landing on the display tray. Orchestrator-only: dispatches eight specialized agents to bootstrap the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore branch. Mode-detected (standalone vs sequential). -->
 
-# CI/CD Scaffold (sub-skill of `/deliver-stage`)
+# Final Quality Check — CI/CD + Verification Baseline
 
 This skill is the orchestrator for the CI/CD baseline. It does not write workflows itself — it **dispatches eight specialized agents** that each own one slice of the scaffold work. The orchestrator's job is detection, sequencing, user-input gating, and walking the completion checklist.
 

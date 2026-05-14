@@ -1,13 +1,13 @@
-<!-- commands/scaffold-ci-cd.md -->
-<!-- Slash command that loads the scaffold-ci-cd skill. Sub-skill of /deliver-stage; auto-dispatched on type:ci-cd stages. -->
+<!-- commands/final-quality-check.md -->
+<!-- Slash command that loads the final-quality-check skill. Daily-prep skill; run before /sell-slice. Also invocable standalone on any project. -->
 
 ---
-description: Sub-skill of /bytheslice:deliver-stage. Wires the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore/scaffold-ci-cd branch. Auto-dispatched by /deliver-stage on type:ci-cd stages; invoke directly to re-scaffold or repair CI when the baseline drifts. Use when the user says "scaffold ci/cd", "set up CI", "bootstrap quality gates", or runs /scaffold-ci-cd.
+description: Install the quality line every pie passes through before going on display. Wires the production-grade CI/CD + E2E + design-system-compliance + visual-regression baseline on a dedicated chore branch. Run once before /sell-slice (part of the foundation prep phase); also invocable standalone to add CI to any project, or to repair/re-scaffold a drifted baseline. Use when the user says "install the quality line", "scaffold ci/cd", "set up CI", or "bootstrap quality gates".
 ---
 
-# /scaffold-ci-cd
+# /final-quality-check
 
-Load and follow the [`scaffold-ci-cd`](../skills/sub-disciplines/scaffold-ci-cd/SKILL.md) skill.
+Load and follow the [`final-quality-check`](../skills/final-quality-check/SKILL.md) skill.
 
 **Sub-skill of `/bytheslice:deliver-stage`.** This skill is normally dispatched automatically when `deliver-stage` encounters a `type: ci-cd` stage. Run it directly only when you need to re-scaffold or repair the CI/CD baseline outside the normal stage loop.
 

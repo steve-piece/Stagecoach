@@ -1,14 +1,14 @@
-<!-- commands/walk-platform.md -->
-<!-- Slash command that loads the walk-platform skill: on-demand cross-cutting visual walkthrough of a running web app. Complements (does not replace) deliver-stage's per-slice visual-reviewer. -->
+<!-- commands/inspect-display.md -->
+<!-- Slash command that loads the inspect-display skill: on-demand cross-cutting visual walkthrough of a running web app. Pizza-shop framing: walk past the display tray, eyes on every pie that's already up. Complements (does not replace) /sell-slice's per-slice visual-reviewer. -->
 
 ---
-description: Cross-cutting visual walkthrough of a running web app. Discovers every route, drives a live browser through them, captures screenshots and console output, and surfaces a ranked report of what's broken, mocked, stubbed, or empty across the whole product. Run before UAT, before a demo, or after a batch of `/ship-pr` runs to catch silent regressions on surfaces nobody touched. Read-only. Different from `deliver-stage`'s per-slice visual-reviewer (Phase 4.7) — that gates ONE slice against spec; this walks EVERY route to find drift between claimed and real.
+description: Walk the display tray and eyeball every pie that's already on display. Cross-cutting visual walkthrough of a running web app. Discovers every route, drives a live browser through them, captures screenshots and console output, and surfaces a ranked report of what's broken, mocked, stubbed, or empty across the whole product. Run before UAT, before a demo, or after a batch of `/box-it-up` runs to catch silent regressions on surfaces nobody touched. Read-only. Different from `/sell-slice`'s per-slice visual-reviewer (Phase 4.7) — that gates ONE slice against spec; this walks EVERY route to find drift between claimed and real.
 argument-hint: [optional — scope hints like "marketplace only", "skip /host-resources", or a specific app name]
 ---
 
-# /walk-platform
+# /inspect-display
 
-Load and follow the [`walk-platform`](../skills/walk-platform/SKILL.md) skill.
+Load and follow the [`inspect-display`](../skills/inspect-display/SKILL.md) skill.
 
 `/deliver-stage`'s frontend pipeline already runs a sophisticated per-slice visual reviewer (Phase 4.7) — that's the right gate when shipping one slice. `/walk-platform` is a different shape: a cross-cutting, on-demand walkthrough of the *whole running app* to catch what per-slice review can't.
 

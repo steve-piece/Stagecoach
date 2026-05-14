@@ -1,13 +1,13 @@
-<!-- commands/add-feature.md -->
-<!-- Slash command shim that loads the add-feature skill — bolts new features onto an existing ByTheSlice project after the original PRD-to-app run is complete. Auto-detects whether the project is ByTheSlice-built, just-an-existing-app (redirects to setup), or no-project-on-disk (redirects to setup for bootstrap). -->
+<!-- commands/special-order.md -->
+<!-- Slash command that loads the special-order skill — bolts new features onto an existing ByTheSlice project after the original PRD-to-app run is complete. Pizza-shop framing: a walk-in wants something not on today's menu — cook it on the spot. -->
 
 ---
-description: Bolt new features onto an existing project mid-flight. Auto-detects whether the project was built with ByTheSlice (has docs/plans/), wasn't (existing app, needs setup first), or doesn't exist yet (needs bootstrap). For ByTheSlice projects, runs complexity assessment, writes new stage files via phased-plan-writer (extending the master checklist), and hands off to /bytheslice:deliver-stage for delivery. Use after the original PRD-to-app run is complete and you want to add a feature without rewriting the whole plan.
+description: Cook a slice with the customer's specifications on the spot. Bolt new features onto an existing project mid-flight. Auto-detects whether the project was built with ByTheSlice (has docs/plans/), wasn't (existing app, needs setup first), or doesn't exist yet (needs bootstrap). For ByTheSlice projects, runs complexity assessment, writes new stage files via phased-plan-writer (extending the master checklist), and hands off to /bytheslice:sell-slice for delivery. Use after the original PRD-to-app run is complete and you want to add a feature without rewriting the whole plan.
 ---
 
-# /add-feature
+# /special-order
 
-Load and follow the [`add-feature`](../skills/add-feature/SKILL.md) skill.
+Load and follow the [`special-order`](../skills/special-order/SKILL.md) skill.
 
 The skill auto-detects which path applies:
 

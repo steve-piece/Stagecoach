@@ -1,15 +1,18 @@
 ---
-name: init-design-system
-description: Bootstrap your design system: tokens, Tailwind config, and design rules. Auto-dispatched by deliver-stage on design-system stages.
+name: set-display-case
+description: Build the display case the pies will sit in — bootstrap your design system: tokens, Tailwind config, design rules, and the operator-only /library preview route. Run once before /sell-slice; also invocable standalone on any project.
 user-invocable: true
-triggers: ["/bytheslice:init-design-system", "/init-design-system", "scaffold design system", "design-system stage"]
+triggers: ["/bytheslice:set-display-case", "/set-display-case", "set up the display case", "install the design system", "/bytheslice:init-design-system", "/init-design-system", "scaffold design system", "design-system stage"]
 ---
 
-# init-design-system (sub-skill of `/deliver-stage`)
+<!-- skills/set-display-case/SKILL.md -->
+<!-- Daily-prep skill (run before /sell-slice). Pizza-shop framing: builds the display case every pre-made pie will sit in — tokens, Tailwind config, the /library preview route. Validates or generates a complete design system; runs standalone on any project (mode-detected). -->
 
-Validate or generate a complete design system before any feature work. Outputs canonical token files and writes design-system rules into the project rules file.
+# Set the Display Case — Design System Foundation
 
-This skill is required before any UI feature stage begins. No feature work may start until the token completeness gate passes. `/deliver-stage` auto-dispatches it on `type: design-system` stages; invoke directly only as an escape hatch.
+Validate or generate a complete design system before any feature work. Outputs canonical token files, writes design-system rules into the project rules file, and scaffolds the operator-only `/library` preview route.
+
+This is a **daily-prep skill** — part of the run-once foundation phase that runs before any feature delivery. Also fully invocable standalone (no master checklist required) to bolt a design system onto any project. Mode is auto-detected from disk state.
 
 ---
 

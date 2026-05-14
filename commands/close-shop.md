@@ -1,13 +1,13 @@
-<!-- commands/review-pipeline.md -->
-<!-- Slash command shim that loads the review-pipeline skill to review recent stage executions and draft plugin improvements. -->
+<!-- commands/close-shop.md -->
+<!-- Slash command that loads the close-shop skill to review recent stage executions and draft plugin improvements. Pizza-shop framing: bookends /setup-shop — after-service retro. -->
 
 ---
-description: EXPERIMENTAL. Reviews recent stage executions, identifies friction patterns, drafts PRs to the plugin repo for improvements. Defaults to plugin path ~/bytheslice; override via BYTHESLICE_PLUGIN_PATH env var.
+description: EXPERIMENTAL. After-service retro. Reviews recent stage executions, identifies friction patterns, drafts PRs to the plugin repo for improvements. Bookends /setup-shop. Defaults to plugin path ~/bytheslice; override via BYTHESLICE_PLUGIN_PATH env var.
 ---
 
-# /review-pipeline
+# /close-shop
 
-Load and follow the [`review-pipeline`](../skills/review-pipeline/SKILL.md) skill.
+Load and follow the [`close-shop`](../skills/close-shop/SKILL.md) skill.
 
 The skill reviews recent phased-plan executions and surfaces systemic friction patterns:
 

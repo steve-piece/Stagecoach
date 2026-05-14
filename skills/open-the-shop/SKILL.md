@@ -1,13 +1,13 @@
 ---
-name: setup-environment
-description: Scan environment requirements and verify all external service credentials are populated. Auto-dispatched on env-setup stages.
+name: open-the-shop
+description: Doors unlocked, lights flipped, OPEN sign up — scan environment requirements and verify all external service credentials are populated. The most HITL-heavy prep step; the operator personally stocks the cash drawer. Run once before /sell-slice; also invocable standalone.
 user-invocable: true
-triggers: ["/bytheslice:setup-environment", "/setup-environment", "env setup", "env-setup stage"]
+triggers: ["/bytheslice:open-the-shop", "/open-the-shop", "stock the line", "open for business", "doors open", "/bytheslice:setup-environment", "/setup-environment", "env setup", "env-setup stage"]
 ---
-<!-- skills/sub-disciplines/setup-environment/SKILL.md -->
-<!-- Sub-skill of /bytheslice:deliver-stage. Orchestrator-only: dispatches env-scanner, github-secrets-scanner, checklist-generator, and env-verifier to gate the project on a fully populated environment before feature work or CI runs. -->
+<!-- skills/open-the-shop/SKILL.md -->
+<!-- Daily-prep skill — the LAST step before /sell-slice. Pizza-shop framing: doors unlock, lights flip, OPEN sign goes up. Orchestrator-only: dispatches env-scanner, github-secrets-scanner, checklist-generator, and env-verifier to gate the project on a fully populated environment. Mode-detected (standalone vs sequential). Most HITL-heavy prep step — operator personally provides credentials. -->
 
-# Environment Setup Gate (sub-skill of `/deliver-stage`)
+# Open the Shop — Environment Gate
 
 Ensures all external services are provisioned and every `.env.local` file is fully populated before feature stages or CI gates begin. Running feature work with missing or placeholder keys causes cascading failures that are hard to diagnose; this gate catches them early.
 

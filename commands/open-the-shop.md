@@ -1,13 +1,13 @@
-<!-- commands/setup-environment.md -->
-<!-- Slash command that loads the setup-environment skill. Sub-skill of /deliver-stage; auto-dispatched on type:env-setup stages. -->
+<!-- commands/open-the-shop.md -->
+<!-- Slash command that loads the open-the-shop skill. Daily-prep skill — the LAST step before /sell-slice. Also invocable standalone on any project. -->
 
 ---
-description: Sub-skill of /bytheslice:deliver-stage. Scans .env.example files, generates a manual setup checklist for external services (Supabase, Stripe, Resend, etc.), waits for user confirmation, and verifies all keys are populated before allowing CI runs or feature work. Auto-dispatched by /deliver-stage on type:env-setup stages; invoke directly to re-verify env state.
+description: Doors unlocked, lights flipped, OPEN sign up. Scans .env.example files, generates a manual setup checklist for external services (Supabase, Stripe, Resend, etc.), waits for user confirmation, and verifies all keys are populated. The most HITL-heavy prep step — the operator personally stocks the cash drawer. Run once before /sell-slice (the final foundation step); also invocable standalone to walk env-var setup on any project.
 ---
 
-# /setup-environment
+# /open-the-shop
 
-Load and follow the [`setup-environment`](../skills/sub-disciplines/setup-environment/SKILL.md) skill.
+Load and follow the [`open-the-shop`](../skills/open-the-shop/SKILL.md) skill.
 
 **Sub-skill of `/bytheslice:deliver-stage`.** This skill is normally dispatched automatically when `deliver-stage` encounters a `type: env-setup` stage. Run it directly only when you need to re-verify environment state outside the normal stage loop.
 

@@ -1,13 +1,13 @@
 ---
-name: ship-pr
-description: Ship a feature branch: push, open PR, watch CI (auto-fix on red), merge on approval, and cleanup.
+name: box-it-up
+description: Box the slice and hand it across the counter — push, open PR, watch CI (auto-fix on red), merge on approval, sync main, cleanup branches and worktrees.
 user-invocable: true
-triggers: ["/bytheslice:ship-pr", "/ship-pr", "ship the pr", "submit the pr", "open and merge the pr", "ship this branch", "ship this slice"]
+triggers: ["/bytheslice:box-it-up", "/box-it-up", "box up the slice", "hand it over", "/bytheslice:ship-pr", "/ship-pr", "ship the pr", "submit the pr", "open and merge the pr", "ship this branch", "ship this slice"]
 ---
-<!-- skills/ship-pr/SKILL.md -->
-<!-- Standalone skill that takes a feature branch with locally-committed work and ships it through PR open → CI watch (with auto-fix loop on red) → user-authorized merge → main sync + branch and worktree cleanup. Decoupled from /deliver-stage and /add-feature so the operator can review / UAT the slice locally before deciding to ship. -->
+<!-- skills/box-it-up/SKILL.md -->
+<!-- Standalone closeout skill. Pizza-shop framing: pie's cooled, inspection passed — box it and hand it over. Takes a feature branch with locally-committed work and ships it through PR open → CI watch (with auto-fix loop on red) → user-authorized merge → main sync + branch and worktree cleanup. Decoupled from /sell-slice and /special-order so the operator can review / UAT the slice locally before deciding to ship. -->
 
-# /ship-pr
+# /box-it-up
 
 `/deliver-stage` and `/add-feature` stop at "slice committed locally, ready for review". `/ship-pr` is the next step in the chain — it takes a branch with locally-committed work and shepherds it through PR open → CI watch (with an auto-fix loop on red) → user-authorized merge → main sync + branch / worktree cleanup.
 
