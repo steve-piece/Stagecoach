@@ -47,23 +47,28 @@ You are the **library-route-scaffolder** for `/init-design-system`. Your job: af
 
 ### Step 3 — Generate the route files
 
+The library uses **a single page route with `?tab=<id>` query-param routing**, NOT folder-per-entry. One page reads the query param, validates against a typed tab vocabulary, and dispatches to the matching entry component via a `STORIES` registry. The sidebar links are `<Link href="/library?tab=<id>">`. This keeps every entry one file (not a folder), every URL one shape, and TypeScript catches drift between the vocabulary and the registry at build time.
+
 Create at the target path:
 
 ```
 <target>/
 ├── layout.tsx        # operator-only layout with the library shell
-├── page.tsx          # default landing — renders the first entry (Buttons)
+├── page.tsx          # reads ?tab=<id>, falls back to default, renders the matching entry
 ├── _components/
 │   ├── library-shell.tsx        # sidebar + main + footer rail
-│   ├── library-sidebar.tsx      # entries + search input
+│   ├── library-sidebar.tsx      # entries + search input — <Link href="/library?tab=<id>">
 │   ├── library-search.tsx       # client-side filter over the entries registry
 │   ├── theme-toggle.tsx         # Sun/Moon icon button, aria-label="Toggle theme"
-│   └── component-preview.tsx    # main pane — renders a chosen entry's variants and states
+│   ├── component-preview.tsx    # main pane — renders the active entry via STORIES dispatch
+│   ├── entry-frame.tsx          # <EntryHeader>, <EntrySection>, <EntryStage> (server)
+│   └── entry-source-copy.tsx    # 'use client' icon-button island for the Markdown-link copy buttons
 ├── _registry/
-│   └── entries.ts               # registry array — every library entry is registered here
-└── buttons/
-    ├── page.tsx                 # /library/buttons — the canonical seed entry
-    └── buttons.entry.ts         # registered in _registry/entries.ts
+│   ├── tabs.ts                  # LIBRARY_TABS const tuple + LibraryTab type + isLibraryTab guard
+│   ├── entries.ts               # LibraryEntry[] for the sidebar — { id, name, tags }
+│   └── stories.tsx              # STORIES: Record<LibraryTab, ComponentType> — id → component
+└── _entries/
+    └── buttons-entry.tsx        # the canonical seed entry; one file per entry (NOT a folder)
 ```
 
 Use the design tokens from `docs/design-system.md` and `app/globals.css`. **No raw color/font/spacing values** in any file.
@@ -90,19 +95,100 @@ Use the design tokens from `docs/design-system.md` and `app/globals.css`. **No r
 #### `page.tsx` content requirements
 
 - Same top-of-file comment block as `layout.tsx`.
-- Default content: redirect to `/library/buttons` (or render the buttons entry inline) so the operator lands on the seed entry.
+- Server component. Reads `searchParams.tab`, runs it through `isLibraryTab(...)` (from `_registry/tabs.ts`), falls back to a `DEFAULT_TAB` (the seed `buttons` tab) when the param is missing or invalid.
+- Passes the active tab id down to `<LibraryShell>`, which renders the matching component from `STORIES`.
+- Should set `export const dynamic = 'force-dynamic'` so the search-param read isn't cached.
+
+Shape:
+
+```tsx
+import { isLibraryTab } from './_registry/tabs';
+import type { LibraryTab } from './_registry/tabs';
+import { LibraryShell } from './_components/library-shell';
+
+const DEFAULT_TAB: LibraryTab = 'buttons';
+
+export default async function LibraryPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const raw = typeof params['tab'] === 'string' ? params['tab'] : undefined;
+  const activeTab: LibraryTab = isLibraryTab(raw) ? raw : DEFAULT_TAB;
+  return <LibraryShell activeTab={activeTab} />;
+}
+
+export const dynamic = 'force-dynamic';
+```
 
 #### `library-shell.tsx`
 
 - Three regions: left sidebar (~240px), main content pane (flex-1), footer slot at sidebar bottom for the theme toggle.
+- Receives `activeTab: LibraryTab` as a prop, renders the matching component from `STORIES` in the main pane.
 - Sidebar contains: search input at top, entry list (rendered from `_registry/entries.ts`), theme toggle pinned to bottom rail.
 - All spacing, color, and typography use design tokens.
 
 #### `library-sidebar.tsx`
 
-- Renders entries from the registry. Each entry is a `<Link href={entry.path}>` showing `entry.name`.
-- Active entry styled via tokenized active state.
+- Receives `activeTab: LibraryTab` as a prop.
+- Renders entries from the registry. Each entry is a `<Link href={`/library?tab=${entry.id}`}>` showing `entry.name`. Use `replace`, `scroll={false}`, `prefetch={false}` so soft navigation feels snappy and doesn't shove a hundred entries into the prefetch queue.
+- Active entry styled via tokenized active state (`aria-current="page"` when `entry.id === activeTab`).
 - Filtered by the search input's value (case-insensitive substring match on `entry.name` and `entry.tags`).
+
+#### `_registry/tabs.ts`
+
+The single source of truth for valid tab ids. Typed tuple → derived type → type guard. Adding a new entry means adding to this tuple AND to `STORIES` (TypeScript enforces both):
+
+```ts
+export const LIBRARY_TABS = [
+  'buttons',
+  // new entries append here
+] as const;
+
+export type LibraryTab = (typeof LIBRARY_TABS)[number];
+
+export function isLibraryTab(value: unknown): value is LibraryTab {
+  return typeof value === 'string' && (LIBRARY_TABS as readonly string[]).includes(value);
+}
+```
+
+#### `_registry/entries.ts`
+
+Sidebar metadata only — name, tags, grouping. Keyed by `id: LibraryTab`. No `path` field; the path is always `/library?tab=${id}` and the sidebar builds it inline:
+
+```ts
+import type { LibraryTab } from './tabs';
+
+export type LibraryEntry = {
+  id: LibraryTab;
+  name: string;
+  tags: readonly string[];
+};
+
+export const entries: readonly LibraryEntry[] = [
+  { id: 'buttons', name: 'Buttons', tags: ['primitive', 'form'] },
+];
+```
+
+#### `_registry/stories.tsx`
+
+The dispatch map — `Record<LibraryTab, ComponentType>`. Typing it this way forces TypeScript to fail compilation if `LIBRARY_TABS` and `STORIES` ever drift:
+
+```tsx
+import { ButtonsEntry } from '../_entries/buttons-entry';
+import type { LibraryTab } from './tabs';
+import type { ComponentType, ReactNode } from 'react';
+
+export const STORIES: Record<LibraryTab, ComponentType<Record<string, never>>> = {
+  buttons: ButtonsEntry,
+};
+
+export function renderStory(tab: LibraryTab): ReactNode {
+  const Story = STORIES[tab];
+  return <Story />;
+}
+```
 
 #### `theme-toggle.tsx`
 
@@ -115,28 +201,238 @@ Use the design tokens from `docs/design-system.md` and `app/globals.css`. **No r
 - Receives an entry's variants and states as props.
 - Renders a section per state (default / hover / focus / disabled / loading / empty / error / populated) with the component shown in that state and a small label.
 - Uses tokens for layout spacing, separators, and labels.
+- **Delegates the page H1 + per-section H3 to `<EntryHeader>` and `<EntrySection>`** (see below) so every entry gets inline Markdown-link copy buttons next to the title and each state label.
 
-#### `_registry/entries.ts`
+#### `entry-frame.tsx` (server) + `entry-source-copy.tsx` (`'use client'`)
 
-```ts
-export type LibraryEntry = {
-  name: string;        // "Button"
-  path: string;        // "/library/buttons"
-  tags: string[];      // ["form", "primitive"]
+These two files are the **source-path affordance**: every entry page renders an icon-only copy button next to the H1 (one per page) and next to each state H3 (one per section). On click the button writes a **Markdown link** to the clipboard. When the operator pastes the payload into a Claude Code chat, it renders as a clickable link to the exact file (and optional line range) they want changed — no hunting through the file tree, no asking Claude to scan a 400-line file when the change is in 16 lines.
+
+- `<EntryHeader>` accepts `sourcePath?: string` (singular). The page button copies `[Title](path)`.
+- `<EntrySection>` accepts `sourcePath?: string` and optional `sourceLines?: string | number`. The section button copies `[Section name](path)`, or `[Section name](path:N)` / `[Section name](path:N-M)` when `sourceLines` is set.
+- `sourceLines` accepts a number for a single line (`28`) or a string for a range (`"13-29"`). Skip it when there's no clean discrete anchor — the bare path link is still useful.
+- The copy button is the **only** part that needs `'use client'`. Keep it in its own file so `entry-frame.tsx` itself stays server-renderable.
+
+Generate `entry-source-copy.tsx` from this template (token names are illustrative — substitute the project's tokens):
+
+```tsx
+// _components/entry-source-copy.tsx
+// Builds a Markdown link payload such as:
+//   [Buttons](components/ui/button.tsx)
+//   [Disabled](components/ui/button.tsx:42-58)
+'use client';
+
+import { useState } from 'react';
+import { Check, Copy } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { ReactNode } from 'react';
+
+export type EntrySourceCopyProps = {
+  linkText: string;
+  path: string;
+  lines?: string | number;
+  size?: 'header' | 'section';
+  className?: string;
 };
 
-export const entries: LibraryEntry[] = [
-  { name: "Buttons", path: "/library/buttons", tags: ["primitive", "form"] },
-];
+function buildPayload(linkText: string, path: string, lines: string | number | undefined): string {
+  const target = lines !== undefined && lines !== '' ? `${path}:${lines}` : path;
+  return `[${linkText}](${target})`;
+}
+
+export function EntrySourceCopy({
+  linkText,
+  path,
+  lines,
+  size = 'section',
+  className,
+}: EntrySourceCopyProps): ReactNode {
+  const [copied, setCopied] = useState(false);
+  const payload = buildPayload(linkText, path, lines);
+
+  const onClick = async (): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(payload);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // Clipboard API blocked — silently no-op; the title attribute still
+      // shows the payload so the operator can copy from the tooltip context menu.
+    }
+  };
+
+  const dim = size === 'header' ? 'h-7 w-7' : 'h-6 w-6';
+  const iconDim = size === 'header' ? 'h-3.5 w-3.5' : 'h-3 w-3';
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={copied ? 'Copied' : `Copy: ${payload}`}
+      aria-label={copied ? `Copied ${payload}` : `Copy markdown link: ${payload}`}
+      className={cn(
+        'inline-flex shrink-0 items-center justify-center rounded-md border bg-bg-card transition-colors',
+        'hover:bg-bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        dim,
+        copied ? 'border-brand-accent text-brand-accent' : 'border-hairline-soft text-ink-3 hover:text-ink-1',
+        className,
+      )}
+    >
+      {copied ? <Check className={iconDim} aria-hidden /> : <Copy className={iconDim} aria-hidden />}
+    </button>
+  );
+}
 ```
 
-Subsequent components are appended to this array by `library-entry-writer` (the Phase 4.5 agent in `/deliver-stage`).
+Generate `entry-frame.tsx` from this template (server-renderable; the only client island is the `<EntrySourceCopy>` button inside it):
 
-#### `buttons/page.tsx` (seed entry)
+```tsx
+// _components/entry-frame.tsx
+import { cn } from '@/lib/utils';
+import { EntrySourceCopy } from './entry-source-copy';
+import type { ReactNode } from 'react';
 
+export type EntryHeaderProps = {
+  eyebrow: string;
+  title: string;
+  subtitle?: string;
+  /** Repo-relative path to the primitive (or composing) source file. */
+  sourcePath?: string;
+};
+
+export function EntryHeader({ eyebrow, title, subtitle, sourcePath }: EntryHeaderProps): ReactNode {
+  return (
+    <header className="border-b border-hairline-soft pb-6">
+      <p className="text-xs uppercase tracking-wide text-ink-3">{eyebrow}</p>
+      <div className="mt-1 flex items-center gap-2">
+        <h1 className="text-2xl font-semibold text-ink-1">{title}</h1>
+        {sourcePath ? <EntrySourceCopy linkText={title} path={sourcePath} size="header" /> : null}
+      </div>
+      {subtitle ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-3">{subtitle}</p> : null}
+    </header>
+  );
+}
+
+export type EntrySectionProps = {
+  name: string;
+  desc?: string;
+  children: ReactNode;
+  className?: string;
+  sourcePath?: string;
+  /** Optional anchor in `sourcePath` — single line (`28`) or range (`"13-29"`). */
+  sourceLines?: string | number;
+};
+
+export function EntrySection({
+  name,
+  desc,
+  children,
+  className,
+  sourcePath,
+  sourceLines,
+}: EntrySectionProps): ReactNode {
+  return (
+    <section className={cn('mt-6', className)}>
+      <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span className="text-sm font-semibold text-ink-1">{name}</span>
+        {sourcePath ? (
+          <EntrySourceCopy
+            linkText={name}
+            path={sourcePath}
+            size="section"
+            {...(sourceLines !== undefined ? { lines: sourceLines } : {})}
+          />
+        ) : null}
+        {desc ? <span className="text-xs text-ink-3">{desc}</span> : null}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+export function EntryStage({
+  layout = 'row',
+  children,
+  className,
+}: {
+  layout?: 'row' | 'stack' | 'grid';
+  children: ReactNode;
+  className?: string;
+}): ReactNode {
+  return (
+    <div
+      className={cn(
+        'rounded-lg border border-hairline-soft bg-bg-card p-6',
+        layout === 'row' && 'flex flex-wrap items-center gap-3',
+        layout === 'stack' && 'flex flex-col gap-3',
+        layout === 'grid' && 'grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+```
+
+**Token substitution.** The templates reference illustrative token names (`bg-bg-card`, `text-ink-1`, `border-hairline-soft`, `brand-accent`, etc.). Before writing these files, swap in whatever token names the project's design system actually defines (read `docs/design-system.md` and `app/globals.css`). If a token doesn't exist for a given role, fall back to the closest token the system does ship — never invent.
+
+#### `_entries/buttons-entry.tsx` (seed entry)
+
+The seed entry is **one file** that exports a single component (named `<EntryName>Entry`, e.g. `ButtonsEntry`). It is dispatched by `STORIES[tab]` in `_registry/stories.tsx` — there is NO `<slug>/page.tsx` folder. Every future entry follows the same shape.
+
+- Exports `ButtonsEntry` (component name `<PascalCaseTabId>Entry`).
 - Renders every variant declared by the design-system rules (primary / secondary / ghost / destructive / etc.) across every state listed above.
 - Uses tokens only; no raw values.
 - Imports the actual project Button component if one exists in `components/ui/button.tsx` — otherwise renders inline using design-system primitives.
+- **Declares one or more `SOURCE` consts at the top of the file** and passes them through `<EntryHeader sourcePath=…>` and `<EntrySection sourcePath=… sourceLines=…>` so the operator can copy a Markdown link to the exact file (or line range) they want changed. Convention:
+  - Single-primitive entry: one `SOURCE` const for both header and sections.
+  - Multi-primitive entry: one const per primitive plus an `ENTRY` const for the page header (which usually points at the entry file itself, since no single primitive owns the page).
+  - For preview-only entries where the primitive hasn't been extracted yet, point `SOURCE` at the entry file itself; once the primitive lands, swap the const.
+
+Seed shape:
+
+```tsx
+// app/(dashboard)/library/_entries/buttons-entry.tsx
+import { Button } from '@/components/ui/button';
+import { EntryHeader, EntrySection, EntryStage } from '../_components/entry-frame';
+
+const SOURCE = 'components/ui/button.tsx';
+
+export function ButtonsEntry() {
+  return (
+    <div>
+      <EntryHeader
+        eyebrow="Foundation · Primitive"
+        title="Buttons"
+        subtitle="All declared variants across every state."
+        sourcePath={SOURCE}
+      />
+
+      <EntrySection name="Default" desc="Canonical resting state." sourcePath={SOURCE}>
+        <EntryStage layout="row">
+          <Button intent="primary">Primary</Button>
+          <Button intent="secondary">Secondary</Button>
+          <Button intent="ghost">Ghost</Button>
+          <Button intent="destructive">Destructive</Button>
+        </EntryStage>
+      </EntrySection>
+
+      <EntrySection
+        name="Disabled"
+        desc="Read-only state."
+        sourcePath={SOURCE}
+        sourceLines="42-58"
+      >
+        {/* ... */}
+      </EntrySection>
+
+      {/* hover / focus / loading / empty / error / populated sections follow */}
+    </div>
+  );
+}
+```
+
+Visited at `/library?tab=buttons` (the seed `DEFAULT_TAB`). Subsequent entries are added by `library-entry-writer` during `/deliver-stage` Phase 4.5 by (1) appending an id to `LIBRARY_TABS`, (2) adding the file to `_entries/`, (3) registering it in `STORIES`, and (4) adding the sidebar metadata to `entries`.
 
 ### Step 4 — Audit and exclude from navigation surfaces
 
@@ -178,9 +474,18 @@ nav_surfaces_audited:
     action: confirmed_excluded | added_to_exclude_list | created_defensive_default
 seed_entry:
   name: Buttons
-  path: /library/buttons
+  id: buttons
+  url: /library?tab=buttons
+  entry_file: <e.g. app/(dashboard)/library/_entries/buttons-entry.tsx>
+  registered_in:
+    tabs: <e.g. app/(dashboard)/library/_registry/tabs.ts>
+    entries: <e.g. app/(dashboard)/library/_registry/entries.ts>
+    stories: <e.g. app/(dashboard)/library/_registry/stories.tsx>
   variants_rendered: <count>
   states_rendered: [<list>]
+  source_path_affordance:
+    header_copy_button: true | false   # MUST be true
+    section_copy_buttons: true | false # MUST be true for every state section
 internal_link_audit:
   href_library_matches: [<list of file:line matches outside tests/docs>]
 ```
@@ -209,8 +514,9 @@ hitl_context: null | "<what triggered this>"
 
 - **Tokens only.** No raw color, font, spacing, or radius values in any generated file.
 - **Operator-only.** The route MUST be excluded from every navigation surface listed above. The top-of-file comment in `layout.tsx` and `page.tsx` documents this.
+- **Source-path affordance is non-optional.** Every entry — starting with the seed `Buttons` page — MUST use `<EntryHeader sourcePath=…>` for the H1 and `<EntrySection sourcePath=…>` for every state section so the operator can copy a Markdown link to chat. The `<EntrySourceCopy>` client island must be wired up before the seed entry renders.
 - **Never add `<Link href="/library">`** to any production navigation file.
 - **Stage but do not commit.** The orchestrator commits at closeout.
 - **Reuse existing theme primitives** when present. Only install `next-themes` if no primitive exists.
-- **No new dependencies beyond `next-themes`** (and only if missing). Surface anything else as `external_credentials` HITL.
-- **Idempotent re-runs.** If the route already exists with the canonical comment block, this agent should be a no-op for the route files; only re-audit nav surfaces.
+- **No new dependencies beyond `next-themes` and `lucide-react`** (and only if missing — `lucide-react` is used by `<EntrySourceCopy>`; if the project's icon library is different, substitute its equivalent `Check` + `Copy` icons rather than adding a new dep). Surface anything else as `external_credentials` HITL.
+- **Idempotent re-runs.** If the route already exists with the canonical comment block AND the `entry-frame.tsx` + `entry-source-copy.tsx` files are present, this agent should be a no-op for the route files; only re-audit nav surfaces. If the comment block is present but the frame helpers are missing, generate them — this is the upgrade path for projects bootstrapped before the source-path affordance shipped.

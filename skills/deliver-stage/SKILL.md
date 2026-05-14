@@ -161,24 +161,30 @@ Run sequentially:
 2. **4.2 — `layout-architect`** → route files, layout components, breakpoint plan
 3. **4.3 — `block-composer`** (always first) → composes from shadcn blocks; reports `ui_coverage_percent`
 4. **4.4 — `component-crafter`** (only if `block-composer` reports gaps) → token-only custom components
-5. **4.5 — Library Preview Gate** (non-skippable):
-   - **Trigger.** Library preview gate is non-skippable and fires whenever a stage (a) authors a new component or block, OR (b) modifies any user-visible surface of an existing library component (props, copy, content, variants, states, or styles) as it appears in a production route. In the modify case, the existing `/library/<slug>` entry must be updated to reflect the change and re-approved before the production-route edit lands. Pure internal refactors with no rendered-output delta are exempt.
+5. **4.5 — Library Preview Gate** (non-skippable, preview-first HARD STOP):
+   - **Trigger.** Library preview gate is non-skippable and fires whenever a stage (a) authors a new component or block, OR (b) modifies any user-visible surface of an existing library component (props, copy, content, variants, states, or styles) as it appears in a production route. In the modify case, the existing `/library?tab=<id>` entry must be updated to reflect the change and re-approved before the production-route edit lands. Pure internal refactors with no rendered-output delta are exempt.
+   - **Phase 0 — Should we even build this?** `library-entry-writer` runs the extend-vs-create gate first. If it returns `phase_0.build_decision: extend_existing` or `inline_in_consumer`, **stop** and surface the recommendation via `ask_user_input_v0` (or bubble HITL `creative_direction`). The orchestrator pivots the slice scope before any new entry is written.
    - Dispatch `library-entry-writer` with one of two **modes** per item:
-     - `mode: "new"` for every component / block emitted by 4.3 and 4.4 → appends a fresh `/library/<slug>` entry with the full variants × states matrix.
-     - `mode: "modify"` for every existing library component whose user-visible surface changed under condition (b) → updates the existing `/library/<slug>` entry in place with the delta (copy / prop / content / variant / state / style change), leaving the registry row alone unless tags or name genuinely changed.
-   - Both modes render all variants × all states (default / hover / focus / disabled / loading / empty / error / populated).
-   - Stop and ask the user via `ask_user_input_v0` (or bubble HITL with `hitl_category: "creative_direction"`):
-     > "I've added `<component name>` to `/library` — please review and tell me if the design is approved, needs revision, or should be rejected."
+     - `mode: "new"` for every component / block emitted by 4.3 and 4.4 → appends a fresh entry: one file under `_entries/<id>-entry.tsx`, plus registrations in `_registry/tabs.ts`, `_registry/stories.tsx`, and `_registry/entries.ts`, all rendering the full variants × states matrix.
+     - `mode: "modify"` for every existing library component whose user-visible surface changed under condition (b) → updates the existing `_entries/<id>-entry.tsx` file in place with the delta (copy / prop / content / variant / state / style change), leaving the registry rows alone unless tags or name genuinely changed.
+   - Both modes render all variants × all states (default / hover / focus / disabled / loading / empty / error / populated) AND wire the source-path copy buttons through `<EntryHeader sourcePath=…>` / `<EntrySection sourcePath=… sourceLines=…>`.
+   - **Discover the dev port** before surfacing URLs. Check in order: `lsof -i -P | grep LISTEN | grep node` (already-serving ports), `package.json` `scripts.dev` declared port, framework-specific port hints (`next.config.js`, `proxy.ts`). If still ambiguous, ask the user.
+   - **HARD STOP.** Surface a single Phase 4.5 prompt that embeds:
+     1. The **self-critique block** from `library-entry-writer`'s output contract — skipped states, untested edge cases, close-but-not-exact tokens, untested compositions — verbatim, per entry.
+     2. A **clickable preview URL block**, one line per entry, in the form `http://localhost:<port>/library?tab=<id>`, with a 1-line note on what's covered.
+     3. The explicit ask:
+        > "Library is updated. Self-critique above, preview URLs below. Click through, leave comments on anything that needs changing, and tell me whether each entry is **approved**, needs **revision**, or should be **rejected** before I wire `<component name>` into `<production route>`."
+   - **Do not start production wiring** until the user explicitly approves. Even if the request sounded straightforward, even if the design feels right, even if the user is in a hurry — stop here. The cost asymmetry (rewriting a story file vs. rewriting story file + routes + server actions + types + tests) is what makes the gate worth enforcing.
    - On **approved** → import the component from the library into the production route(s) named by the stage spec (or, in the modify case, land the consumer-route edit). Continue to Phase 4.6.
-   - On **revision** → re-dispatch `component-crafter` with the user's notes, then re-run 4.5 for the revised component. Cap at 2 revision loops; on the 3rd round, surface as HITL `creative_direction` and stop.
-   - On **rejected** → remove the library entry (delete the `/library/<slug>/` page and the corresponding `_registry/entries.ts` line) and surface as HITL `creative_direction` for the user to redirect.
+   - On **revision** → re-dispatch `component-crafter` with the user's notes, then re-run 4.5 for the revised component (with a fresh self-critique). Cap at 2 revision loops; on the 3rd round, surface as HITL `creative_direction` and stop.
+   - On **rejected** → remove the entry: delete `_entries/<id>-entry.tsx`, remove the id from `_registry/tabs.ts` (`LIBRARY_TABS`), remove the import + map row from `_registry/stories.tsx` (`STORIES`), and remove the sidebar row from `_registry/entries.ts`. Surface as HITL `creative_direction` for the user to redirect.
    - **No production-route imports happen before approval.** `library-entry-writer`'s output contract requires `production_imports_added: 0`.
 6. **4.6 — `state-illustrator`** → ensures every interactive surface has loading / empty / error / success states (in production routes; the library version was already populated by 4.5)
 7. **4.7 — `visual-reviewer`** (loops on fail) → pass: continue; fail: re-dispatch the responsible producer with the critique. Cap 2 retry loops; on third failure HITL `creative_direction`.
 
 **Hard rules:**
 - `block-composer` MUST run and report before `component-crafter` is considered. Never skip block composition.
-- **Library preview gate is non-skippable and fires whenever a stage (a) authors a new component or block, OR (b) modifies any user-visible surface of an existing library component (props, copy, content, variants, states, or styles) as it appears in a production route. In the modify case, the existing `/library/<slug>` entry must be updated to reflect the change and re-approved before the production-route edit lands. Pure internal refactors with no rendered-output delta are exempt.** Library-first applies even to single-component stages and to "small" consumer-side edits like copy or prop changes.
+- **Library preview gate is non-skippable and fires whenever a stage (a) authors a new component or block, OR (b) modifies any user-visible surface of an existing library component (props, copy, content, variants, states, or styles) as it appears in a production route. In the modify case, the existing `/library?tab=<id>` entry must be updated to reflect the change and re-approved before the production-route edit lands. Pure internal refactors with no rendered-output delta are exempt.** Library-first applies even to single-component stages and to "small" consumer-side edits like copy or prop changes.
 
 #### `backend` / `full-stack` / `db-schema` / `infrastructure` — Internal implementer
 
@@ -270,6 +276,7 @@ After each task and at stage closeout:
 4. Subagent run summary (which roles ran, how many review loops, fix-attempter / debug-instrumenter activity)
 5. Open risks / blockers
 6. Next recommended slice
+7. **Closing-narrative paragraph** (UI-touching stages only) — one paragraph telling the design story: what was built · why this shape over alternatives (one or two trade-offs made) · what was deliberately left out · what reviewers should pay attention to. The PR body lifts this paragraph verbatim. Without it, future readers reverse-engineer the design from the diff.
 
 ---
 
@@ -284,6 +291,7 @@ After each task and at stage closeout:
 - **Always provide a recommended answer in available options** at every elicitation point.
 - **Phase 6 (basic-checks) and Phase 7 (aggregating-test-review) gate the output summary.** No "stage complete" report until both pass (or are intentionally skipped per stage type).
 - **Strip `// INSTRUMENT` lines** before final commit if `debug-instrumenter` ran.
+- **Session goal is set at most once per slice run, after Phase 2 authorization.** Phase 2.5 enforces the parent-goal pre-check; if `/run-pipeline` already set a plan-level goal, the slice-level goal is skipped. Never overwrite an active parent goal with a narrower slice-level condition.
 
 ---
 
@@ -304,10 +312,15 @@ Run at the end of every slice. Do not report the slice "ready to ship" until eve
 
 Skip only if the stage is `type: backend`, `db-schema`, or `infrastructure` with zero UI changes, OR the stage is a pure internal refactor with no rendered-output delta in any production route.
 
-[ ] Every component / block delivered in this stage has a `/library` entry with all variants and states (default / hover / focus / disabled / loading / empty / error / populated).
-[ ] Every existing library component whose user-visible surface (props, copy, content, variants, states, or styles) changed in a production route has its `/library/<slug>` entry updated to reflect the change.
+[ ] `library-entry-writer` ran the Phase 0 extend-vs-create gate and reported `build_decision` for every dispatched item.
+[ ] Every component / block delivered in this stage has a `/library?tab=<id>` entry with all variants and states (default / hover / focus / disabled / loading / empty / error / populated).
+[ ] Every entry uses `<EntryHeader sourcePath=…>` and `<EntrySection sourcePath=… sourceLines=…>` so the page H1 and every state H3 render a working copy-Markdown-link button.
+[ ] Every new entry is registered in all three registries (`_registry/tabs.ts` → `LIBRARY_TABS`, `_registry/stories.tsx` → `STORIES`, `_registry/entries.ts` → `entries`). Modify-case entries leave registry rows alone unless `name` / `tags` genuinely changed.
+[ ] Every existing library component whose user-visible surface (props, copy, content, variants, states, or styles) changed in a production route has its `/library?tab=<id>` entry updated to reflect the change.
+[ ] Phase 4.5 HITL prompt embedded the self-critique block AND clickable preview URLs before the user-approval ask.
 [ ] User-approved each component at the library preview gate before any production-route import or consumer-side edit landed.
 [ ] No component imported into a production route, and no user-visible consumer-side edit committed, without library-first review.
+[ ] Closing-narrative paragraph (one paragraph: what was built · why this shape · what was left out · what reviewers should pay attention to) drafted for the PR description in §3 below.
 
 ### 2. Master Checklist Updated
 

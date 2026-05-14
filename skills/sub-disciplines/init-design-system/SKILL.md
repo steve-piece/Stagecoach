@@ -179,14 +179,17 @@ Dispatch [`agents/library-route-scaffolder.md`](agents/library-route-scaffolder.
 - Project rules file path
 - Whether `next-themes` is already a dependency (read from `package.json`)
 
-The agent generates an operator-only Storybook-like preview route at `app/(dashboard)/library/` (or the detected route-group equivalent — falls back to `app/library/` if no route groups exist). The route renders:
-- Left sidebar: search input + entry list
-- Main pane: the selected entry's variants and states (default / hover / focus / disabled / loading / empty / error / populated)
-- Sidebar bottom rail: a Sun/Moon theme toggle (`aria-label="Toggle theme"`, persisted across reloads via `next-themes` or the project's existing theme primitive)
+The agent generates an operator-only Storybook-like preview route at `app/(dashboard)/library/` (or the detected route-group equivalent — falls back to `app/library/` if no route groups exist). The route uses **`?tab=<id>` query-param routing**: one page route reads `searchParams.tab`, validates it against a typed `LIBRARY_TABS` tuple, and dispatches to the matching component from a `STORIES` registry. Each entry is **one file** under `_entries/<id>-entry.tsx` (no folder-per-entry). Adding a new entry means appending in three places — `LIBRARY_TABS`, `STORIES`, and `entries` (sidebar metadata) — and TypeScript enforces that the tuple and the dispatch map stay in lockstep (`Record<LibraryTab, ComponentType>`).
+
+The route renders:
+- Left sidebar: search input + entry list. Each row is `<Link href="/library?tab=<id>">`.
+- Main pane: the selected entry's variants and states (default / hover / focus / disabled / loading / empty / error / populated).
+- Sidebar bottom rail: a Sun/Moon theme toggle (`aria-label="Toggle theme"`, persisted across reloads via `next-themes` or the project's existing theme primitive).
+- **Source-path copy buttons** next to every page H1 and every state H3 — click writes a Markdown link to the clipboard (e.g. `[Disabled](components/ui/button.tsx:42-58)`), so when the operator pastes the payload into a Claude Code chat it renders as a clickable link to the exact file (and optional line range) they want changed. The button is a one-file client island (`_components/entry-source-copy.tsx`) used by the server-renderable `<EntryHeader>` / `<EntrySection>` helpers in `_components/entry-frame.tsx`.
 
 The agent also **audits and excludes the route from every navigation surface**: app-sidebar, top-nav, mobile sheet, breadcrumbs, `app/sitemap.ts` (or `sitemap.xml`), `robots.txt` (or `app/robots.ts`), and any `<Link href="/library">` references in production code.
 
-The route is seeded with one example block — Buttons — rendering every variant from the design-system rules across every state. Subsequent components are added by `library-entry-writer` during `/deliver-stage` Phase 4.5 (Library Preview Gate).
+The route is seeded with one example entry — `buttons` (visited at `/library?tab=buttons`, the default tab) — rendering every variant from the design-system rules across every state, with the source-path affordance wired through. Subsequent components are added by `library-entry-writer` during `/deliver-stage` Phase 4.5 (Library Preview Gate); every new or modified entry follows the same `EntryHeader sourcePath=… / EntrySection sourcePath=… sourceLines=…` convention.
 
 If the agent surfaces an HITL bubble (existing `/library` route, multiple parallel route groups, pages-router project, or stray internal links to `/library`), bubble it up via this skill's return contract. Do not silently overwrite production routes or guess at navigation conventions.
 
@@ -233,7 +236,10 @@ This skill does NOT call `ask_user_input_v0` for HITL resolution — it bubbles 
 [ ] `docs/design-bundle/` populated (Mode A only)
 [ ] Project-specific code patterns captured (only non-null answers written)
 [ ] Design-system rules block appended to project rules file (CLAUDE.md or AGENTS.md)
-[ ] `/library` route generated and rendering at least one example block
+[ ] `/library` route generated with `?tab=<id>` query-param routing and rendering at least one example entry
+[ ] `_registry/tabs.ts` (`LIBRARY_TABS` + `LibraryTab` + `isLibraryTab`), `_registry/entries.ts` (sidebar metadata), and `_registry/stories.tsx` (`STORIES: Record<LibraryTab, ComponentType>`) all scaffolded and TypeScript-coherent
+[ ] `<EntryHeader>` / `<EntrySection>` / `<EntryStage>` server helpers + `<EntrySourceCopy>` client island scaffolded in `_components/`
+[ ] Seed Buttons entry lives at `_entries/buttons-entry.tsx`, declares a `SOURCE` const, and passes it through `<EntryHeader sourcePath=…>` and every `<EntrySection sourcePath=…>` so the page H1 and every state H3 render a working copy-Markdown-link button
 [ ] `/library` excluded from every navigation surface (sidebar, top nav, mobile sheet, sitemap, robots)
 [ ] Theme toggle present at sidebar bottom and persists across reloads
 [ ] No `- [ ]` checkbox syntax used in any output file — only `[ ]`

@@ -41,6 +41,18 @@ Token catalog: `docs/design-system.md`. Every styling decision references tokens
 2. Reference via Tailwind config; never inline
 3. Update this catalog
 
+### Preview-first UI workflow
+
+UI changes go through the operator-only `/library` showcase route BEFORE landing in any production route. `/deliver-stage`'s Phase 4.5 (Library Preview Gate) enforces this — non-skippable for new components AND for consumer-side edits that change a user-visible surface (props, copy, content, variants, states, or styles) of an existing library component. Pure internal refactors with no rendered-output delta are exempt.
+
+- **`?tab=<id>` routing.** One page route at `/library` reads `?tab=<id>`, validates against `LIBRARY_TABS`, and dispatches via `STORIES`. Each entry is one file under `_entries/<id>-entry.tsx`; the URL is always `/library?tab=<id>`.
+- **One entry per component / block.** Each entry renders the full variants × states matrix (default / hover / focus / disabled / loading / empty / error / populated) and registers in three places: `_registry/tabs.ts` (`LIBRARY_TABS`), `_registry/stories.tsx` (`STORIES`), `_registry/entries.ts` (sidebar metadata). TypeScript fails the build if any of the three drifts.
+- **Source-path copy buttons.** Every entry uses `<EntryHeader sourcePath=…>` and `<EntrySection sourcePath=… sourceLines=…>` so the operator can click an icon button next to the H1 (or any state H3) and paste a Markdown link like `[Disabled](components/ui/button.tsx:42-58)` straight into a Claude Code chat.
+- **HARD STOP at the preview gate.** No production-route import happens until the user explicitly approves the entry. The orchestrator surfaces a self-critique block (skipped states, untested edge cases, close-but-not-exact tokens) and a clickable `http://localhost:<port>/library?tab=<id>` URL per entry before asking for approval.
+- **Closing narrative.** Stages that land UI write a one-paragraph design-story summary (what was built · why this shape · what was left out · what reviewers should pay attention to) into the commit body, so the PR description carries the rationale forward.
+
+Before adding a new library entry, ask: does an existing primitive already cover this? Should it be extended instead? Is this composition library-worthy or does it belong inline in the consuming feature? Reserve the library for things that recur in 3+ places or have non-trivial behavior worth previewing in isolation.
+
 ### Project-specific code patterns
 > Captured during the design system gate. These are project preferences, not universal rules.
 > Examples (only present if applicable to the project): variant system library to use, status indicator visual pattern, numeric column treatment, icon library, etc.
