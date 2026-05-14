@@ -343,6 +343,8 @@ The intent: once daily prep is locked in, `/run-the-day` lets the coding agent t
 
 v4 adds **`/goal` integration** in `/run-the-day`'s `--auto-*` modes — Phase 0.5 sets a session-scoped goal whose condition encodes the pipeline's end state, and a prompt-based Stop hook (default Haiku) checks it between turns. HITL pauses still end turns cleanly. See [`skills/run-the-day/SKILL.md`](skills/run-the-day/SKILL.md) Phase 0.5 for the goal-condition strings per mode.
 
+**Cursor / non-Claude-Code fallback.** `/goal` is a Claude Code feature. When unavailable (running in Cursor, `disableAllHooks` set, or any other reason), `/sell-slice` and `/run-the-day` fall back to a **manual goal-tracking pattern**: WebFetch Anthropic's [`goal.md`](https://code.claude.com/docs/en/goal.md), hold the same condition in working memory, and self-evaluate after each phase. The skills do NOT silently drop goal logic — see [`skills/cook-pizzas/references/goal-fallback-pattern.md`](skills/cook-pizzas/references/goal-fallback-pattern.md) for the full protocol.
+
 | Skill | Slash command | What it does |
 |---|---|---|
 | `run-the-day` | `/bytheslice:run-the-day` | Autonomous multi-stage variant of `/sell-slice`. Drives every remaining stage in one chat session. Supports periodic platform-walk checkpoints — set `runPipeline.platformWalkEvery: 5` in `bytheslice.config.json` to dispatch `/inspect-display` every 5 stages and catch cross-cutting regressions before they compound. |
