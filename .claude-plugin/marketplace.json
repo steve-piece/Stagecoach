@@ -7,8 +7,8 @@
     {
       "name": "bytheslice",
       "source": "./",
-      "description": "ByTheSlice is a Claude Code plugin that takes a project from a free-form brief to a shipping production web app through a phased, subagent-driven workflow. v3 collapses ship-feature + ship-frontend into /bytheslice:deliver-stage (routes by stage type, gates on lint/type/build + type-aware aggregating test review, runs a non-skippable Library Preview Gate for every new component and every consumer-side user-visible edit) and adds /bytheslice:ship-pr as the universal closeout — push, PR, CI watch with auto-fix loop on red, user-authorized merge, main sync, branch + worktree cleanup.",
-      "version": "3.0.0",
+      "description": "ByTheSlice is a Claude Code plugin that runs your project like a grab-and-go pizza shop. Daily prep (/setup-shop, /create-menu, /cook-pizzas, /set-display-case, /final-quality-check, /open-the-shop) runs once before service starts. The everyday loop is /sell-slice (cook a slice, run it through the line, commit locally) then /box-it-up (push, PR, CI watch with auto-fix, merge, cleanup). Special orders cooked on the spot via /special-order. Every skill is independently invocable. v4 adds /goal integration in /run-the-day's --auto-* modes.",
+      "version": "4.0.0",
       "keywords": [
         "prd",
         "phased-plans",
@@ -16,7 +16,8 @@
         "ci-cd",
         "development-workflow",
         "multi-agent",
-        "bytheslice"
+        "bytheslice",
+        "pizza-shop"
       ]
     }
   ]

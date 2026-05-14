@@ -1,7 +1,7 @@
 {
   "name": "bytheslice",
-  "version": "3.0.0",
-  "description": "ByTheSlice is a Claude Code plugin that takes a project from a free-form brief to a shipping production web app through a phased, subagent-driven workflow. v3 collapses ship-feature + ship-frontend into a single /bytheslice:deliver-stage loop that routes by stage type, dispatches the right sub-skill (init-design-system / scaffold-ci-cd / setup-environment) automatically, and gates every slice on a real verification (lint/type/build + a type-aware aggregating test review including dev-server boot and Claude-in-Chrome browser UAT for frontend slices). Frontend stages also pass through a non-skippable Library Preview Gate (Phase 4.5) — every new component AND every consumer-side edit to a user-visible surface of an existing library component gets staged into an operator-only /library preview route for explicit user approval before landing in production. /deliver-stage stops at 'slice committed locally, ready for review'; /bytheslice:ship-pr is the universal closeout — push, PR, CI watch with auto-fix loop on red (capped at 3 attempts), user-authorized merge, main sync, branch + worktree cleanup. Run /deliver-stage then /ship-pr per slice; /run-pipeline is the experimental autonomous multi-stage variant.",
+  "version": "4.0.0",
+  "description": "ByTheSlice is a Cursor + Claude Code plugin that runs your project like a grab-and-go pizza shop. v4 renames every command to a kitchen action — /setup-shop, /create-menu, /cook-pizzas, /set-display-case, /final-quality-check, /open-the-shop, /sell-slice, /box-it-up — and promotes the three foundation skills (design system, CI/CD, env) out of being canned plan stages into being standalone, run-once-before-service prep commands. The master checklist gains a top 'Prep' section that /sell-slice gates on. Every skill is independently invocable (auto-detected standalone vs sequential mode). The everyday loop is /sell-slice (cook a slice) then /box-it-up (hand it across the counter). Library Preview Gate (Phase 4.5 inside /sell-slice) enforces preview-first delivery for any user-visible component change. /run-the-day is the experimental autonomous variant; v4 adds /goal integration. Old v3 commands (/deliver-stage, /ship-pr, /plan-phases, etc.) still fire for one release as backward-compat aliases.",
   "author": {
     "name": "Steven Light"
   },
@@ -22,7 +22,8 @@
     "development-workflow",
     "implementation-planning",
     "multi-agent",
-    "bytheslice"
+    "bytheslice",
+    "pizza-shop"
   ],
   "skills": "./skills",
   "commands": "./commands"
