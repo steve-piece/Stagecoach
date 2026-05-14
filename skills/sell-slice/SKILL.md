@@ -53,9 +53,9 @@ Each subagent lives in its own file under `./agents/`. **Read the file before di
 
 | Stage `type` | Sub-skill (path) |
 |---|---|
-| `design-system` | [`skills/set-display-case/SKILL.md`](../sub-disciplines/set-display-case/SKILL.md) |
-| `ci-cd` | [`skills/final-quality-check/SKILL.md`](../sub-disciplines/final-quality-check/SKILL.md) |
-| `env-setup` | [`skills/open-the-shop/SKILL.md`](../sub-disciplines/open-the-shop/SKILL.md) |
+| `design-system` | [`skills/set-display-case/SKILL.md`](../set-display-case/SKILL.md) |
+| `ci-cd` | [`skills/final-quality-check/SKILL.md`](../final-quality-check/SKILL.md) |
+| `env-setup` | [`skills/open-the-shop/SKILL.md`](../open-the-shop/SKILL.md) |
 
 ---
 
@@ -106,9 +106,12 @@ After Phase 4, Phases 5–9 run regardless of stage type (with type-aware depth 
 ### Phase 0 — Orientation
 
 1. Read `docs/plans/00_master_checklist.md` and every `docs/plans/stage_*.md`.
-2. Identify the **active stage**: first stage with status `Not Started` or `In Progress`, unless the user named one.
-3. Confirm git state: `git status --short`, `git rev-parse --abbrev-ref HEAD`.
-4. Switch to **Plan Mode** before continuing.
+2. **Prep-section precondition (v4).** If the master checklist has a `## Prep` section, verify every Prep checkbox is `[x]` before any feature stage can run. If any Prep box is `[ ]`, STOP and surface a helpful message:
+   > *"Prep step '`<unchecked line>`' is still pending. Run `<the linked command>` first, then come back."*
+   This precondition does NOT apply to legacy projects that pre-date v4 (no Prep section in the checklist) — those keep the v3 behavior where foundation stages live as `stage_1_*` / `stage_2_*` / `stage_3_*` plan files routed through Phase 4 (see Legacy path note in Phase 4 below).
+3. Identify the **active stage**: first stage with status `Not Started` or `In Progress`, unless the user named one.
+4. Confirm git state: `git status --short`, `git rev-parse --abbrev-ref HEAD`.
+5. Switch to **Plan Mode** before continuing.
 
 ### Phase 1 — Reconnaissance (parallel)
 
@@ -149,7 +152,11 @@ If discovery reported `index_freshness: stale`, run `npx gitnexus analyze` once 
 
 Per the routing table above:
 
-#### `design-system` / `ci-cd` / `env-setup` — Sub-skill dispatch
+#### `design-system` / `ci-cd` / `env-setup` — Legacy sub-skill dispatch (v3 projects only)
+
+> **v4 note:** In v4, the foundation stages (design-system / ci-cd / env-setup) are no longer scaffolded as plan files by `/cook-pizzas`. New projects run `/set-display-case`, `/final-quality-check`, and `/open-the-shop` directly from the master checklist's Prep section — they don't pass through `/sell-slice` at all.
+>
+> This routing path exists for **legacy v3 projects** whose master checklist still has `stage_1_*`, `stage_2_*`, `stage_3_*` plan files. In that case, `/sell-slice` loads the corresponding foundation skill (`/set-display-case`, `/final-quality-check`, `/open-the-shop`) end-to-end as a sub-skill, records the artifacts, and proceeds to Phase 5 — same behavior as v3. The user gets a one-line note: *"Detected legacy `type: <X>` stage — dispatching `/<new-name>` as a sub-skill. v4 projects skip this routing entirely (foundations are run-once before feature work)."*
 
 Load the corresponding sub-skill SKILL.md and follow it end-to-end. The sub-skill returns the structured contract; the orchestrator records the artifacts and proceeds to Phase 5.
 

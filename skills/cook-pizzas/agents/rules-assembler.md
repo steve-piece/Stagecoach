@@ -56,7 +56,7 @@ You are the **rules-assembler** for `/cook-pizzas`. Your job: produce a clean, l
    - Empty section labeled "Design System Rules — populated by `set-display-case`". This anchor is what `set-display-case` later fills.
 
    **Placeholder section for CI/CD operational rules**
-   - Empty section labeled "CI/CD Operational Rules — populated by `final-quality-check`". This anchor is what `final-quality-check` later fills with the contents of [`skills/final-quality-check/references/prd-ci-cd-checklist.md`](../../sub-disciplines/final-quality-check/references/prd-ci-cd-checklist.md). These are runtime guardrails (master-checklist updates, CI gate alignment, deterministic pipelines, slice-per-PR rule, failure-artifact upload) that every agent on every PR must respect — they live in the project rules file because they apply to all stage skills, not just to the one-time CI/CD scaffolding.
+   - Empty section labeled "CI/CD Operational Rules — populated by `final-quality-check`". This anchor is what `final-quality-check` later fills with the contents of [`skills/final-quality-check/references/prd-ci-cd-checklist.md`](../../final-quality-check/references/prd-ci-cd-checklist.md). These are runtime guardrails (master-checklist updates, CI gate alignment, deterministic pipelines, slice-per-PR rule, failure-artifact upload) that every agent on every PR must respect — they live in the project rules file because they apply to all stage skills, not just to the one-time CI/CD scaffolding.
 
 4. Write the assembled content to the target file path.
 

@@ -34,47 +34,14 @@ completion_criteria:
 
 ---
 
-## Stage 1 — Design System Gate
-**Type:** design-system | **MVP:** Yes | **Depends on:** none
-**Linear milestone:** [id or —]
+## Prep — run once before any feature work
 
-Completion criteria:
-[ ] token_files_committed
-[ ] design_system_compliance_check_passing
-[ ] tests_passing
-[ ] PR reviewer pass
-[ ] All tests added and passing
-[ ] Full CI green (visual regression + design-system-compliance)
+These are run-once standalone skills the user invokes directly. `/sell-slice` checks every box below before accepting any feature stage. Each foundation skill flips its own checkbox on completion when invoked in sequential mode.
 
----
-
-## Stage 2 — CI/CD Scaffold
-**Type:** ci-cd | **MVP:** Yes | **Depends on:** Stage 1
-**Linear milestone:** [id or —]
-
-Completion criteria:
-[ ] ci_workflow_green_on_main
-[ ] e2e_suite_passing
-[ ] branch_protection_configured
-[ ] tests_passing
-[ ] PR reviewer pass
-[ ] All tests added and passing
-[ ] Full CI green
-
----
-
-## Stage 3 — Environment Setup Gate
-**Type:** env-setup | **MVP:** Yes | **Depends on:** Stages 1, 2
-**Linear milestone:** [id or —]
-**HITL required:** external_credentials
-
-Completion criteria:
-[ ] all_env_vars_populated
-[ ] local_dev_boots
-[ ] services_reachable
-[ ] tests_passing
-[ ] PR reviewer pass
-[ ] HITL items resolved
+[ ] Display case built       — run `/bytheslice:set-display-case` (design system, tokens, /library route)
+[ ] Quality line installed   — run `/bytheslice:final-quality-check` (CI/CD, E2E, design-system-compliance, visual-regression)
+[ ] Shop open                — run `/bytheslice:open-the-shop` (env vars, external service credentials)
+[ ] DB schema foundation     — run `/bytheslice:sell-slice` on `stage_4_db_schema_foundation.md` (only if backend in scope)
 
 ---
 
@@ -92,15 +59,13 @@ Completion criteria:
 
 ---
 
-<!-- Repeat for all stages -->
+<!-- Repeat for all feature stages (5..N typical) -->
 
 ## MVP Summary
 
 | Stage | Name | Type | Status |
 |-------|------|------|--------|
-| 1 | Design System Gate | design-system | [ ] |
-| 2 | CI/CD Scaffold | ci-cd | [ ] |
-| 3 | Environment Setup Gate | env-setup | [ ] |
+| 4 | DB Schema Foundation (conditional) | db-schema | [ ] |
 
 ## Phase 2 (Post-Launch)
 

@@ -17,13 +17,12 @@ Transform a finalized PRD into a complete, ordered set of implementation stages 
 **Input:** a finalized PRD file (output of `/create-menu` or equivalent). Not specs, briefs, questionnaires, or API docs — those feed `/create-menu`.
 
 **Output:**
-- `docs/plans/00_master_checklist.md`
-- `docs/plans/stage_1_design_system_gate.md` (canned)
-- `docs/plans/stage_2_ci_cd_scaffold.md` (canned)
-- `docs/plans/stage_3_env_setup_gate.md` (canned)
-- `docs/plans/stage_4_db_schema_foundation.md` (canned, conditional on Q3)
+- `docs/plans/00_master_checklist.md` — includes a top **Prep section** pointing at the foundation skills (`/set-display-case`, `/final-quality-check`, `/open-the-shop`) that the user runs once before any feature stage
+- `docs/plans/stage_4_db_schema_foundation.md` (canned, conditional on Q3 = Yes)
 - `docs/plans/stage_5..N_<feature>.md` (20-30 vertical-slice feature stages)
 - `CLAUDE.md` or `AGENTS.md` (per Q12) — the project rules file
+
+> **v4 change:** `cook-pizzas` no longer emits canned plan files for the design-system, CI/CD, or env-setup foundation stages. Those are now run-once-before-service prep steps invoked directly via `/set-display-case`, `/final-quality-check`, `/open-the-shop`. The master checklist's Prep section is the canonical list. Existing projects with `stage_1_*`, `stage_2_*`, `stage_3_*` plan files still work — `/sell-slice` keeps a legacy routing path for those types.
 
 ## Project Config (optional)
 
@@ -124,15 +123,14 @@ Read the PRD. Map every feature from Section 2 (Functional Requirements) to stag
 
 ## Phase 3: Dispatch Stage Writers (parallel)
 
-Dispatch all stage-writer sub-agents in parallel. Each writes exactly one file.
+Dispatch stage-writer sub-agents in parallel. Each writes exactly one file.
 
 | Stage | Sub-agent | Canned? | Condition |
 |-------|-----------|---------|-----------|
-| 1 | `design-system-stage-writer` | Yes | Always |
-| 2 | `ci-cd-scaffold-stage-writer` | Yes | Always |
-| 3 | `env-setup-stage-writer` | Yes | Always |
-| 4 | `db-schema-stage-writer` | Yes | Q3 = Yes only |
-| 5..N | `phased-plan-writer` | No | One per feature stage |
+| 4 (db-schema) | `db-schema-stage-writer` | Yes | Q3 = Yes only |
+| 5..N (features) | `phased-plan-writer` | No | One per feature stage |
+
+> **v4 change:** the foundation stages (design-system, ci-cd, env-setup) are no longer emitted as plan files here. They live as standalone, run-once skills (`/set-display-case`, `/final-quality-check`, `/open-the-shop`) referenced from the master checklist's Prep section (Phase 4 below). The legacy writers (`design-system-stage-writer`, `ci-cd-scaffold-stage-writer`, `env-setup-stage-writer`) remain in `agents/` for backward-compat repair on old projects but are NOT dispatched in the v4 flow.
 
 Supply each agent with:
 - Stage number, short name, output path, one-sentence goal, `mvp:` flag
@@ -141,16 +139,24 @@ Supply each agent with:
 - Elicitation answers (Q1–Q12) as context
 - Absolute path to the project rules file
 
-Each canned-stage writer pulls its template from `references/canned-stages/`.
-
 ## Phase 4: Master Checklist (last)
 
 After ALL stage files are written, dispatch `master-checklist-synthesizer`. It:
-1. Scans every stage file's frontmatter `completion_criteria`
-2. Writes `docs/plans/00_master_checklist.md`
-3. Uses `[ ]` checkbox format (no leading dash)
 
-See `references/templates.md` for the exact checklist template.
+1. Writes a top **Prep section** with these run-once checkboxes (always in this order):
+   ```
+   ## Prep — run once before any feature work
+   [ ] Display case built       — run /set-display-case
+   [ ] Quality line installed   — run /final-quality-check
+   [ ] Shop open                — run /open-the-shop
+   [ ] DB schema foundation     — run /sell-slice (handled internally on stage 4)
+   ```
+   Drop the last line if Q3 = No (no DB).
+2. Scans every feature stage file's frontmatter `completion_criteria`
+3. Writes the rest of `docs/plans/00_master_checklist.md` — stage rows for 4 (if DB) and 5..N
+4. Uses `[ ]` checkbox format (no leading dash)
+
+See `references/templates.md` for the exact checklist template, including the new Prep section format.
 
 ## Phase 5: Linear stubs (if Q2 = Linear)
 
@@ -174,15 +180,14 @@ Opinionated rules (naming, type-vs-interface, file organization, server-action p
 ```
 docs/
 ├── plans/
-│   ├── 00_master_checklist.md
-│   ├── stage_1_design_system_gate.md
-│   ├── stage_2_ci_cd_scaffold.md
-│   ├── stage_3_env_setup_gate.md
-│   ├── stage_4_db_schema_foundation.md   (conditional)
-│   └── stage_N_<feature>.md              (20-30 feature stages)
+│   ├── 00_master_checklist.md             (Prep section at top, then stages)
+│   ├── stage_4_db_schema_foundation.md    (conditional on Q3 = Yes)
+│   └── stage_N_<feature>.md               (20-30 feature stages)
 └── (existing PRD)
 CLAUDE.md or AGENTS.md (per Q12)
 ```
+
+> The Prep section in the master checklist points the user at the standalone foundation skills (`/set-display-case`, `/final-quality-check`, `/open-the-shop`). Those run once each before any `/sell-slice` invocation. They are NOT plan files; they are skills the user invokes directly.
 
 ## Key principles
 
@@ -202,10 +207,10 @@ Every stage file uses the contract in `references/stage-frontmatter-contract.md`
 [ ] All 12 elicitation questions answered and answers written to project rules file
 [ ] Project rules file assembled with correct layering: baseline → Q9 imports → design system patterns
 [ ] Stage list presented to user and approved
-[ ] All canned stage files written (stages 1-3, optionally 4)
+[ ] Stage 4 (db-schema) plan file written if Q3 = Yes
 [ ] All feature stage files written (stages 5..N)
 [ ] All stage files include valid YAML frontmatter per `references/stage-frontmatter-contract.md`
-[ ] Master checklist generated after all stages
+[ ] Master checklist generated with Prep section at the top pointing at the foundation skills
 [ ] Linear stubs created if Q2 = Linear (linear_milestone fields populated)
 [ ] No `- [ ]` checkboxes in generated files (all use `[ ]` format)
 [ ] No platform-specific references in generated files (use "project rules file" not "cursor rules")
