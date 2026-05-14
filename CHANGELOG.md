@@ -54,8 +54,6 @@ All notable changes to **🍕 ByTheSlice** are tracked here, slice by slice. The
 
 **New v4 projects:** follow the Quick Start in the README. The sequence is `/setup-shop` → `/create-menu` → `/cook-pizzas` → `/set-display-case` → `/final-quality-check` → `/open-the-shop` → `/sell-slice` (loop with `/box-it-up`).
 
-**Migration manifest:** [`MIGRATION-v4.md`](MIGRATION-v4.md) at the repo root has the full file-by-file rename inventory. Deleted after this PR merges.
-
 ---
 
 ## [3.1.0] — 2026-05-13
